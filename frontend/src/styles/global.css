@@ -1,0 +1,80 @@
+/* global.css - Styles that apply to the entire app */
+
+@import url("https://fonts.googleapis.com/css2?family=Lancelot&display=swap");
+
+/* Reset default browser styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Apply base styles to entire app */
+body {
+  font-family: var(--font-primary);
+  color: var(--color-text-primary);
+  background-color: var(--color-bg-white);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Base heading styles */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+/* Base link styles */
+a {
+  color: var(--color-primary);
+  text-decoration: none;
+  transition: color var(--transition-normal);
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+/* Base button styles */
+button {
+  font-family: var(--font-primary);
+  cursor: pointer;
+}
+
+/* Base input styles */
+input,
+textarea,
+select {
+  font-family: var(--font-primary);
+}
+
+/* Remove default input styles on focus */
+input:focus,
+textarea:focus,
+select:focus {
+  outline: none;
+}
+
+/* Utility classes you can use anywhere */
+.text-center {
+  text-align: center;
+}
+
+.text-primary {
+  color: var(--color-primary);
+}
+
+.text-secondary {
+  color: var(--color-text-secondary);
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 var(--spacing-sm);
+}
