@@ -4,8 +4,12 @@ import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 import { FcGoogle } from "react-icons/fc";
 import { FaApple } from "react-icons/fa";
 import Logo from "../components/Logo";
+import Cookies from "js-cookie";
+import { useNavigate } from "react-router-dom";
+import RoutePaths from "../routes/routePaths";
 
 function LoginPage() {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -25,6 +29,8 @@ function LoginPage() {
     e.preventDefault();
     console.log("Form submitted:", formData);
     // Later, we'll add API call here
+    Cookies.set("accessToken", "static-token-123");
+    navigate(RoutePaths.DASHBOARD);
   };
 
   const togglePasswordVisibility = () => {

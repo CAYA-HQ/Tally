@@ -1,12 +1,13 @@
-import "./styles/variables.css"; // Import variables first
+import "./styles/variables.css";
 import "./styles/global.css";
-import LoginPage from "./pages/LoginPage";
+import { RouterProvider } from "react-router-dom";
+import { router } from "./routes";
 
 function App() {
   return (
     <>
       <section id="center">
-        <LoginPage />
+        <RouterProvider router={router} />
       </section>
     </>
   );
