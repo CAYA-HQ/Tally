@@ -1,0 +1,28 @@
+.checkbox-container {
+    display: flex;
+    align-items: center; 
+    gap: 8px;
+    margin-bottom: 20px;            
+}
+
+.checkbox-input {
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+}
+
+.checkbox-text {
+    margin: 0;           
+    font-size: 14px;
+    color: #374151;     
+}
+
+.terms-link {
+    color: #2563eb;      
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.terms-link:hover {
+    text-decoration: underline;
+}
