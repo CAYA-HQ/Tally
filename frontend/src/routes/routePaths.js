@@ -3,6 +3,7 @@ const RoutePaths = {
   LOGIN: "/login",
   REGISTER: "/register",
   DASHBOARD: "/dashboard",
+  VERIFYPAGE: "/verify",
 };
 
 export default RoutePaths;

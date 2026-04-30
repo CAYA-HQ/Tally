@@ -4,6 +4,7 @@ import AuthGuard from "../guards/AuthGuard";
 import LoginPage from "../pages/LoginPage";
 import RegisterPage from "../pages/RegisterPage";
 import DashboardPage from "../pages/DashboardPage";
+import VerifyPage from "../pages/VerifyPage";
 import RoutePaths from "./routePaths";
 
 export const router = createBrowserRouter([
@@ -22,6 +23,10 @@ export const router = createBrowserRouter([
       {
         path: RoutePaths.REGISTER,
         element: <RegisterPage />,
+      },
+      {
+        path: RoutePaths.VERIFYPAGE,
+        element: <VerifyPage />,
       }
     ],
   },
