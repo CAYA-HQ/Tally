@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import type { Request, Response } from "express";
 
 export let register = (req: Request, res: Response) => {
     res.status(201).json({
@@ -14,5 +14,3 @@ export let login = (req: Request, res: Response) => {
         }
     })
 }
-
-
