@@ -1,0 +1,103 @@
+.table-container {
+  width: 100%;
+  overflow-x: 0;
+  /* margin-top: var(--spacing-md); */
+}
+
+.task-history-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: var(--font-primary);
+  background-color: transparent;
+}
+
+/* Header Styles */
+.task-history-table thead tr {
+  background-color: #d1d5db; /* Grey header background as seen in image */
+}
+
+.task-history-table th {
+  padding: 14px var(--spacing-sm);
+  text-align: left;
+  font-size: var(--font-size-md);
+  font-weight: 600;
+  color: var(--color-text-primary);
+  border-radius: 0;
+}
+
+/* Rounded corners for the grey header bar */
+.task-history-table th:first-child {
+  border-top-left-radius: var(--border-radius-md);
+  border-bottom-left-radius: var(--border-radius-md);
+}
+
+.task-history-table th:last-child {
+  border-top-right-radius: var(--border-radius-md);
+  border-bottom-right-radius: var(--border-radius-md);
+}
+
+.sort-icon {
+  font-size: 14px;
+  vertical-align: middle;
+  margin-left: 4px;
+  cursor: pointer;
+  color: var(--color-text-secondary);
+}
+
+/* Row Styles */
+.task-history-table td {
+  padding: var(--spacing-md) var(--spacing-sm);
+  vertical-align: top;
+  border-bottom: none; /* No borders between rows in the design */
+}
+
+.col-sn {
+  width: 80px;
+  color: var(--color-text-secondary);
+}
+
+.col-desc {
+  max-width: 400px;
+  color: var(--color-text-secondary);
+  line-height: 1.5;
+  font-size: var(--font-size-sm);
+}
+
+.col-date {
+  width: 180px;
+}
+
+.date-text {
+  display: block;
+  font-weight: 500;
+  color: var(--color-text-primary);
+}
+
+.time-text {
+  display: inline-block;
+  font-size: var(--font-size-xs);
+  color: var(--color-text-light);
+  margin-left: 4px;
+}
+
+/* Status Styling */
+.col-status {
+  width: 120px;
+  font-weight: 600;
+  font-size: var(--font-size-sm);
+  text-align: right;
+}
+
+.status-completed {
+  color: #4caf50; /* Green */
+}
+
+.status-deleted {
+  color: #ff5252; /* Red */
+}
+
+/* Hover effect for rows */
+.task-history-table tbody tr:hover {
+  background-color: var(--color-bg-light);
+  transition: background-color var(--transition-fast);
+}
