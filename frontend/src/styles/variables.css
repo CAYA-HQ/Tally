@@ -9,8 +9,9 @@
 
   --color-text-primary: #1a1a1a;
   --color-text-secondary: #666;
-  --color-text-light: #999;
+  --color-text-light: #637381;
   --color-text-white: #ffffff;
+  --color-text-body: #374151;
 
   --color-border: #e0e0e0;
   --color-border-focus: #4c8bf5;
@@ -20,9 +21,11 @@
   --color-bg-hover: #f5f5f5;
 
   /* FONTS */
-  --font-primary: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto",
-    sans-serif;
+  --font-primary:
+    -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", sans-serif;
   --font-logo: "Lancelot", serif;
+  --font-poppins: "Poppins", sans-serif;
+  --font-inter: "Inter", sans-serif;
 
   /* FONT SIZES */
   --font-size-xs: 13px;
