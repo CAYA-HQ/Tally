@@ -25,7 +25,7 @@ export const register = asyncHandler(async (req: Request, res: Response) => {
     res.status(201).json({
         success: true,
         message: 'new user created successfully',
-        newUser,
+        user: jwt.payLOad(newUser),
         accessToken,
     })
 })
@@ -58,7 +58,7 @@ export const login = asyncHandler(async (req: Request, res: Response) => {
         success: true,
         message: 'login successful',
         accessToken,
-        user,
+        user: jwt.payLOad(user),
     })
 })
 
