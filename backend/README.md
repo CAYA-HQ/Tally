@@ -1,7 +1,7 @@
 # Tally BACKEND/ DB
 
 ## Overview
-This backend service is built using **Bun**, **Express.js**, **MongoDB**, and **Mongoose**.
+This backend service is built using **Bun**, **Express.js**, **Passportjs**, **Redis**, **MongoDB**, and **Mongoose**.
 
 The application follows a modular and scalable architecture with proper separation of concerns for:
 - routing
@@ -27,9 +27,9 @@ The project is containerized using Docker to ensure a consistent development env
 | Zod        | Request validation                   |
 | Docker     | Containerization                     |
 | dotenv     | Environment variable management      |
-│ redis      │ storing state session                │
-│ cookies    │ storing stateless session            │
-│ passportjs │ different authentication strategy    │
+| redis      | storing state session                |
+| cookies    | storing stateless session            |
+| passportjs | different authentication strategy    |
 
 ---
 
