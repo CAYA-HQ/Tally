@@ -10,6 +10,7 @@ The application follows a modular and scalable architecture with proper separati
 - database configuration
 - middleware
 - utilities
+- Authentication
 
 The project is containerized using Docker to ensure a consistent development environment across all systems.
 
@@ -26,6 +27,9 @@ The project is containerized using Docker to ensure a consistent development env
 | Zod        | Request validation                   |
 | Docker     | Containerization                     |
 | dotenv     | Environment variable management      |
+│ redis      │ storing state session                │
+│ cookies    │ storing stateless session            │
+│ passportjs │ different authentication strategy    │
 
 ---
 
@@ -36,9 +40,11 @@ src/
 │
 ├── config/
 │   └── db.ts
+│   └── redis.ts
 │
 ├── controllers/
 │   └── user.controller.ts
+│   └── auth controller.ts
 │
 ├── models/
 │   ├── User.ts
@@ -46,12 +52,18 @@ src/
 │
 ├── routes/
 │   ├── api.ts
+│   ├── auth.ts
 │   └── userRouter.ts
+│
+├── service
+│   └── user.service.ts
 │
 ├── utils/
 │   ├── asyncHandler.ts
 │   ├── errorHandler.ts
-│   └── validate.middleware.ts
+│   ├── validate.middleware.ts
+│   ├── passportStrategy/
+│         └── googlestrategy.ts
 │
 ├── index.ts
 │
@@ -73,7 +85,7 @@ index.ts
 routes/api.ts
 (Route grouping: /user)
       ↓
-routes/userRouter.ts
+routes/userRouter.ts & routes/auth.ts
 (Endpoint definitions)
       ↓
 Middleware Layer
@@ -120,6 +132,8 @@ Example:
 
 ```ts
 router.use("/user", userRouter);
+            &
+router.use("/auth", authRouter)
 ```
 
 ---
@@ -130,14 +144,20 @@ Defined in:
 
 ```ts
 routes/userRouter.ts
+      &
+routes/auth.ts
 ```
 
 Examples:
 
 ```txt
-POST   /api/user
-GET    /api/user/:id
-PUT    /api/user/:id
+user: POST/api/user
+      GET/api/user/:id
+      PUT/api/user/:id
+
+auth: POST/api/auth/login
+      GET/api/auth/signup
+      PUT/api/auth/logout
 ```
 
 ---
@@ -150,6 +170,8 @@ Location:
 
 ```ts
 controllers/user.controller.ts
+            &
+controllers/auth.controllers.ts
 ```
 
 Responsibilities include:
@@ -158,7 +180,61 @@ Responsibilities include:
 - handling responses
 - returning appropriate HTTP status codes
 
+
 ---
+
+# Authentication Strategy
+
+## 1. schema
+
+Location:
+
+```ts
+models/User.ts 
+```
+used to defined user schema in db when registering
+
+---
+
+## 2. JASON web token (JWT)
+
+location:
+
+```ts
+utils/jwt.ts
+```
+used to create session token for users login verification it also uses cookies
+
+---
+
+## 3. bcrypt
+
+Location:
+
+```ts 
+utils/bcrypt.this
+```
+used for password encryption
+
+---
+
+## .4 Authentication strategy
+
+location:
+```ts
+utils/passportStrategy/googlestrategy.ts
+```
+used to create passportjs google registration strategy
+---
+
+## 5. Verifying user API
+
+Location:
+```ts 
+middleware/verifyUserRoute.ts 
+```
+used as a protection mechanism, to verif user route
+
 
 # Validation Strategy
 
