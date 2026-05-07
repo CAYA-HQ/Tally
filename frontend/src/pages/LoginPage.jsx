@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import "../styles/pages/loginpage.css";
-import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 import { FcGoogle } from "react-icons/fc";
 import { FaApple } from "react-icons/fa";
 import Logo from "../components/Logo";
+import PasswordInput from "../components/PasswordInput";
 import Cookies from "js-cookie";
 import { useNavigate } from "react-router-dom";
 import RoutePaths from "../routes/routePaths";
@@ -14,8 +14,6 @@ function LoginPage() {
     email: "",
     password: "",
   });
-
-  const [showPassword, setShowPassword] = useState(false);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -33,20 +31,18 @@ function LoginPage() {
     navigate(RoutePaths.DASHBOARD);
   };
 
-  const togglePasswordVisibility = () => {
-    setShowPassword(!showPassword);
-  };
-
   return (
     <div className="login-page">
       {/* LEFT SIDE - Dark blue section */}
       <div className="login-left">
         <Logo />
         <div className="welcome-text">
-          <h1>Manage your business the simple way</h1>
+          <h1>
+            Manage your business <br /> the simple way
+          </h1>
           <p>
-            Keep track of your stock, tasks, and daily 
-            activities without stress or confusion.
+            Keep track of your stock, tasks, and daily <br /> activities without
+            stress or confusion.
           </p>
         </div>
       </div>
@@ -70,37 +66,20 @@ function LoginPage() {
               />
             </div>
 
-            <div className="form-group">
-              <div className="password-input-wrapper">
-                <input
-                  type={showPassword ? "text" : "password"}
-                  id="password"
-                  name="password"
-                  value={formData.password}
-                  onChange={handleInputChange}
-                  placeholder="Enter your Password"
-                  required
-                />
-                <button
-                  type="button"
-                  className="password-toggle"
-                  onClick={togglePasswordVisibility}
-                  aria-label="Toggle password visibility"
-                >
-                  {showPassword ? (
-                    <AiOutlineEyeInvisible size={20} />
-                  ) : (
-                    <AiOutlineEye size={20} />
-                  )}
-                </button>
-              </div>
-            </div>
+            <PasswordInput
+              id="password"
+              name="password"
+              value={formData.password}
+              onChange={handleInputChange}
+              placeholder="Enter your Password"
+              required
+            />
 
             <div className="forgot-password">
               <a href="/forgot-password">Forgotten Password</a>
             </div>
 
-            <button type="submit" className="login-btn">
+            <button type="submit" className="btn-primary">
               Log in
             </button>
           </form>

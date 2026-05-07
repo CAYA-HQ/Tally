@@ -8,7 +8,7 @@
   font-family: var(--font-primary);
 }
 
-/* ── Card ───────────────────────────────────────────────────────── */
+/* ── Card ── */
 .vc-card {
   background: var(--color-bg-white);
   border-radius: var(--border-radius-lg);

@@ -1,0 +1,49 @@
+.dashboard-wrapper {
+  display: flex;
+  min-height: 100vh;
+  background-color: var(--color-bg-light);
+}
+
+.main-content {
+  flex: 1; /* Takes up remaining space next to sidebar */
+  margin-left: 260px; /* IMPORTANT: Match this to your Sidebar's width */
+  display: flex;
+  flex-direction: column;
+}
+
+.content-padding {
+  padding: var(--spacing-md);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: var(--spacing-md);
+}
+
+.table-section {
+  background-color: var(--color-bg-white);
+  padding: var(--spacing-md);
+  border-radius: var(--border-radius-lg);
+  box-shadow: var(--shadow-sm);
+}
+
+.section-title {
+  font-size: var(--font-size-md);
+  font-weight: 700;
+  margin-bottom: var(--spacing-md);
+}
+
+.logout-btn {
+  align-self: flex-start;
+  margin-top: auto;
+  padding: 10px 20px;
+  background-color: var(--color-primary);
+  color: white;
+  border: none;
+  border-radius: var(--border-radius-sm);
+  cursor: pointer;
+}
