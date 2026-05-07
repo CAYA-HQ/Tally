@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { NavLink } from "react-router-dom"; // MUST IMPORT THIS
 import { RiDashboardLine } from "react-icons/ri";
 import { MdOutlineInventory2 } from "react-icons/md";
 import { BsCart3 } from "react-icons/bs";
@@ -8,71 +8,57 @@ import { IoSettingsOutline } from "react-icons/io5";
 import { LuLogOut } from "react-icons/lu";
 import Logo from "../Logo";
 import "../../styles/layout/sidebar.css";
-import Navbar from "./Navbar";
 import logogroup from "../../assets/logogroup.svg";
 
-
 const NAV_ITEMS = [
-  { id: "dashboard", label: "Dashboard", icon: <RiDashboardLine /> },
-  { id: "inventory", label: "Inventory",  icon: <MdOutlineInventory2 /> },
-  { id: "orders",    label: "Orders",     icon: <BsCart3 /> },
-  { id: "reports",   label: "Reports",    icon: <HiOutlineDocumentReport /> },
-  { id: "record",    label: "Record",     icon: <LuClipboardList /> },
-];
-
-const BOTTOM_ITEMS = [
-  { id: "settings", label: "Settings", icon: <IoSettingsOutline /> },
-  { id: "logout",   label: "Log out",  icon: <LuLogOut /> },
+  { id: "dashboard", label: "Dashboard", icon: <RiDashboardLine />, path: "/dashboard" },
+  { id: "inventory", label: "Inventory", icon: <MdOutlineInventory2 />, path: "/dashboard/inventory" },
+  { id: "orders",    label: "Orders",    icon: <BsCart3 />, path: "/dashboard/orders" },
+  { id: "reports",   label: "Reports",   icon: <HiOutlineDocumentReport />, path: "/dashboard/reports" },
+  { id: "record",    label: "Record",    icon: <LuClipboardList />, path: "/dashboard/record" },
 ];
 
 export default function Sidebar() {
-  const [active, setActive] = useState("dashboard");
-
   return (
-    <div className="tally-layout">
+    <aside className="tally-sidebar">
+      {/* Logo */}
+      <div className="tally-logo">
+        <img src={logogroup} alt="Tally Logo" className="tally-img" />
+        <Logo />
+      </div>
 
-      {/* ── Sidebar ── */}
-      <aside className="tally-sidebar">
+      {/* Main nav - Using NavLink instead of buttons */}
+      <nav className="tally-nav">
+        {NAV_ITEMS.map((item) => (
+          <NavLink
+            key={item.id}
+            to={item.path}
+            // isActive is provided by React Router automatically
+            className={({ isActive }) => 
+              `tally-nav-item${isActive ? " active" : ""}`
+            }
+            // Use 'end' for dashboard so it's not active when on /inventory
+            end={item.id === "dashboard"}
+          >
+            <span className="tally-nav-icon">{item.icon}</span>
+            <span className="tally-nav-label">{item.label}</span>
+          </NavLink>
+        ))}
+      </nav>
 
-        {/* Logo */}
-        <a href="#" className="tally-logo">
-          <img src={logogroup} alt="Tally Logo" className="tally-img" />
-          <Logo />
-        </a>
+      <div className="tally-divider" />
 
-        {/* Main nav */}
-        <nav className="tally-nav">
-          {NAV_ITEMS.map((item) => (
-            <button
-              key={item.id}
-              className={`tally-nav-item${active === item.id ? " active" : ""}`}
-              onClick={() => setActive(item.id)}
-            >
-              <span className="tally-nav-icon">{item.icon}</span>
-              <span className="tally-nav-label">{item.label}</span>
-            </button>
-          ))}
-        </nav>
-
-        {/* Divider */}
-        <div className="tally-divider" />
-
-        {/* Bottom nav */}
-        <div className="tally-bottom">
-          {BOTTOM_ITEMS.map((item) => (
-            <button
-              key={item.id}
-              className={`tally-nav-item${active === item.id ? " active" : ""}`}
-              onClick={() => setActive(item.id)}
-            >
-              <span className="tally-nav-icon">{item.icon}</span>
-              <span className="tally-nav-label">{item.label}</span>
-            </button>
-          ))}
-        </div>
-
-      </aside>
-
-    </div>
+      {/* Bottom nav */}
+      <div className="tally-bottom">
+        <button className="tally-nav-item">
+          <span className="tally-nav-icon"><IoSettingsOutline /></span>
+          <span className="tally-nav-label">Settings</span>
+        </button>
+        <button className="tally-nav-item">
+          <span className="tally-nav-icon"><LuLogOut /></span>
+          <span className="tally-nav-label">Log out</span>
+        </button>
+      </div>
+    </aside>
   );
 }

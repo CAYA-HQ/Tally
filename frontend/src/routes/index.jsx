@@ -4,6 +4,7 @@ import AuthGuard from "../guards/AuthGuard";
 import LoginPage from "../pages/LoginPage";
 import RegisterPage from "../pages/RegisterPage";
 import DashboardPage from "../pages/DashboardPage";
+import InventoryPage from "../pages/Inventory";
 import RoutePaths from "./routePaths";
 
 export const router = createBrowserRouter([
@@ -32,6 +33,10 @@ export const router = createBrowserRouter([
       {
         index: true,
         element: <DashboardPage />,
+      },
+      {
+        path: "inventory", 
+        element: <InventoryPage />,
       },
     ],
   },
