@@ -10,10 +10,10 @@
 .login-left {
   flex: 1;
   background: var(--color-dark-bg-gradient);
-  background-image: url("../../assets/loginhero.jpg");
+  background-image: url("../../assets/loginhero.png");
   background-size: cover;
-  background-position: center;
-  background-blend-mode: overlay;
+  background-position: 10% 10%;
+  /* background-blend-mode: overlay; */
   padding: var(--spacing-xl);
   color: var(--color-text-white);
   display: flex;
@@ -21,7 +21,7 @@
   position: relative;
 }
 
-.login-left::before {
+/* .login-left::before {
   content: "";
   position: absolute;
   top: 0;
@@ -30,7 +30,7 @@
   bottom: 0;
   background: rgba(10, 25, 41, 0.7);
   z-index: 0;
-}
+} */
 
 .login-left > * {
   position: relative;
@@ -40,7 +40,7 @@
 .logo {
   font-family: var(--font-logo);
   font-size: var(--font-size-logo);
-  font-weight: 300;
+  font-weight: 600;
   margin-bottom: 50px;
   color: #eef4ff;
 }
@@ -50,17 +50,25 @@
   margin-left: -20px;
 }
 
+.welcome-text {
+  text-align: center;
+}
+
 .welcome-text h1 {
-  font-size: var(--font-size-xl);
-  font-weight: 400;
-  margin-bottom: 30px;
+  font-size: 40px;
+  font-weight: 600;
+  margin-bottom: 12px;
+  line-height: 150%;
 }
 
 .welcome-text p {
-  font-size: var(--font-size-base);
-  line-height: 1.8;
+  font-size: 24px;
+  line-height: 121%;
   color: rgba(255, 255, 255, 0.7);
-  max-width: 500px;
+
+  font-family: var(--font-inter);
+
+  /* max-width: 500px; */
 }
 
 .login-right {
@@ -78,7 +86,7 @@
 }
 
 .login-form-container h2 {
-  font-size: var(--font-size-lg);
+  font-size: 39px;
   font-weight: 600;
   color: var(--color-text-primary);
   margin-bottom: var(--spacing-xs);
@@ -87,69 +95,16 @@
 .subtitle {
   font-size: var(--font-size-sm);
   color: var(--color-text-secondary);
-  margin-bottom: var(--spacing-lg);
-}
-
-.form-group {
-  margin-bottom: var(--spacing-md);
-}
-
-.form-group input {
-  width: 100%;
-  padding: 14px var(--spacing-sm);
-  border: 1px solid var(--color-border);
-  border-radius: var(--border-radius-md);
-  font-size: var(--font-size-md);
-  color: var(--color-text-primary);
-  background: var(--color-bg-light);
-  transition: all var(--transition-normal);
-}
-
-.form-group input:focus {
-  border-color: var(--color-border-focus);
-  background: var(--color-bg-white);
-}
-
-.form-group input::placeholder {
-  color: var(--color-text-light);
-  font-size: var(--font-size-sm);
-}
-
-.password-input-wrapper {
-  position: relative;
-}
-
-.password-input-wrapper input {
-  padding-right: 45px;
-}
-
-.password-toggle {
-  position: absolute;
-  right: 12px;
-  top: 50%;
-  transform: translateY(-50%);
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 5px;
-  color: var(--color-text-light);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: color var(--transition-normal);
-}
-
-.password-toggle:hover {
-  color: var(--color-text-secondary);
+  margin-bottom: 55px;
 }
 
 .forgot-password {
   text-align: right;
-  margin-bottom: var(--spacing-md);
+  margin-bottom: var(--spacing-lg);
 }
 
 .forgot-password a {
-  font-size: var(--font-size-xs);
+  font-size: var(--font-size-base);
   color: var(--color-text-light);
   text-decoration: none;
 }
@@ -158,29 +113,11 @@
   color: var(--color-text-secondary);
 }
 
-.login-btn {
-  width: 100%;
-  padding: var(--spacing-sm);
-  background: var(--color-primary);
-  color: var(--color-text-white);
-  border: none;
-  border-radius: var(--border-radius-md);
-  font-size: var(--font-size-base);
-  font-weight: 600;
-  cursor: pointer;
-  transition: background var(--transition-normal);
-  margin-bottom: 20px;
-}
-
-.login-btn:hover {
-  background: var(--color-primary-hover);
-}
-
 .signup-text {
   text-align: center;
   font-size: var(--font-size-sm);
   color: var(--color-text-secondary);
-  margin-bottom: var(--spacing-md);
+  margin-top: 32px;
 }
 
 .signup-text a {
@@ -195,7 +132,7 @@
 
 .divider {
   text-align: center;
-  margin: 30px 0;
+  margin: 32px 0;
   position: relative;
 }
 
@@ -205,8 +142,8 @@
   left: 0;
   top: 50%;
   width: 100%;
-  height: 1px;
-  background: var(--color-border);
+  height: 0.5px;
+  background: black;
 }
 
 .divider span {

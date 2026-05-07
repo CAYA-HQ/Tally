@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import "../styles/pages/registerpage.css";
-import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 import { FcGoogle } from "react-icons/fc";
 import { FaApple } from "react-icons/fa";
 import Logo from "../components/Logo";
+import PasswordInput from "../components/PasswordInput";
 import Cookies from "js-cookie";
 import { useNavigate } from "react-router-dom";
 import RoutePaths from "../routes/routePaths";
@@ -15,8 +15,6 @@ function RegisterPage() {
     email: "",
     password: "",
   });
-
-  const [showPassword, setShowPassword] = useState(false);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -34,25 +32,18 @@ function RegisterPage() {
     navigate(RoutePaths.DASHBOARD);
   };
 
-  const togglePasswordVisibility = () => {
-    setShowPassword(!showPassword);
-  };
-
   return (
     <div className="login-page">
       {/* LEFT SIDE - Dark blue section */}
       <div className="login-left">
         <Logo />
         <div className="welcome-text">
+          <h1>
+            Manage your business <br /> the simple way
+          </h1>
           <p>
-            Lorem Ipsum dolor sit amet, consectetur adipiscing elit. Aliquam
-            quis set facilibus, posuere nulla vel, ornare erat. Vivamus
-            pellentesque, massa eget tincidunt ornare, ipsum velit tincidunt
-            tortor, a eleifend ante mi non metus. Curabitur at est euismod,
-            congue quam in, suscipit enim. Pellentesque accumsan tincidunt nisl
-            vestibulum laoreet. Phasellus nec sapien et mauris ornare eleifend.
-            Integer massudda vitae lectus nec verius. Integer mollis non quam
-            vitae fringilla.
+            Keep track of your stock, tasks, and daily <br /> activities without
+            stress or confusion.
           </p>
         </div>
       </div>
@@ -61,7 +52,9 @@ function RegisterPage() {
       <div className="login-right">
         <div className="login-form-container">
           <h2>Create Account</h2>
-          <p className="subtitle">Already have an account ? <a href="/login">Login here</a></p>
+          <p className="subtitle">
+            Already have an account ? <a href="/login">Login here</a>
+          </p>
 
           <form onSubmit={handleSubmit}>
             <div className="form-group">
@@ -76,7 +69,6 @@ function RegisterPage() {
               />
             </div>
 
-
             <div className="form-group">
               <input
                 type="email"
@@ -89,44 +81,34 @@ function RegisterPage() {
               />
             </div>
 
-            <div className="form-group">
-              <div className="password-input-wrapper">
-                <input
-                  type={showPassword ? "text" : "password"}
-                  id="password"
-                  name="password"
-                  value={formData.password}
-                  onChange={handleInputChange}
-                  placeholder="Enter your Password"
-                  required
-                />
-                <button
-                  type="button"
-                  className="password-toggle"
-                  onClick={togglePasswordVisibility}
-                  aria-label="Toggle password visibility"
-                >
-                  {showPassword ? (
-                    <AiOutlineEyeInvisible size={20} />
-                  ) : (
-                    <AiOutlineEye size={20} />
-                  )}
-                </button>
-              </div>
+            <PasswordInput
+              id="password"
+              name="password"
+              value={formData.password}
+              onChange={handleInputChange}
+              placeholder="Enter your Password"
+              required
+            />
+
+            <div className="checkbox-container">
+              <input
+                type="checkbox"
+                name="terms"
+                id="terms"
+                className="checkbox-input"
+              />
+              <label htmlFor="terms" className="checkbox-text">
+                I agree to the{" "}
+                <a href="/terms" className="terms-link">
+                  Terms and Conditions
+                </a>
+              </label>
             </div>
 
-    <div className="checkbox-container">
-    <input type="checkbox" name="terms" id="terms" className="checkbox-input" />
-    <p className="checkbox-text">
-        I agree to the <a href="/terms" className="terms-link">Terms and Conditions</a>
-    </p>
-</div>
-
-            <button type="submit" className="login-btn">
-                Register
+            <button type="submit" className="btn-primary">
+              Register
             </button>
           </form>
-
 
           <div className="divider">
             <span>Or sign in with</span>
