@@ -1,3 +1,4 @@
+version: '3.9'
 services:
   backend:
     build: ./backend
@@ -7,11 +8,26 @@ services:
       - .env
     volumes:
       - ./backend:/app
-      - /app/node_modules
     environment:
       - MONGO_URI=mongodb://db:27017/myapp
+      - REDIS_URL=redis://redis:6379
+    command: bun run dev
     depends_on:
       - db
+      - redis
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    env_file:
+      - .env
+    command: npm run dev
+    depends_on:
+      - backend
 
   db:
     image: mongo:6
@@ -21,5 +37,15 @@ services:
     volumes:
       - mongo_data:/data/db
 
+  redis:
+    image: redis:7
+    container_name: redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    command: ["redis-server", "--appendonly", "yes"]
+
 volumes:
   mongo_data:
+  redis_data:
