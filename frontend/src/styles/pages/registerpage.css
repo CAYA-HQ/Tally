@@ -1,28 +1,28 @@
 .checkbox-container {
-    display: flex;
-    align-items: center; 
-    gap: 8px;
-    margin-bottom: 20px;            
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  margin-bottom: var(--spacing-lg);
 }
 
 .checkbox-input {
-    width: 16px;
-    height: 16px;
-    cursor: pointer;
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
 }
 
 .checkbox-text {
-    margin: 0;           
-    font-size: 14px;
-    color: #374151;     
+  margin: 0;
+  font-size: var(--font-size-sm);
+  color: var(--color-text-body);
 }
 
 .terms-link {
-    color: #2563eb;      
-    text-decoration: none;
-    font-weight: 500;
+  color: var(--color-primary);
+  text-decoration: none;
+  font-weight: 500;
 }
 
 .terms-link:hover {
-    text-decoration: underline;
+  text-decoration: underline;
 }
