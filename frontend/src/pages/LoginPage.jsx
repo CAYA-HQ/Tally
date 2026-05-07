@@ -43,16 +43,10 @@ function LoginPage() {
       <div className="login-left">
         <Logo />
         <div className="welcome-text">
-          <h1>Hey Micheal !</h1>
+          <h1>Manage your business the simple way</h1>
           <p>
-            Lorem Ipsum dolor sit amet, consectetur adipiscing elit. Aliquam
-            quis set facilibus, posuere nulla vel, ornare erat. Vivamus
-            pellentesque, massa eget tincidunt ornare, ipsum velit tincidunt
-            tortor, a eleifend ante mi non metus. Curabitur at est euismod,
-            congue quam in, suscipit enim. Pellentesque accumsan tincidunt nisl
-            vestibulum laoreet. Phasellus nec sapien et mauris ornare eleifend.
-            Integer massudda vitae lectus nec verius. Integer mollis non quam
-            vitae fringilla.
+            Keep track of your stock, tasks, and daily 
+            activities without stress or confusion.
           </p>
         </div>
       </div>
