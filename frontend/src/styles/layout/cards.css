@@ -1,0 +1,77 @@
+.report-card {
+  background-color: var(--color-bg-white);
+  border-radius: var(--border-radius-lg);
+  padding: var(--spacing-md);
+  box-shadow: var(--shadow-sm);
+  flex: 1;
+  min-width: 200px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+  transition: transform var(--transition-fast);
+}
+
+.report-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-md);
+}
+
+.icon-box {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--border-radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+}
+
+.card-icon {
+  font-size: 20px;
+}
+
+.card-body {
+  margin-top: var(--spacing-xs);
+}
+
+.card-title {
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-sm);
+  margin-bottom: var(--spacing-xs);
+  font-weight: 500;
+}
+
+.card-amount {
+  color: var(--color-text-primary);
+  font-size: var(--font-size-lg); /* 36px from your variables */
+  font-weight: 700;
+  margin: 0;
+}
+
+.card-footer {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  margin-top: auto;
+}
+
+.trend-tag {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+}
+
+.trend-up {
+  color: #27ae60; /* Success Green */
+}
+
+.trend-down {
+  color: #eb5757; /* Error Red */
+}
+
+.trend-text {
+  color: var(--color-text-light);
+  font-size: var(--font-size-xs);
+}
