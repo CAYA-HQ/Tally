@@ -1,39 +1,40 @@
 import React from 'react';
 import { HiSelector } from "react-icons/hi"; 
-import { FiChevronDown } from "react-icons/fi";
 import "../../styles/layout/table.css";
 
-const Table = () => {
-  const tasks = [
-    { id: 1, description: "Neque porro quisquam est qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit...", date: "12/06/2026", time: "10:30am", status: "Completed" },
-    { id: 2, description: "Neque porro quisquam est qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit...", date: "12/06/2026", time: "10:30am", status: "Completed" },
-    { id: 3, description: "Neque porro quisquam est qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit...", date: "12/06/2026", time: "10:30am", status: "Completed" },
-    { id: 4, description: "Neque porro quisquam est qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit...", date: "12/06/2026", time: "10:30am", status: "Deleted" },
-  ];
+// Destructure columns and data from props
+const Table = ({ columns, data }) => {
+  
+  // Safety check: If no props are passed, default to an empty state
+  if (!columns || !data) {
+    return <div className="table-container">No data available</div>;
+  }
 
   return (
     <div className="table-container">
       <table className="task-history-table">
         <thead>
           <tr>
-            <th className="col-sn">S/N <HiSelector className="sort-icon" /></th>
-            <th className="col-desc">Description</th>
-            <th className="col-date">Date <HiSelector className="sort-icon" /></th>
-            <th className="col-status">Status <FiChevronDown className="sort-icon" /></th>
+            {columns.map((col, index) => (
+              <th key={index} className={`col-${col.key}`} style={{ width: col.width }}>
+                {col.header} 
+                {col.sortable && <HiSelector className="sort-icon" />}
+              </th>
+            ))}
           </tr>
         </thead>
         <tbody>
-          {tasks.map((task) => (
-            <tr key={task.id}>
-              <td className="col-sn">{task.id}</td>
-              <td className="col-desc">{task.description}</td>
-              <td className="col-date">
-                <span className="date-text">{task.date}</span>
-                <span className="time-text">{task.time}</span>
-              </td>
-              <td className={`col-status status-${task.status.toLowerCase()}`}>
-                {task.status}
-              </td>
+          {data.map((item, rowIndex) => (
+            <tr key={rowIndex}>
+              {columns.map((col, colIndex) => (
+                <td key={colIndex} className={`col-${col.key}`}>
+                  {/* If a 'render' function exists in the column definition, 
+                    use it to display the data (useful for status colors).
+                    Otherwise, just show the raw data.
+                  */}
+                  {col.render ? col.render(item[col.key], item) : item[col.key]}
+                </td>
+              ))}
             </tr>
           ))}
         </tbody>

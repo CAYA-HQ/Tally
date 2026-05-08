@@ -22,9 +22,10 @@
 }
 
 .page-title {
-  font-size: var(--font-size-md);
+  font-size: 24px;
   font-weight: 700;
   color: var(--color-text-primary);
+  font-family: var(--font-poppins);
 }
 
 .add-product-btn {
@@ -38,6 +39,7 @@
   border-radius: var(--border-radius-md);
   font-weight: 600;
   cursor: pointer;
+  font-family: var(--font-poppins);
 }
 
 /* Summary Card Styling */
@@ -49,6 +51,7 @@
   gap: var(--spacing-lg);
   box-shadow: var(--shadow-sm);
   margin-bottom: var(--spacing-md);
+  font-family: var(--font-poppins);
 }
 
 .divider {
@@ -89,6 +92,13 @@
   gap: var(--spacing-sm);
   font-size: var(--font-size-sm);
   color: var(--color-text-light);
+}
+
+.stock-value{
+  font-size: var(--font-size-md);
+  font-weight: 600;
+  color: var(--color-text-primary);
+  font-family: var(--font-poppins);
 }
 
 .legend-item {

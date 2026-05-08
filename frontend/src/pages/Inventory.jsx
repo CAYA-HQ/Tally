@@ -7,6 +7,35 @@ import Table from "../components/Layout/Tables";
 import "../styles/pages/inventory.css";
 
 const InventoryPage = () => {
+const inventoryColumns = [
+    { key: 'sn', header: 'S/N', width: '50px' },
+    { key: 'idNo', header: 'ID No.' },
+    { key: 'productName', header: 'Product name' },
+    { key: 'category', header: 'Category' },
+    { key: 'stocks', header: 'Stocks' },
+    { 
+      key: 'status', 
+      header: 'Status', 
+      sortable: true,
+      // Custom render to apply specific colors from your design
+      render: (value) => {
+        const statusClass = value.toLowerCase().replace(/\s+/g, '-');
+        return <span className={`status-pill ${statusClass}`}>{value}</span>;
+      }
+    },
+  ];
+
+  const inventoryData = [
+    { sn: 1, idNo: 'IVS-1002', productName: 'Hi-Drone', category: 'Electronics', stocks: 50, status: 'Low Stock' },
+    { sn: 2, idNo: 'BEN-6701', productName: 'Body-fit Compact', category: 'Wellness', stocks: 95, status: 'In Stock' },
+    { sn: 3, idNo: 'TIN-2090', productName: 'Peak Milk', category: 'Beverages', stocks: 20, status: 'Out of Stock' },
+    { sn: 3, idNo: 'PAN-0076', productName: 'Paracetamol', category: 'Medication', stocks: 15, status: 'Out of Stock' },
+    { sn: 3, idNo: 'TIN-2090', productName: 'Nivea', category: 'Deodorant', stocks: 400, status: 'In Stock' },
+  ];
+
+
+
+
   return (
     <div className="inventory-wrapper">
       <Sidebar />
@@ -17,7 +46,7 @@ const InventoryPage = () => {
         <div className="inventory-content">
           {/* Header Section */}
           <div className="inventory-header">
-            <h1 className="page-title">Inventory</h1>
+            <h1 className='page-title'>Inventory</h1>
             <button className="add-product-btn">
               <FiPlus /> Add Product
             </button>
@@ -45,9 +74,9 @@ const InventoryPage = () => {
               </div>
 
               <div className="stock-legend">
-                <span className="legend-item"><span className="dot green"></span> In stock: <strong>1452</strong></span>
-                <span className="legend-item"><span className="dot yellow"></span> low stock: <strong>355</strong></span>
-                <span className="legend-item"><span className="dot red"></span> out of stock: <strong>186</strong></span>
+                <span className="legend-item"><span className="dot green"></span> In stock: <strong className="stock-value">1452</strong></span>
+                <span className="legend-item"><span className="dot yellow"></span> low stock: <strong className="stock-value">355</strong></span>
+                <span className="legend-item"><span className="dot red"></span> out of stock: <strong className="stock-value">186</strong></span>
               </div>
             </div>
           </div>
@@ -67,7 +96,7 @@ const InventoryPage = () => {
           </div>
 
           {/* Reusable Table Component */}
-          <Table />
+          <Table columns={inventoryColumns} data={inventoryData}/>
         </div>
       </main>
     </div>

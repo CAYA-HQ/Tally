@@ -1,0 +1,73 @@
+.content-container {
+  padding: var(--spacing-md);
+}
+
+.page-title {
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 30px;
+  font-family: var(--font-poppins);
+}
+
+/* Tab Styles */
+.filter-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.tabs {
+  display: flex;
+  gap: 25px;
+}
+
+.tab {
+  color: #828282;
+  font-weight: 500;
+  cursor: pointer;
+  font-family: var(--font-poppins);
+}
+
+.tab.active {
+  color: #1a1c1e;
+  border-bottom: 2px solid #1a1c1e;
+  padding-bottom: 4px;
+}
+
+/* Date and Time Column Styles */
+.date-column {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.time-text {
+  font-size: 11px;
+  color: #828282;
+}
+
+/* Status Colors specific to Task History */
+.status-text.completed {
+  color: #27ae60;
+  font-weight: 600;
+}
+
+.status-text.deleted {
+  color: #eb5757;
+  font-weight: 600;
+}
+
+.action-btn {
+  background: var(--bg-white);
+  border: 1px solid #e0e0e0;
+  padding: 8px 15px;
+  border-radius: 8px;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin-left: 10px;
+  cursor: pointer;
+  font-size: 14px;
+  font-family: var(--font-poppins);
+}
