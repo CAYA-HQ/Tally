@@ -6,7 +6,7 @@
 .task-history-table {
   width: 100%;
   border-collapse: collapse;
-  font-family: var(--font-primary);
+  font-family: var(--font-poppins);
   background-color: transparent;
 }
 
