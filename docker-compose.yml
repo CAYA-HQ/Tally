@@ -1,4 +1,3 @@
-version: '3.9'
 services:
   backend:
     build: ./backend
@@ -6,11 +5,12 @@ services:
       - "3000:3000"
     env_file:
       - .env
+    environment:
+      - MONGO_URI=mongodb://db:27017/tally
+      - REDIS_URL=redis://redis:6379
     volumes:
       - ./backend:/app
-    environment:
-      - MONGO_URI=mongodb://db:27017/myapp
-      - REDIS_URL=redis://redis:6379
+      - /app/node_modules
     command: bun run dev
     depends_on:
       - db
@@ -18,13 +18,13 @@ services:
 
   frontend:
     build: ./frontend
+    environment:
+      - VITE_BASE_URL=http://localhost:3000
     ports:
       - "5173:5173"
     volumes:
       - ./frontend:/app
       - /app/node_modules
-    env_file:
-      - .env
     command: npm run dev
     depends_on:
       - backend
@@ -40,11 +40,14 @@ services:
   redis:
     image: redis:7
     container_name: redis
-    ports:
-      - "6379:6379"
     volumes:
       - redis_data:/data
     command: ["redis-server", "--appendonly", "yes"]
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
 
 volumes:
   mongo_data:
