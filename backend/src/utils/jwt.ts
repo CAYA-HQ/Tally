@@ -34,7 +34,7 @@ export const generateRefreshToken = async (res: Response, payload: object): Prom
   res.cookie("token", token, cookieOption); 
   await redis.set(`refresh:${(payload as { id: string }).id}`, token, {
     EX: 60 * 60 * 24 * 7,
-  }); // Store in Redis with expiration
+  });
   return token;
 }
 
