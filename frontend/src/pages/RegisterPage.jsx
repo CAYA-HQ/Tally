@@ -4,9 +4,11 @@ import { FcGoogle } from "react-icons/fc";
 import { FaApple } from "react-icons/fa";
 import Logo from "../components/Logo";
 import PasswordInput from "../components/PasswordInput";
-import Cookies from "js-cookie";
 import { useNavigate } from "react-router-dom";
 import RoutePaths from "../routes/routePaths";
+import api from "../session/api";
+import { setAccessToken } from "../session/token";
+import { toast } from "react-toastify";
 
 function RegisterPage() {
   const navigate = useNavigate();
@@ -15,21 +17,25 @@ function RegisterPage() {
     email: "",
     password: "",
   });
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: value,
-    });
+    setFormData({ ...formData, [name]: value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Form submitted:", formData);
-    // Later, we'll add API call here
-    Cookies.set("accessToken", "static-token-123");
-    navigate(RoutePaths.DASHBOARD);
+    setIsLoading(true);
+    try {
+      const { data } = await api.post("/auth/register", formData);
+      setAccessToken(data.accessToken, data.user);
+      navigate(RoutePaths.DASHBOARD);
+    } catch (err) {
+      toast.error(err.response?.data?.message || "Something went wrong. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -96,6 +102,7 @@ function RegisterPage() {
                 name="terms"
                 id="terms"
                 className="checkbox-input"
+                required
               />
               <label htmlFor="terms" className="checkbox-text">
                 I agree to the{" "}
@@ -105,8 +112,8 @@ function RegisterPage() {
               </label>
             </div>
 
-            <button type="submit" className="btn-primary">
-              Register
+            <button type="submit" className="btn-primary" disabled={isLoading}>
+              {isLoading ? "Creating account..." : "Register"}
             </button>
           </form>
 
