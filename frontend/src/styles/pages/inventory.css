@@ -22,9 +22,10 @@
 }
 
 .page-title {
-  font-size: var(--font-size-md);
-  font-weight: 700;
+  font-size: var(--font-size-lg);
+  font-weight: 600;
   color: var(--color-text-primary);
+  /* font: var(--font-poppins); */
 }
 
 .add-product-btn {
@@ -62,9 +63,19 @@
   margin-bottom: 8px;
 }
 
+.stock-value{
+  color: var(--color-dark-bg);
+  font-size: var(--font-size-base);
+  font-weight: 500;
+  font-family: var(--font-poppins);
+  /* margin-bottom: 8px; */
+}
+
 .assets-value .value {
   font-size: var(--font-size-md);
-  font-weight: 700;
+  font-weight: 600;
+  font-family: var(--font-poppins);
+
 }
 
 .product-stock-stats {

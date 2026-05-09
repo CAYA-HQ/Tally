@@ -1,19 +1,18 @@
 .table-container {
   width: 100%;
-  overflow-x: 0;
-  /* margin-top: var(--spacing-md); */
+  overflow-x: auto; 
 }
 
 .task-history-table {
   width: 100%;
   border-collapse: collapse;
-  font-family: var(--font-primary);
+  font-family: var(--font-poppins);
   background-color: transparent;
 }
 
-/* Header Styles */
+
 .task-history-table thead tr {
-  background-color: #d1d5db; /* Grey header background as seen in image */
+  background-color: #d1d5db; 
 }
 
 .task-history-table th {
@@ -22,10 +21,9 @@
   font-size: var(--font-size-md);
   font-weight: 600;
   color: var(--color-text-primary);
-  border-radius: 0;
 }
 
-/* Rounded corners for the grey header bar */
+
 .task-history-table th:first-child {
   border-top-left-radius: var(--border-radius-md);
   border-bottom-left-radius: var(--border-radius-md);
@@ -44,59 +42,46 @@
   color: var(--color-text-secondary);
 }
 
-/* Row Styles */
+
 .task-history-table td {
   padding: var(--spacing-md) var(--spacing-sm);
-  vertical-align: top;
-  border-bottom: none; /* No borders between rows in the design */
-}
-
-.col-sn {
-  width: 80px;
-  color: var(--color-text-secondary);
-}
-
-.col-desc {
-  max-width: 400px;
-  color: var(--color-text-secondary);
-  line-height: 1.5;
+  vertical-align: middle; 
+  border-bottom: none; 
   font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
 }
 
-.col-date {
-  width: 180px;
-}
 
-.date-text {
-  display: block;
-  font-weight: 500;
-  color: var(--color-text-primary);
-}
 
-.time-text {
-  display: inline-block;
-  font-size: var(--font-size-xs);
-  color: var(--color-text-light);
-  margin-left: 4px;
-}
-
-/* Status Styling */
-.col-status {
-  width: 120px;
+.status-pill {
   font-weight: 600;
-  font-size: var(--font-size-sm);
-  text-align: right;
 }
+
+/* Matches "In Stock" (Green) */
+.status-pill.in-stock {
+  color: #27ae60;
+}
+
+/* Matches "Low Stock" (Yellow) */
+.status-pill.low-stock {
+  color: #f1c40f;
+}
+
+/* Matches "Out of Stock" (Red) */
+.status-pill.out-of-stock {
+  color: #eb5757;
+}
+
 
 .status-completed {
-  color: #4caf50; /* Green */
+  color: #4caf50;
 }
 
 .status-deleted {
-  color: #ff5252; /* Red */
+  color: #ff5252;
 }
 
-/* Hover effect for rows */
+/* Hover effect */
 .task-history-table tbody tr:hover {
   background-color: var(--color-bg-light);
   transition: background-color var(--transition-fast);
