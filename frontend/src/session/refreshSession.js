@@ -1,9 +1,6 @@
 // Import necessary dependencies
 import { getAccessToken, setAccessToken } from "./token";
 import api from "./api";
-import dotenv from "dotenv";
-
-dotenv.config();
 
 // Add a request interceptor to include the access token in the Authorization header of every request
 api.interceptors.request.use((config) => {
@@ -50,11 +47,12 @@ api.interceptors.response.use((res) => res, async (err) => {
         });
       }
 
+                                                                                                                                                                                                                                                                    
       isRefreshing = true;
 
       try {
         const res = await axios.post(
-          `${process.env.BASE_URL}/refresh`,
+          `${import.meta.env.VITE_BASE_URL}/api/refresh`,
           {},
           { withCredentials: true }
         );

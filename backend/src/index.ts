@@ -8,6 +8,7 @@ import { errorHandler } from "./utils/errorHandler";
 import cookieParser from "cookie-parser";
 import passport from "passport";
 import helmet from "helmet";
+import { env } from "./model/validate.user";
 
 dotenv.config();
 const app = express();
@@ -19,7 +20,7 @@ await connectRedis();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors({
-  origin: process.env.CLIENT_URL,
+  origin: env.FRONTEND_URL,
   credentials: true,
 }));
 app.use(passport.initialize())
@@ -45,6 +46,9 @@ const PORT = process.env.PORT || 3000;
 connectDB().then(() => {
   app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
+    console.log("MONGO:", env.MONGO_URI);
+    console.log("REDIS:", env.REDIS_URL);
+    console.log("FRONTEND_URL:", env.FRONTEND_URL);
   });
 });
 

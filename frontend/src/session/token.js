@@ -1,10 +1,11 @@
 let accessToken = null;
 
-export const setAccessToken = (token, user) => {
-  accessToken = token;
-  if (user?.id) localStorage.setItem("userId", user.id);
+export const setAccessToken = (token) => {
+  if (typeof token === "object" && token !== null) {
+    accessToken = token.accessToken;
+  } else {
+    accessToken = token;
+  }
 };
 
 export const getAccessToken = () => accessToken;
-
-export const getUserId = () => localStorage.getItem("userId");

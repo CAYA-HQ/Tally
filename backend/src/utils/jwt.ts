@@ -1,12 +1,11 @@
-import dotenv from "dotenv";
+import {env} from "../model/validate.user";
 import jwt from "jsonwebtoken";
 import type { Response } from "express";
 import { redis } from "../config/redis";
 
-dotenv.config();
 
-const JWT_SECRET = process.env.JWT_SECRET
-const REFRESH_JWT_SECRET = process.env.REFRESH_JWT_SECRET
+const JWT_SECRET = env.JWT_SECRET
+const REFRESH_JWT_SECRET = env.REFRESH_JWT_SECRET
 
 export const genAccessToken = (payload: object): string => {
   return jwt.sign(payload, JWT_SECRET as string, { expiresIn: "15m" });
@@ -26,7 +25,7 @@ export const verifyRefreshToken = (token: string) => {
 
 export const cookieOption = {
   httpOnly: true,
-  secure: process.env.NODE_ENV === "production",
+  secure: env.NODE_ENV === "production",
   sameSite: "lax" as const,
 }
 
@@ -39,10 +38,10 @@ export const generateRefreshToken = async (res: Response, payload: object): Prom
   return token;
 }
 
-type payLoadType = { id: string; name: string; email: string };
+type payLoadType = { id: string; name: string; email: string, metadata: { session: Array<any>, registrationDate: string; registrationTime: string } };
 
 export const payLOad = (d: payLoadType) => {
-  return {id: d.id, name: d.name, email: d.email}
+  return {id: d.id, name: d.name, email: d.email, session: d.metadata.session, registrationDate: d.metadata.registrationDate, registrationTime: d.metadata.registrationTime}
 }
 
 export const logOutUser = async (res: Response, token: string) => {
