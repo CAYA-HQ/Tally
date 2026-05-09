@@ -5,7 +5,7 @@ import "../../styles/layout/table.css";
 // Destructure columns and data from props
 const Table = ({ columns, data }) => {
   
-  // Safety check: If no props are passed, default to an empty state
+ 
   if (!columns || !data) {
     return <div className="table-container">No data available</div>;
   }

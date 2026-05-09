@@ -6,6 +6,7 @@ import RegisterPage from "../pages/RegisterPage";
 import DashboardPage from "../pages/DashboardPage";
 import InventoryPage from "../pages/Inventory";
 import TaskHistoryPage from "../pages/Orders";
+import Recordpage from "../pages/Recordpage";
 import RoutePaths from "./routePaths";
 
 export const router = createBrowserRouter([
@@ -43,6 +44,11 @@ export const router = createBrowserRouter([
         path: "orders",
         element: <TaskHistoryPage />,
       },
+      {
+        path: "record",
+        element: <Recordpage />,
+      },
+
     ],
   },
 ]);
