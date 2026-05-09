@@ -3,7 +3,7 @@ import { Strategy as JwtStrategy, ExtractJwt } from "passport-jwt";
 import passport from "passport";
 import { getUserById } from "../service/user.service";
 
-const JWT_SECRET = env.JWT_SECRET as string;
+const JWT_SECRET = env.JWT_SECRET
 
 const opts = {
   jwtFromRequest: ExtractJwt.fromExtractors([
