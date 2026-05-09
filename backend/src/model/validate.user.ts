@@ -19,7 +19,6 @@ const envSchema = z.object({
   GOOGLE_CLIENT_ID:z.string(),
   GOOGLE_CLIENT_SECRET:z.string(),
   FRONTEND_URL:z.string(),
-  GOOGLE_SECRET:z.string(),
   NODE_ENV: z.enum([
     'production',
     'development'
