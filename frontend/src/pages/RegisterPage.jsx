@@ -6,7 +6,7 @@ import Logo from "../components/Logo";
 import PasswordInput from "../components/PasswordInput";
 import { useNavigate } from "react-router-dom";
 import RoutePaths from "../routes/routePaths";
-import api from "../session/api";
+import api from "../utils/api";
 import { toast } from "react-toastify";
 
 function RegisterPage() {
@@ -17,8 +17,6 @@ function RegisterPage() {
     password: "",
   });
   const [isLoading, setIsLoading] = useState(false);
-  const authBaseURL =
-    import.meta.env.VITE_BASE_URL || "http://localhost:3000/api";
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;

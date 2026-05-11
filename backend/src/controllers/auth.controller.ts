@@ -88,15 +88,12 @@ export const login = asyncHandler(async (req: Request, res: Response) => {
 //Controller for handling user logout
 export const logout = async (req: Request, res: Response) => {
   const token = req.cookies.token;
-  const decoded = jwt.verifyRefreshToken(token);
-  await redis.del(`refresh:${decoded.id}`);
   jwt.logOutUser(res, token);
 };
 
 //Controller for handling token refresh
 export const refresh = asyncHandler(async (req: Request, res: Response) => {
   const token = req.cookies.token;
-
   if (!token) {
     return res.status(401).json({ message: "No refresh token" });
   }
@@ -110,11 +107,9 @@ export const refresh = asyncHandler(async (req: Request, res: Response) => {
   }
 
   const userId = decoded.id;
-
   const stored = await redis.get(`refresh:${userId}`);
 
-  //REUSE DETECTION
-  if (!stored || stored !== token) {
+  if (!stored || stored !== token){
     await redis.del(`refresh:${userId}`);
 
     return res.status(403).json({

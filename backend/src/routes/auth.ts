@@ -14,5 +14,3 @@ authRouter.get('/google', googleVerification)
 authRouter.get ('/google/callback', googleCallback, googleSession)
 
 export default authRouter;
-
-

@@ -13,7 +13,6 @@ import { env } from "./model/validate.user";
 dotenv.config();
 const app = express();
 
-// helmet used for server protection by setting various HTTP headers
 app.use(helmet());
 
 await connectRedis();
@@ -23,15 +22,15 @@ app.use(cors({
   origin: env.FRONTEND_URL,
   credentials: true,
 }));
+
 app.use(passport.initialize())
 app.use(cookieParser());
 app.use("/api", api)
 
-//Check endpoint
 app.get("/", (req, res) => {
   res.send("API running 🚀");
 });
-// 404 handler
+
 app.all(/.*/, (req, res) => {
   res.status(404).json({
     success: false,

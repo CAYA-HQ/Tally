@@ -6,8 +6,8 @@ import Logo from "../components/Logo";
 import PasswordInput from "../components/PasswordInput";
 import { useNavigate } from "react-router-dom";
 import RoutePaths from "../routes/routePaths";
-import api from "../session/api";
-import { setAccessToken } from "../session/token";
+import api from "../utils/api";
+import { setAccessToken } from "../utils/session/token";
 import { toast } from "react-toastify";
 
 function LoginPage() {

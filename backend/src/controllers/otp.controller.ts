@@ -2,6 +2,7 @@ import type { Request, Response } from "express";
 import { getFullDate, getTime } from "../utils/date";
 import { getUserByEmail } from "../service/user.service";
 import * as jwt from "../utils/jwt";
+import * as OTP from '../service/otp.service'
 
 export const verifyOtp = async (req: Request, res: Response) => {
   const { email, otp } = req.body;
@@ -22,47 +23,29 @@ export const verifyOtp = async (req: Request, res: Response) => {
     });
   }
 
-  const otpValue = user.metadata?.otp;
-  const otpExpires = user.metadata?.otpExpires;
+  const now = new Date();
+  const storedOtp = await OTP.getOtp(email)
+  const locked = await OTP.isLocked(email);
 
-  if (user.otpLockedUntil && user.otpLockedUntil < new Date()) {
-    user.otpLockedUntil = null;
-    user.otpAttempts = 0;
-    await user.save();
-  }
-
-  if (user.otpLockedUntil && user.otpLockedUntil > new Date()) {
+  if (locked) {
     return res.status(403).json({
       success: false,
-      message: `Account locked. Try again in ${
-        Math.ceil((user.otpLockedUntil.getTime() - Date.now()) / 1000)
-      } seconds`,
+      message: "Too many attempts. Try again later.",
     });
   }
 
-  if (!otpValue || !otpExpires) {
+  if (!storedOtp) {
     return res.status(400).json({
       success: false,
       message: "No OTP found",
     });
   }
 
-  // 7. OTP expiry check
-  if (Date.now() > otpExpires) {
-    user.metadata.otp = null;
-    user.metadata.otpExpires = null;
-    await user.save();
 
-    return res.status(400).json({
-      success: false,
-      message: "OTP has expired",
-    });
-  }
+  if (!storedOtp || storedOtp !== otp) {
+    const attempt = await OTP.incrementAttempts(email)
 
-  if (otpValue !== otp) {
-    user.otpAttempts += 1;
-
-    if (user.otpAttempts >= 5 && !user.isVerified) {
+    if (attempt >= 5 && !user.isVerified) {
       await user.deleteOne();
 
       return res.status(403).json({
@@ -71,34 +54,49 @@ export const verifyOtp = async (req: Request, res: Response) => {
       });
     }
 
-    if (user.otpAttempts >= 5) {
-      user.otpLockedUntil = new Date(Date.now() + 60 * 1000);
-    }
-
-    await user.save();
-
     return res.status(400).json({
       success: false,
       message: "Invalid OTP",
     });
   }
 
-  user.isVerified = true;
-  user.otpAttempts = 0;
-  user.otpLockedUntil = null;
+  user.metadata = user.metadata || {};
+  user.metadata.notification = user.metadata.notification || [];  
 
-  user.metadata.otp = null;
-  user.metadata.otpExpires = null;
+  await OTP.clearOtp(email);  
 
-  user.metadata.registrationDate = getFullDate(new Date());
-  user.metadata.registrationTime = getTime(new Date());
+  if (user.isVerified) {
 
-  await user.save();
+    user.metadata.notification.push({
+      message: `Welcome back ${user.name} 🎉`,
+      date: getFullDate(now),
+      time: getTime(now),
+      category: "login",
+    })
+
+  } else {
+    user.isVerified = true; 
+
+    if (!user.metadata.registrationDate || !user.metadata.registrationTime) {
+      user.metadata.registrationDate = getFullDate(now);
+      user.metadata.registrationTime = getTime(now);
+    } 
+
+    user.metadata.notification.push({
+      message: `Welcome onboard ${user.name} 🎉`,
+      date: user.metadata.registrationDate,
+      time: user.metadata.registrationTime,
+      category: "signup",
+    })
+    
+  } 
+
+  await user.save();  
 
   const payload = jwt.payLOad(user);
-  const accessToken = jwt.genAccessToken(payload);
+  const accessToken = jwt.genAccessToken(payload);  
 
-  await jwt.generateRefreshToken(res, payload);
+  await jwt.generateRefreshToken(res, payload); 
 
   return res.status(200).json({
     success: true,
@@ -106,4 +104,4 @@ export const verifyOtp = async (req: Request, res: Response) => {
     user: payload,
     accessToken,
   });
-};
+}
