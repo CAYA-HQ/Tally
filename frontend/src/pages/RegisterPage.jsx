@@ -7,7 +7,6 @@ import PasswordInput from "../components/PasswordInput";
 import { useNavigate } from "react-router-dom";
 import RoutePaths from "../routes/routePaths";
 import api from "../session/api";
-import { setAccessToken } from "../session/token";
 import { toast } from "react-toastify";
 
 function RegisterPage() {
@@ -18,6 +17,8 @@ function RegisterPage() {
     password: "",
   });
   const [isLoading, setIsLoading] = useState(false);
+  const authBaseURL =
+    import.meta.env.VITE_BASE_URL || "http://localhost:3000/api";
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -29,13 +30,19 @@ function RegisterPage() {
     setIsLoading(true);
     try {
       const { data } = await api.post("/auth/register", formData);
-      setAccessToken(data.accessToken, data.user);
-      navigate(RoutePaths.DASHBOARD);
+      toast.success("Account created. Please verify your email.");
+      navigate(RoutePaths.VERIFY, { state: { email: data.email } });
     } catch (err) {
-      toast.error(err.response?.data?.message || "Something went wrong. Please try again.");
+      toast.error(
+        err.response?.data?.message || "Something went wrong. Please try again."
+      );
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const handleGoogleLogin = () => {
+    window.location.href = `${authBaseURL}/auth/google`;
   };
 
   return (
@@ -122,7 +129,11 @@ function RegisterPage() {
           </div>
 
           <div className="social-login">
-            <button type="button" className="social-btn google-btn">
+            <button
+              type="button"
+              className="social-btn google-btn"
+              onClick={handleGoogleLogin}
+            >
               <FcGoogle size={20} />
               Google
             </button>
