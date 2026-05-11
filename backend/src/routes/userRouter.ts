@@ -8,7 +8,7 @@ const UserRouter = Router();
 UserRouter.use(verifyUser)
 
 UserRouter.put('/:id', userController.updateUser);
-UserRouter.post('/alert')
+// UserRouter.post('/alert')
 UserRouter.use('/reminder', reminderRouter)
 UserRouter.use('/inventory', inventoryRouter )
 

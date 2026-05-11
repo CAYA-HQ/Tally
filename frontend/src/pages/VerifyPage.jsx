@@ -6,8 +6,8 @@ import { MdErrorOutline } from "react-icons/md";
 import { BsCheckCircleFill } from "react-icons/bs";
 import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import api from "../session/api";
-import { setAccessToken } from "../session/token";
+import api from "../utils/api";
+import { setAccessToken } from "../utils/session/token";
 import RoutePaths from "../routes/routePaths";
 import "../styles/pages/VerifyCode.css";
 
