@@ -2,6 +2,17 @@ import mongoose from "mongoose";
 
 const userSchema = new mongoose.Schema(
   {
+    avatar: {
+      url: {
+        type: String,
+        default: ""
+      },    
+
+      public_id: {
+        type: String,
+        default: ""
+      }
+    },
     name: {
       type: String,
       required: [true, "Name is required"],
@@ -54,18 +65,6 @@ const userSchema = new mongoose.Schema(
     isVerified:{
       type: Boolean,
       default: false,
-    },
-    otpAttempts: {
-      type: Number,
-      default: 0,
-    },
-    isRegistered:{
-      type: Boolean,
-      default: false,
-    },
-    otpLockedUntil: {
-      type: Date,
-      default: null,
     },
     metadata: {
       type: mongoose.Schema.Types.Mixed,

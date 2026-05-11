@@ -69,9 +69,13 @@ export const login = asyncHandler(async (req: Request, res: Response) => {
 
 //Controller for handling user logout
 export const logout = async (req: Request, res: Response) => {
+  const {email} = req.body
+  const user = await userService.getUserByEmail(email)
+
+  !user ? res.status(400).json({success: false, message: 'no user found'}) :
+  user.isVerified = false
+
   const token = req.cookies.token;
-  const decoded = jwt.verifyRefreshToken(token);
-  await redis.del(`refresh:${decoded.id}`);
   jwt.logOutUser(res, token);
 };
 
@@ -80,7 +84,6 @@ export const logout = async (req: Request, res: Response) => {
 export const refresh = asyncHandler(async (req: Request, res: Response) => {
   
   const token = req.cookies.token;
-
   if (!token) {
     return res.status(401).json({ message: "No refresh token" });
   }
@@ -94,10 +97,8 @@ export const refresh = asyncHandler(async (req: Request, res: Response) => {
   }
 
   const userId = decoded.id;
-
   const stored = await redis.get(`refresh:${userId}`);
 
-  //REUSE DETECTION
   if (!stored || stored !== token){
     await redis.del(`refresh:${userId}`);
 

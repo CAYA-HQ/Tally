@@ -7,6 +7,7 @@ import { redis } from "../config/redis";
 import { env } from "../model/validate.user";
 import { getFullDate, getTime } from "../utils/date";
 import { buildMetaData } from "../utils/metaDataArg";
+import { asyncHandler } from "../utils/asyncHandler";
 
 passport.use(
   new GoogleStrategy(
@@ -68,7 +69,7 @@ export const googleCallback = passport.authenticate("google", {
   session: false,
 });
 
-export const googleSession = async (req: Request, res: Response) => {
+export const googleSession = asyncHandler(async (req: Request, res: Response) => {
   const user = req.user as any;
 
   if (!user) {
@@ -102,4 +103,4 @@ export const googleSession = async (req: Request, res: Response) => {
     accessToken,
     user: payload,
   });
-};
+})

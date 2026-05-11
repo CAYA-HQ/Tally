@@ -2,16 +2,13 @@ import { User } from "../model/User";
 import type { CreateUserInput } from "../model/validate.user";
 import type {UAParser} from "ua-parser-js";
 
+// create user
 export const createUser = async (data: CreateUserInput) => {
   const existingUser = await User.findOne({ email: data.email });
   if(existingUser) {
     throw new Error("User already exists");
   }
   return await User.create(data);
-};
-
-export const getUsers = async () => {
-  return await User.find();
 };
 
 export const getUserById = async (id: string) => {
@@ -26,9 +23,6 @@ export const updateUser = async (id: string, data: Partial<CreateUserInput>) => 
   return await User.findByIdAndUpdate(id, data, { new: true });
 };
 
-export const deleteUser = async (id: string) => {
-  return await User.findByIdAndDelete(id);
-};
 
 export const metaDataInfo = async (ip: any, parser: UAParser) => {
   const deviceInfo = parser.getResult();
@@ -73,3 +67,60 @@ export const metaDataInfo = async (ip: any, parser: UAParser) => {
   },
 };
 };
+
+export const deleteFromMetaData = async ( userId: string, dataId: any | string , cat: string ) => {
+
+  return User.findByIdAndUpdate( userId, {
+      $pull: {
+        [`metadata.${cat}`]: Array.isArray(dataId)
+        ? { $in: dataId }
+        : dataId
+      }
+    },
+    {
+      new: true
+    }
+  );
+};
+
+export const addToMetaData = async ( userId: string, data: any | string , cat: string) => {
+
+  return User.findByIdAndUpdate( userId, {
+      $set: {
+        [`metadata.${cat}`]: data
+      }
+    },
+    {
+      new: true,
+      runValidators: true,
+    }
+  );
+};
+
+export const newMetaData = async ( userId: string, data: any | string , cat: string) => {
+
+  return User.findByIdAndUpdate( userId, {
+      $addToSet: {
+        [`metadata.${cat}`]: data
+      }
+    },
+    {
+      new: true,
+      runValidators: true,
+    }
+  );
+};
+
+export const deleteAMetaData = async ( userId: string, cat: string ) => {
+
+  return User.findByIdAndUpdate( userId, {
+      $unset: {
+        [`metadata.${cat}`]: ''
+      }
+    },
+    {
+      new: true
+    }
+  );
+};
+
