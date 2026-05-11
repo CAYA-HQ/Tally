@@ -14,6 +14,7 @@ function LoginPage() {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [isLoading, setIsLoading] = useState(false);
+  // const authBaseURL = import.meta.env.VITE_BASE_URL;
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -24,14 +25,28 @@ function LoginPage() {
     e.preventDefault();
     setIsLoading(true);
     try {
-      const { data } = await api.post("/auth/login", formData);
+      const { data } = await api.post(`/auth/login`, formData);
       setAccessToken(data.accessToken, data.user);
       navigate(RoutePaths.DASHBOARD);
     } catch (err) {
-      toast.error(err.response?.data?.message || "Something went wrong. Please try again.");
+      // If user is not verified (403), redirect to verify page
+      if (err.response?.status === 403 && err.response?.data?.email) {
+        navigate(RoutePaths.VERIFY, {
+          state: { email: err.response.data.email },
+        });
+      } else {
+        toast.error(
+          err.response?.data?.message ||
+            "Something went wrong. Please try again."
+        );
+      }
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const handleGoogleLogin = () => {
+    window.location.href = `${authBaseURL}/auth/google`;
   };
 
   return (
@@ -96,7 +111,11 @@ function LoginPage() {
           </div>
 
           <div className="social-login">
-            <button type="button" className="social-btn google-btn">
+            <button
+              type="button"
+              className="social-btn google-btn"
+              onClick={handleGoogleLogin}
+            >
               <FcGoogle size={20} />
               Google
             </button>

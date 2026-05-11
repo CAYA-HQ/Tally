@@ -19,7 +19,8 @@ services:
   frontend:
     build: ./frontend
     environment:
-      - VITE_BASE_URL=http://localhost:3000
+      - VITE_BASE_URL=http://localhost:3000/api
+      - CHOKIDAR_USEPOLLING=true
     ports:
       - "5173:5173"
     volumes:
@@ -43,6 +44,8 @@ services:
     volumes:
       - redis_data:/data
     command: ["redis-server", "--appendonly", "yes"]
+    ports:
+      - "6379:6379"
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
       interval: 5s
