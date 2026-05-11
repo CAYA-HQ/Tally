@@ -87,12 +87,6 @@ export const login = asyncHandler(async (req: Request, res: Response) => {
 
 //Controller for handling user logout
 export const logout = async (req: Request, res: Response) => {
-  const {email} = req.body
-  const user = await userService.getUserByEmail(email)
-
-  !user ? res.status(400).json({success: false, message: 'no user found'}) :
-  user.isVerified = false
-
   const token = req.cookies.token;
   jwt.logOutUser(res, token);
 };
