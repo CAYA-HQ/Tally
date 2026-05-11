@@ -3,6 +3,7 @@ import GuestGuard from "../guards/GuestGuard";
 import AuthGuard from "../guards/AuthGuard";
 import LoginPage from "../pages/LoginPage";
 import RegisterPage from "../pages/RegisterPage";
+import VerifyPage from "../pages/VerifyPage";
 import DashboardPage from "../pages/DashboardPage";
 import InventoryPage from "../pages/Inventory";
 import RoutePaths from "./routePaths";
@@ -23,7 +24,15 @@ export const router = createBrowserRouter([
       {
         path: RoutePaths.REGISTER,
         element: <RegisterPage />,
-      }
+      },
+      {
+        path: RoutePaths.VERIFY,
+        element: <VerifyPage />,
+      },
+      {
+        path: "inventory",
+        element: <InventoryPage />,
+      },
     ],
   },
   {
@@ -33,10 +42,6 @@ export const router = createBrowserRouter([
       {
         index: true,
         element: <DashboardPage />,
-      },
-      {
-        path: "inventory", 
-        element: <InventoryPage />,
       },
     ],
   },
