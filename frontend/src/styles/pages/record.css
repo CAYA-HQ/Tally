@@ -1,0 +1,125 @@
+.record-wrapper {
+  display: flex;
+  min-height: 100vh;
+}
+
+.record-main {
+  flex: 1;
+  background-color: #f8f9fd;
+  margin-left: 260px;
+}
+
+.record-content {
+  padding: var(--spacing-md);
+}
+
+.record-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+  /* font-size: 20px; */
+}
+
+.header-actions {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.header-with-icon {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  /* color: #828282;  */
+}
+
+.header-dropdown-icon {
+  font-size: 14px;
+  color: var(--text-primary);
+  cursor: pointer;
+}
+
+.icon-btn-gray {
+  background: #f1f2f6;
+  border: none;
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: #828282;
+}
+
+.add-task-btn {
+  background-color: #7c4dff;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+/* Table Specific Cell Styles */
+.record-date-cell {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  
+}
+
+
+.task-history-table th {
+  font-size: var(--size-base);
+  font-weight: 500;
+  font-family: var(--font-poppins);
+}
+
+.date-text{
+    color: #979797;
+    font-weight: 500;
+    font-family: var(--font-poppins);
+}
+
+.time-text {
+  font-size: 12px;
+  color: #bdbdbd;
+}
+
+.status-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.status-pill.upcoming {
+  color: #f2994a; /* Orange for upcoming */
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 600;
+}
+
+.status-pill.upcoming .status-icon {
+  font-size: 16px;
+  color: #1C274C;
+}
+
+.more-options-icon {
+  color: #828282;
+  cursor: pointer;
+}
+
+.page-title {
+  font-size: 24px;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  font-family: var(--font-poppins);
+}
