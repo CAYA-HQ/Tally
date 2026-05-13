@@ -3,6 +3,7 @@ import GuestGuard from "../guards/GuestGuard";
 import AuthGuard from "../guards/AuthGuard";
 import LoginPage from "../pages/LoginPage";
 import RegisterPage from "../pages/RegisterPage";
+import VerifyPage from "../pages/VerifyPage";
 import DashboardPage from "../pages/DashboardPage";
 import InventoryPage from "../pages/Inventory";
 import TaskHistoryPage from "../pages/Orders";
@@ -25,7 +26,15 @@ export const router = createBrowserRouter([
       {
         path: RoutePaths.REGISTER,
         element: <RegisterPage />,
-      }
+      },
+      {
+        path: RoutePaths.VERIFY,
+        element: <VerifyPage />,
+      },
+      {
+        path: "inventory",
+        element: <InventoryPage />,
+      },
     ],
   },
   {
@@ -36,6 +45,7 @@ export const router = createBrowserRouter([
         index: true,
         element: <DashboardPage />,
       },
+<<<<<<< HEAD
       {
         path: "inventory", 
         element: <InventoryPage />,
@@ -48,6 +58,8 @@ export const router = createBrowserRouter([
         path: "record",
         element: <Recordpage />,
       },
+=======
+>>>>>>> d569d39c4836f929c4ed475ca460ca9e7e663616
     ],
   },
 ]);

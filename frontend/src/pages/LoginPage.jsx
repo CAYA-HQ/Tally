@@ -4,31 +4,49 @@ import { FcGoogle } from "react-icons/fc";
 import { FaApple } from "react-icons/fa";
 import Logo from "../components/Logo";
 import PasswordInput from "../components/PasswordInput";
-import Cookies from "js-cookie";
 import { useNavigate } from "react-router-dom";
 import RoutePaths from "../routes/routePaths";
+import api from "../utils/api";
+import { setAccessToken } from "../utils/session/token";
+import { toast } from "react-toastify";
 
 function LoginPage() {
   const navigate = useNavigate();
-  const [formData, setFormData] = useState({
-    email: "",
-    password: "",
-  });
+  const [formData, setFormData] = useState({ email: "", password: "" });
+  const [isLoading, setIsLoading] = useState(false);
+  // const authBaseURL = import.meta.env.VITE_BASE_URL;
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: value,
-    });
+    setFormData({ ...formData, [name]: value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Form submitted:", formData);
-    // Later, we'll add API call here
-    Cookies.set("accessToken", "static-token-123");
-    navigate(RoutePaths.DASHBOARD);
+    setIsLoading(true);
+    try {
+      const { data } = await api.post(`/auth/login`, formData);
+      setAccessToken(data.accessToken, data.user);
+      navigate(RoutePaths.DASHBOARD);
+    } catch (err) {
+      // If user is not verified (403), redirect to verify page
+      if (err.response?.status === 403 && err.response?.data?.email) {
+        navigate(RoutePaths.VERIFY, {
+          state: { email: err.response.data.email },
+        });
+      } else {
+        toast.error(
+          err.response?.data?.message ||
+            "Something went wrong. Please try again."
+        );
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleGoogleLogin = () => {
+    window.location.href = `${authBaseURL}/auth/google`;
   };
 
   return (
@@ -79,8 +97,8 @@ function LoginPage() {
               <a href="/forgot-password">Forgotten Password</a>
             </div>
 
-            <button type="submit" className="btn-primary">
-              Log in
+            <button type="submit" className="btn-primary" disabled={isLoading}>
+              {isLoading ? "Logging in..." : "Log in"}
             </button>
           </form>
 
@@ -93,7 +111,11 @@ function LoginPage() {
           </div>
 
           <div className="social-login">
-            <button type="button" className="social-btn google-btn">
+            <button
+              type="button"
+              className="social-btn google-btn"
+              onClick={handleGoogleLogin}
+            >
               <FcGoogle size={20} />
               Google
             </button>

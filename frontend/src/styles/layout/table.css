@@ -1,18 +1,26 @@
 .table-container {
   width: 100%;
+<<<<<<< HEAD
   overflow-x: auto; /* Changed from 0 to auto for responsiveness */
+=======
+  overflow-x: auto; 
+>>>>>>> d569d39c4836f929c4ed475ca460ca9e7e663616
 }
 
 .task-history-table {
   width: 100%;
   border-collapse: collapse;
-  font-family: var(--font-primary);
+  font-family: var(--font-poppins);
   background-color: transparent;
 }
 
-/* Header Styles */
+
 .task-history-table thead tr {
+<<<<<<< HEAD
   background-color: #d1d5db; /* Matches grey bar in screenshots */
+=======
+  background-color: #d1d5db; 
+>>>>>>> d569d39c4836f929c4ed475ca460ca9e7e663616
 }
 
 .task-history-table th {
@@ -23,7 +31,7 @@
   color: var(--color-text-primary);
 }
 
-/* Rounded corners for the grey header bar */
+
 .task-history-table th:first-child {
   border-top-left-radius: var(--border-radius-md);
   border-bottom-left-radius: var(--border-radius-md);
@@ -42,17 +50,26 @@
   color: var(--color-text-secondary);
 }
 
-/* Row Styles */
+
 .task-history-table td {
   padding: var(--spacing-md) var(--spacing-sm);
+<<<<<<< HEAD
   vertical-align: middle; /* Changed to middle for better alignment in Inventory */
+=======
+  vertical-align: middle; 
+>>>>>>> d569d39c4836f929c4ed475ca460ca9e7e663616
   border-bottom: none; 
   font-size: var(--font-size-sm);
   color: var(--color-text-secondary);
 }
 
+<<<<<<< HEAD
 /* ─── Inventory Specific Status Colors ─── */
 
+=======
+
+
+>>>>>>> d569d39c4836f929c4ed475ca460ca9e7e663616
 .status-pill {
   font-weight: 600;
 }
@@ -72,7 +89,10 @@
   color: #eb5757;
 }
 
+<<<<<<< HEAD
 /* ─── Dashboard Task Specific Colors ─── */
+=======
+>>>>>>> d569d39c4836f929c4ed475ca460ca9e7e663616
 
 .status-completed {
   color: #4caf50;

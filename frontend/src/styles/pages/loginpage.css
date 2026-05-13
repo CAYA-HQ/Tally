@@ -21,6 +21,15 @@
   position: relative;
 }
 
+@media (min-width: 1024px) {
+  .login-left {
+    height: 100dvh;
+    position: sticky;
+    top: 0;
+    align-self: flex-start;
+  }
+}
+
 /* .login-left::before {
   content: "";
   position: absolute;
@@ -199,4 +208,9 @@
   .welcome-text p {
     font-size: var(--font-size-sm);
   }
+}
+
+.login-form-container .divider {
+  width: auto;
+  background: transparent;
 }

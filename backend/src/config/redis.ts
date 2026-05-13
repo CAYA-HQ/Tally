@@ -1,7 +1,8 @@
 import { createClient } from "redis";
+import { env } from "../model/validate.user";
 
 const redisClient = createClient({
-  url: "redis://localhost:6379"
+  url: env.REDIS_URL
 });
 export const connectRedis = async () => {
   try {
@@ -11,5 +12,6 @@ export const connectRedis = async () => {
     console.error("Redis connection error:", err);
   }
 }
+
 
 export const redis = redisClient;   

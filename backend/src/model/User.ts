@@ -1,34 +1,80 @@
-import { sleep } from "bun";
 import mongoose from "mongoose";
 
-const userSchema = new mongoose.Schema({
-  name: {
-    type: String, required: [true, 'Name is required'],
-    minlength: [2, 'Name must be at least 2 characters long']
+const userSchema = new mongoose.Schema(
+  {
+    avatar: {
+      url: {
+        type: String,
+        default: ""
+      },    
+
+      public_id: {
+        type: String,
+        default: ""
+      }
+    },
+    name: {
+      type: String,
+      required: [true, "Name is required"],
+      minlength: [2, "Name must be at least 2 characters long"],
+      trim: true,
+    },
+
+    email: {
+      type: String,
+      required: [true, "Email is required"],
+      unique: true,
+      lowercase: true,
+      trim: true,
+      match: [/^[^\s@]+@[^\s@]+\.[^\s@]+$/,"Please enter a valid email address"],
+    },
+
+    password: {
+      type: String,
+      select: false,
+      minlength: [6, "Password must be at least 6 characters long"],
+      required: function (this: any) {
+      return this.authProvider === "local";
+      },
+    },
+
+    phone: {
+      type: String,
+      trim: true,
+      match: [/^\+?[1-9]\d{7,14}$/, "Invalid phone number"],
+    },
+
+    googleId: {
+      type: String,
+      unique: true,
+      sparse: true,
+    },
+
+    authProvider: {
+      type: String,
+      enum: ["local", "google", "apple"],
+      default: "local",
+    },
+
+    role: {
+      type: String,
+      enum: ["user", "admin"],
+      default: "user",
+    },
+
+    isVerified:{
+      type: Boolean,
+      default: false,
+    },
+    metadata: {
+      type: mongoose.Schema.Types.Mixed,
+      default: {},
+    },
   },
-  email: { 
-    type: String, required: [true, 'Email is required'], unique: true,
-     match: [/^\S+@\S+\.\S+$/, 'Please enter a valid email address'],
-   },
-  phone: { 
-    type: String,
-    match: [/^(?:\+234|0)[789][01]\d{8}$/, 'Please enter a valid phone number'],
-    unique: true,
-    sparse: true,
-  },
-  password: { 
-    type: String, sparse: true, select: true,
-    minlength: [6, 'Password must be at least 6 characters long']
-  },
-  googleId: { type: String, unique: true, sparse: true },
-  authProvider: { type: String, enum: ['local', 'google', 'apple'], default: 'local' },
-},
-  { timestamps: true,
+  {
+    timestamps: true,
     versionKey: false,
-    strict: false,
   }
 );
-
-userSchema.index({ email: 1 });
 
 export const User = mongoose.model("User", userSchema);

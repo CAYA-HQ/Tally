@@ -1,11 +1,9 @@
-import dotenv from "dotenv";
+import {env} from "../model/validate.user";
 import { Strategy as JwtStrategy, ExtractJwt } from "passport-jwt";
 import passport from "passport";
 import { getUserById } from "../service/user.service";
 
-dotenv.config();
-
-const JWT_SECRET = process.env.JWT_SECRET as string;
+const JWT_SECRET = env.JWT_SECRET
 
 const opts = {
   jwtFromRequest: ExtractJwt.fromExtractors([

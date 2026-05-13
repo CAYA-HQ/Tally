@@ -4,9 +4,10 @@ import { FcGoogle } from "react-icons/fc";
 import { FaApple } from "react-icons/fa";
 import Logo from "../components/Logo";
 import PasswordInput from "../components/PasswordInput";
-import Cookies from "js-cookie";
 import { useNavigate } from "react-router-dom";
 import RoutePaths from "../routes/routePaths";
+import api from "../utils/api";
+import { toast } from "react-toastify";
 
 function RegisterPage() {
   const navigate = useNavigate();
@@ -15,21 +16,31 @@ function RegisterPage() {
     email: "",
     password: "",
   });
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: value,
-    });
+    setFormData({ ...formData, [name]: value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Form submitted:", formData);
-    // Later, we'll add API call here
-    Cookies.set("accessToken", "static-token-123");
-    navigate(RoutePaths.DASHBOARD);
+    setIsLoading(true);
+    try {
+      const { data } = await api.post("/auth/register", formData);
+      toast.success("Account created. Please verify your email.");
+      navigate(RoutePaths.VERIFY, { state: { email: data.email } });
+    } catch (err) {
+      toast.error(
+        err.response?.data?.message || "Something went wrong. Please try again."
+      );
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleGoogleLogin = () => {
+    window.location.href = `${authBaseURL}/auth/google`;
   };
 
   return (
@@ -96,6 +107,7 @@ function RegisterPage() {
                 name="terms"
                 id="terms"
                 className="checkbox-input"
+                required
               />
               <label htmlFor="terms" className="checkbox-text">
                 I agree to the{" "}
@@ -105,8 +117,8 @@ function RegisterPage() {
               </label>
             </div>
 
-            <button type="submit" className="btn-primary">
-              Register
+            <button type="submit" className="btn-primary" disabled={isLoading}>
+              {isLoading ? "Creating account..." : "Register"}
             </button>
           </form>
 
@@ -115,7 +127,11 @@ function RegisterPage() {
           </div>
 
           <div className="social-login">
-            <button type="button" className="social-btn google-btn">
+            <button
+              type="button"
+              className="social-btn google-btn"
+              onClick={handleGoogleLogin}
+            >
               <FcGoogle size={20} />
               Google
             </button>

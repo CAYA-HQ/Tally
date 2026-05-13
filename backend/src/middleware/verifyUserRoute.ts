@@ -1,5 +1,5 @@
 import type { Request, Response, NextFunction } from "express";
-import jwt from "jsonwebtoken";
+import * as jwt from "../utils/jwt";
 
 export const verifyUser = (
   req: Request,
@@ -18,10 +18,7 @@ export const verifyUser = (
   const token = authHeader.split(" ")[1] as string;
 
   try {
-    const decoded = jwt.verify(
-      token,
-      process.env.JWT_SECRET as string
-    );
+    const decoded = jwt.verifyRefreshToken(token);
 
     (req as any).user = decoded;
 
