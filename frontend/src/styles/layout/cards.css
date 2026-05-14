@@ -1,77 +1,67 @@
-.report-card {
-  background-color: var(--color-bg-white);
-  border-radius: var(--border-radius-lg);
-  padding: var(--spacing-md);
-  box-shadow: var(--shadow-sm);
-  flex: 1;
-  min-width: 200px;
+.stat-card {
+  background: white;
+  padding: 24px;
+  border-radius: 24px; /* Matches dashboard-tally.png design */
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-sm);
-  transition: transform var(--transition-fast);
+  min-width: 250px;
 }
 
-.report-card:hover {
-  transform: translateY(-4px);
-  box-shadow: var(--shadow-md);
-}
-
-.icon-box {
-  width: 40px;
-  height: 40px;
-  border-radius: var(--border-radius-md);
+.card-header {
   display: flex;
+  justify-content: space-between;
   align-items: center;
-  justify-content: center;
-  color: white;
-}
-
-.card-icon {
-  font-size: 20px;
-}
-
-.card-body {
-  margin-top: var(--spacing-xs);
+  margin-bottom: 8px;
 }
 
 .card-title {
-  color: var(--color-text-secondary);
-  font-size: var(--font-size-sm);
-  margin-bottom: var(--spacing-xs);
+  color: #b2bec3; /* Muted gray */
+  font-size: 14px;
   font-weight: 500;
 }
 
 .card-amount {
-  color: var(--color-text-primary);
-  font-size: var(--font-size-lg); /* 36px from your variables */
+  font-size: 28px;
   font-weight: 700;
+  color: #2d3436;
   margin: 0;
 }
 
-.card-footer {
+.card-icon {
+  font-size: 24px;
+}
+
+/* Dynamic colors for icons */
+.card-icon.blue { color: #54a0ff; }
+.card-icon.pink { color: #ff9ff3; }
+.card-icon.gray { color: #b2bec3; }
+
+/* Visual Area Styling */
+.card-visual-area {
+  height: 100px;
+  margin-top: 15px;
   display: flex;
-  align-items: center;
-  gap: var(--spacing-xs);
-  margin-top: auto;
+  align-items: flex-end;
 }
 
-.trend-tag {
+.chart-placeholder {
   display: flex;
-  align-items: center;
-  gap: 4px;
-  font-size: var(--font-size-xs);
-  font-weight: 600;
+  align-items: flex-end;
+  gap: 8px;
+  width: 100%;
+  height: 100%;
 }
 
-.trend-up {
-  color: #27ae60; /* Success Green */
+.bar {
+  flex: 1;
+  border-radius: 4px;
 }
 
-.trend-down {
-  color: #eb5757; /* Error Red */
-}
+.blue-bars .bar { background: #6c5ce7; opacity: 0.6; }
+.pink-bars .bar { background: #ff9ff3; opacity: 0.6; }
 
-.trend-text {
-  color: var(--color-text-light);
-  font-size: var(--font-size-xs);
+.line-chart {
+  width: 100%;
+  height: 100%;
 }
