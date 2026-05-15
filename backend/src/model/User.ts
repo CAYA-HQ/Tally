@@ -13,6 +13,7 @@ const userSchema = new mongoose.Schema(
         default: ""
       }
     },
+    
     name: {
       type: String,
       required: [true, "Name is required"],
@@ -66,6 +67,86 @@ const userSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+
+    usage: String,
+
+    business: {
+      storeName: String,
+      address: String,
+      businessType: String,
+      country: String,
+      city: String,
+      businessPhone: {
+        type: String,
+        trim: true,
+        match: [/^\+?[1-9]\d{7,14}$/, "Invalid phone number"],
+      },
+    },
+
+    inventory: {
+      inventoryName: String,
+      inventoryType: String,
+      category: String,
+      currency: String,
+      unit: Number,
+      inventoryStock: [{
+        stockId: String,
+        stock: String,
+        quantity: Number,
+        boughtPrice: Number,
+        sellingPrice: Number,
+        date: Date,
+      },]
+    },
+
+    reminder: [{
+      title: {
+        type: String,
+        required: true,
+      },
+
+      message: {
+        type: String,
+      },
+
+      date: {
+        type: Date,
+      },
+
+      createdAt: {
+        type: Date,
+      },
+
+      completed: {
+        type: Boolean,
+        default: false,
+      },
+    },
+    ],
+
+    notifications: [{
+      message: {
+        type: String,
+      },
+
+      date: {
+        type: Date,
+      },
+
+      time: {
+        type: Date,
+      },
+
+      category: {
+        type: String,
+      },
+
+      read: {
+        type: Boolean,
+        default: false,
+      },
+    },
+    ],
     metadata: {
       type: mongoose.Schema.Types.Mixed,
       default: {},

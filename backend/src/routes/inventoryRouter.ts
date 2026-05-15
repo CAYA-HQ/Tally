@@ -1,9 +1,9 @@
 import { Router } from "express";
-import { createInventory, deleteItem, updateInventory } from "../controllers/inventory.controller";
+import { addInventory, deleteItem, updateInventory } from "../controllers/inventory.controller";
 
 const inventoryRouter = Router()
 
-inventoryRouter.post('/:id', createInventory)
+inventoryRouter.post('/:id', addInventory)
 inventoryRouter.put('/:id', deleteItem)
 inventoryRouter.post('/:id', updateInventory)
 

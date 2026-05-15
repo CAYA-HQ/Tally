@@ -6,9 +6,9 @@ export const createUserSchema = z.object({
   password: z.string().min(6, "Password must be at least 6 characters long")
 });
 
-
 const envSchema = z.object({
   PORT: z.string(),
+  SOCKET_PORT: z.string(),
   MONGO_URI: z.string(),
   REDIS_URL: z.string(),
   JWT_SECRET: z.string(),
@@ -22,8 +22,11 @@ const envSchema = z.object({
   NODE_ENV: z.enum([
     'production',
     'development'
-  ])
+  ]),
+  CLOUDINARY_API_SECRET: z.string(),
+  CLOUDINARY_API_KEY: z.string(),
+  CLOUDINARY_NAME: z.string(),
 });
 
 export const env = envSchema.parse(process.env);
-export type CreateUserInput = z.infer<typeof createUserSchema>;
+export type CreateUserInput = z.infer<typeof createUserSchema>; 

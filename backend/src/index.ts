@@ -9,6 +9,8 @@ import cookieParser from "cookie-parser";
 import passport from "passport";
 import helmet from "helmet";
 import { env } from "./model/validate.user";
+import { ioServer } from "./config/socket";
+import { socketAuth } from "./middleware/socketio.middleware";
 
 dotenv.config();
 const app = express();
@@ -38,6 +40,9 @@ app.all(/.*/, (req, res) => {
   });
 });
 
+const ioSocket = ioServer(app)
+ioSocket.use(socketAuth)
+
 app.use(errorHandler)
 
 const PORT = process.env.PORT || 3000;
@@ -50,4 +55,6 @@ connectDB().then(() => {
     console.log("FRONTEND_URL:", env.FRONTEND_URL);
   });
 });
+
+export const io = ioSocket
 

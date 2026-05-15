@@ -45,11 +45,12 @@ passport.use(
         }
 
         else {
-          user = await userService.updateUser(user.id, {
+          await userService.updateUserById(user.id, {
             googleId: profile.id,
             authProvider: "google",
             isVerified: true,
           } as any);
+          user = await userService.getUserByEmail(email);
         }
 
         return done(null, user as any);

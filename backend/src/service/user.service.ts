@@ -1,6 +1,9 @@
+import mongoose from "mongoose";
 import { User } from "../model/User";
 import type { CreateUserInput } from "../model/validate.user";
 import type {UAParser} from "ua-parser-js";
+import { getFullDate, getTime } from "../utils/date";
+import { io } from '../index';
 
 // create user
 export const createUser = async (data: CreateUserInput) => {
@@ -11,19 +14,24 @@ export const createUser = async (data: CreateUserInput) => {
   return await User.create(data);
 };
 
+// get user by id
 export const getUserById = async (id: string) => {
   return await User.findById(id);
 };
 
+// get user by email
 export const getUserByEmail = async (email: string) => {
   return await User.findOne({ email }).select("+password");
 };
 
-export const updateUser = async (id: string, data: Partial<CreateUserInput>) => {
-  return await User.findByIdAndUpdate(id, data, { new: true });
-};
+
+//update user data
+export const updateUserById = (userId: string, update: any, options = {}) => {
+  return User.updateOne({ _id: userId }, update, options)
+}
 
 
+// metadata info
 export const metaDataInfo = async (ip: any, parser: UAParser) => {
   const deviceInfo = parser.getResult();
 
@@ -68,6 +76,8 @@ export const metaDataInfo = async (ip: any, parser: UAParser) => {
 };
 };
 
+
+// metadata updater
 export const deleteFromMetaData = async ( userId: string, dataId: any | string , cat: string ) => {
 
   return User.findByIdAndUpdate( userId, {
@@ -123,4 +133,37 @@ export const deleteAMetaData = async ( userId: string, cat: string ) => {
     }
   );
 };
+
+// setting up socket io
+io.on("connection", (socket) => {
+  const userId = socket.data.userId;
+
+  socket.join(userId);
+
+  console.log(`User connected: ${userId}`);
+
+  socket.on("disconnect", () => {
+    console.log(`User disconnected: ${userId}`);
+  });
+});
+
+// notification helper
+export const setNotification = (user: any, message: string, cat: string) =>{
+  
+  const userId = user._id
+  const now = new Date()
+
+  user.notifications.push({
+    message: message,
+    date: getFullDate(now),
+    time: getTime(now),
+    category: cat,
+    read: false,
+  })
+  user.markModified('metadata.notification')
+
+  // Emit realtime event using io
+  io.to(userId).emit("notification:new", user.notifications);
+  
+}
 
