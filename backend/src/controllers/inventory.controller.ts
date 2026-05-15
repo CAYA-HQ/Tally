@@ -2,11 +2,13 @@
 import type { Request, Response } from 'express'
 import { asyncHandler } from '../utils/asyncHandler'
 import * as userService from '../service/user.service'
+import { setNotification } from '../service/notification.service'
+import { Inventory } from '../model/inventory.model'
 
 // Add inventory
 export const addInventory = asyncHandler(async (req: Request, res: Response) => {
-  const { stock, quantity, boughtPrice, sellingPrice, date } = req.body
-  const userId = req.params.id
+  const { stock, quantity, boughtPrice, sellingPrice } = req.body
+  const userId = (req as any).params.id
 
   if (
     !userId ||
@@ -30,31 +32,25 @@ export const addInventory = asyncHandler(async (req: Request, res: Response) => 
     })
   }
 
-  const stockInventory = {
+  const inventoryStock = Inventory.create({
+    userId,
     stock,
     quantity,
     boughtPrice,
     sellingPrice,
-    date
-  }
-
-  await userService.updateUserById(userId as string, {
-    $push: {
-      'inventory.inventoryStock': stockInventory
-    }
   })
 
-  userService.setNotification(
-    user,
+  await setNotification(
+    user.id,
     'new item added to inventory',
     'inventory'
   )
 
-  await user.save()
-
   return res.status(201).json({
     success: true,
     message: 'new item added to inventory',
+    inventoryStock,
+    stockId: (await inventoryStock).id
   })
 })
 
@@ -71,28 +67,16 @@ export const deleteItem = asyncHandler(async (req: Request, res: Response) => {
     })
   }
 
-  const user = await userService.getUserById(userId as string)
-
-  if (!user) {
-    return res.status(401).json({
-      success: false,
-      message: 'user not found'
-    })
-  }
-
-  await userService.updateUserById(userId as string, {
-    $pull: {
-      'inventory.inventoryStock': { _id: stockId }
-    }
+  await Inventory.findOneAndDelete({
+    _id: stockId,
+    userId,
   })
 
-  userService.setNotification(
-    user,
+  await setNotification(
+    userId.toString(),
     'item removed from inventory',
     'inventory'
   )
-
-  await user.save()
 
   return res.status(200).json({
     success: true,
@@ -103,13 +87,20 @@ export const deleteItem = asyncHandler(async (req: Request, res: Response) => {
 
 // Update inventory
 export const updateInventory = asyncHandler(async (req: Request, res: Response) => {
-  const { inventory } = req.body
+  const { stock, quantity, boughtPrice, sellingPrice, stockId } = req.body
   const userId = req.params.id
 
-  if (!inventory) {
+  if (!req.body) {
     return res.status(400).json({
       success: false,
-      message: 'invalid inventory data'
+      message: 'nothing to update'
+    })
+  }
+
+  if(!userId){
+    return res.status(404).json({
+      success: false,
+      message: 'user not found'
     })
   }
 
@@ -122,32 +113,34 @@ export const updateInventory = asyncHandler(async (req: Request, res: Response) 
     })
   }
 
-  const upDatedStockId = inventory._id
-
-  const result = await userService.updateUserById(
-    userId as string,
-    {
-      $set: {
-        'inventory.inventoryStock.$': inventory
-      }
+  const result = await Inventory.findOneAndUpdate(
+  {
+    _id: stockId,
+    userId,
+  },
+  {
+    $set: {
+      stock,
+      quantity,
+      boughtPrice,
+      sellingPrice,
     },
-    {
-      arrayFilters: [
-        { 'elem._id': upDatedStockId }
-      ]
-    }
-  )
+  },
+  {
+    new: true,
+  }
+)
 
-  userService.setNotification(
-    user,
+  await setNotification(
+    user.id,
     'stock updated successfully',
     'inventory'
   )
 
-  await user.save()
-
   return res.status(200).json({
     success: true,
-    message: 'inventory updated'
+    message: 'inventory updated',
+    result,
+    stockId: result?.id
   })
 })

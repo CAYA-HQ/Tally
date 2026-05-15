@@ -10,7 +10,6 @@ import passport from "passport";
 import helmet from "helmet";
 import { env } from "./model/validate.user";
 import { ioServer } from "./config/socket";
-import { socketAuth } from "./middleware/socketio.middleware";
 
 dotenv.config();
 const app = express();
@@ -40,21 +39,17 @@ app.all(/.*/, (req, res) => {
   });
 });
 
-const ioSocket = ioServer(app)
-ioSocket.use(socketAuth)
-
 app.use(errorHandler)
+const server = ioServer(app)
 
 const PORT = process.env.PORT || 3000;
 
 connectDB().then(() => {
-  app.listen(PORT, () => {
+  server.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
     console.log("MONGO:", env.MONGO_URI);
     console.log("REDIS:", env.REDIS_URL);
     console.log("FRONTEND_URL:", env.FRONTEND_URL);
   });
 });
-
-export const io = ioSocket
 

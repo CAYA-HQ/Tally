@@ -3,11 +3,11 @@
 - on sign up/ register ---> welcome to Tally osai emmanuel 🎉  [✅]
 - if user doesn't have phone number or, onbording info, send notification to
 complete registeration on login [✅]
-- send notification on user updates
+- send notification on user updates [✅]
 - send notification on inventory creation, delete, and updated [✅]
-- Live notification
+- Live notification [✅]
 
 ## Alert Notification
 
-- send notification on reminder creation, delete, and update
-- notification on every reminder sent
+- send notification on reminder creation, delete, and update [✅]
+- notification on every reminder sent 

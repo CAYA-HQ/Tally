@@ -3,7 +3,8 @@ import { getFullDate, getTime } from "../utils/date";
 import { getUserByEmail } from "../service/user.service";
 import * as jwt from "../utils/jwt";
 import * as OTP from '../service/otp.service'
-import * as userService from '../service/user.service'
+import { setNotification } from '../service/notification.service'
+
 
 export const verifyOtp = async (req: Request, res: Response) => {
   const { email, otp } = req.body;
@@ -68,10 +69,10 @@ export const verifyOtp = async (req: Request, res: Response) => {
 
   if (user.isVerified) {
 
-    userService.setNotification(user, `Welcome back ${user.name} 🎉`, 'login')
+    setNotification(user.id, `Welcome back ${user.name} 🎉`, 'login')
 
     if(!user.phone || user.metadata.onBoarding === 0){
-      userService.setNotification(user, 'Complete onboarding to get started', 'login')
+      setNotification(user.id, 'Complete onboarding to get started', 'login')
     }
 
   } else {
@@ -81,8 +82,7 @@ export const verifyOtp = async (req: Request, res: Response) => {
       user.metadata.registrationDate = getFullDate(now);
       user.metadata.registrationTime = getTime(now);
     } 
-
-    userService.setNotification(user, `Welcome onboard ${user.name} 🎉`, 'signup')
+    setNotification(user.id, `Welcome onboard ${user.name} 🎉`, 'signup')
     
   } 
 

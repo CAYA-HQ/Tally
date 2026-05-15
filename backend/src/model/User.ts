@@ -99,54 +99,6 @@ const userSchema = new mongoose.Schema(
       },]
     },
 
-    reminder: [{
-      title: {
-        type: String,
-        required: true,
-      },
-
-      message: {
-        type: String,
-      },
-
-      date: {
-        type: Date,
-      },
-
-      createdAt: {
-        type: Date,
-      },
-
-      completed: {
-        type: Boolean,
-        default: false,
-      },
-    },
-    ],
-
-    notifications: [{
-      message: {
-        type: String,
-      },
-
-      date: {
-        type: Date,
-      },
-
-      time: {
-        type: Date,
-      },
-
-      category: {
-        type: String,
-      },
-
-      read: {
-        type: Boolean,
-        default: false,
-      },
-    },
-    ],
     metadata: {
       type: mongoose.Schema.Types.Mixed,
       default: {},

@@ -4,11 +4,12 @@ import { asyncHandler } from "../utils/asyncHandler";
 import { payLoad } from "../utils/jwt";
 import { comparePassword, hashPassword } from "../utils/bcrypt";
 import cloudinary from "../config/cloudinary";
+import { setNotification } from '../service/notification.service'
 
 
 // UPDATE USER
 export const updateUser = asyncHandler(
-  async (req: Request, res: Response, next: NextFunction) => {
+  async (req: Request, res: Response ) => {
     const updateUserInfo = req.body;
     
     const userId = (req.user as any)?.id;
@@ -20,10 +21,6 @@ export const updateUser = asyncHandler(
         success: false,
         message: "user not found",
       });
-    }
-
-    if (!user.metadata.notification) {
-      user.metadata.notification = [];
     }
 
     const allowedUpdates = [
@@ -43,9 +40,9 @@ export const updateUser = asyncHandler(
     user.set(updates);
 
     await user.save();
-
-    userService.setNotification(
-      user,
+    
+    setNotification(
+      user.id,
       "updated successfully 🎉",
       "user"
     );
@@ -93,6 +90,7 @@ export const updateAvatar = asyncHandler(
     };
 
     await user.save();
+    setNotification(user.id, 'avatar updated successfully', 'user')
 
     return res.status(200).json({
       success: true,
@@ -138,9 +136,11 @@ export const changePassword = asyncHandler(
     }
 
     user.password = newEncryptedPassword
-    userService.setNotification(user, 'password changed successfully ✅', 'user')
-
     await user.save()
+    
+    setNotification(user.id, 'password changed successfully ✅', 'user')
+
+    
     res.status(200).json({
       success: true,
       message: 'password changed successfully'

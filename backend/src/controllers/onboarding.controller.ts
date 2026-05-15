@@ -1,6 +1,8 @@
 import type { Request, Response } from "express";
 import * as userService from '../service/user.service'
 import { asyncHandler } from "../utils/asyncHandler";
+import { setNotification } from '../service/notification.service'
+
 
 export const userOnBoarding = asyncHandler(async(req: Request, res: Response)=>{
     const {
@@ -33,7 +35,8 @@ export const userOnBoarding = asyncHandler(async(req: Request, res: Response)=>{
         "inventory.currency": currency,
         "inventory.unit": unit,
     });
-    userService.setNotification(user, 'set up complete', 'user')
+    
+    setNotification(user.id, 'set up complete', 'user')
     await user.save()
     const data = {'usage': user.usage, 'business': user.business, 'inventory': user.inventory}
 
