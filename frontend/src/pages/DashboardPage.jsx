@@ -1,8 +1,8 @@
 import Cookies from "js-cookie";
-import Sidebar from "../components/Layout/Sidebar";   
+import RoutePaths from "../routes/routePaths";
+import Sidebar from "../components/Layout/Sidebar";
 import Navbar from "../components/Layout/Navbar";
 import { useNavigate } from "react-router-dom";
-import RoutePaths from "../routes/routePaths";
 import Card from "../components/Layout/Cards";
 import Table from "../components/Layout/Tables";
 import InventoryPage from "../pages/Inventory";
@@ -24,9 +24,10 @@ const DashboardPage = () => {
       {/* Main content area */}
       <main className="main-content">
         <Navbar />
-        
-
-          <button className="logout-btn" onClick={handleLogout}>Logout</button>
+        {/* 
+        <button className="logout-btn" onClick={handleLogout}>
+          Logout
+        </button> */}
       </main>
     </div>
   );

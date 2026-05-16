@@ -1,13 +1,10 @@
-import React from 'react';
-import { HiSelector } from "react-icons/hi"; 
+import React from "react";
+import { HiSelector } from "react-icons/hi";
 import "../../styles/layout/table.css";
 
-
-  // Safety check: If no props are passed, default to an empty state
-
+// Destructure columns and data from props
 const Table = ({ columns, data }) => {
-  
-  
+  // Safety check: If no props are passed, default to an empty state
   if (!columns || !data) {
     return <div className="table-container">No data available</div>;
   }
@@ -18,8 +15,12 @@ const Table = ({ columns, data }) => {
         <thead>
           <tr>
             {columns.map((col, index) => (
-              <th key={index} className={`col-${col.key}`} style={{ width: col.width }}>
-                {col.header} 
+              <th
+                key={index}
+                className={`col-${col.key}`}
+                style={{ width: col.width }}
+              >
+                {col.header}
                 {col.sortable && <HiSelector className="sort-icon" />}
               </th>
             ))}

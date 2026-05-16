@@ -31,10 +31,10 @@ export const router = createBrowserRouter([
         path: RoutePaths.VERIFY,
         element: <VerifyPage />,
       },
-      {
-        path: "inventory",
-        element: <InventoryPage />,
-      },
+      // {
+      //   path: "inventory",
+      //   element: <InventoryPage />,
+      // },
     ],
   },
   {
@@ -46,14 +46,14 @@ export const router = createBrowserRouter([
         element: <DashboardPage />,
       },
       {
-        path: "inventory", 
+        path: "inventory",
         element: <InventoryPage />,
       },
       {
         path: "orders",
         element: <TaskHistoryPage />,
       },
-       {
+      {
         path: "record",
         element: <Recordpage />,
       },
