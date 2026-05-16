@@ -1,71 +1,146 @@
 // importing necessary packages
 import type { Request, Response } from 'express'
 import { asyncHandler } from '../utils/asyncHandler'
-import { User } from '../model/User'
-import * as userService from '../service/user.service';
+import * as userService from '../service/user.service'
+import { setNotification } from '../service/notification.service'
+import { Inventory } from '../model/inventory.model'
 
-//creating inventory
-export const createInventory = asyncHandler(async (req: Request, res: Response) => {
-  const { stockId, stock, quantity, boughtPrice, sellingPrice, date } = req.body;
-  const userId = req.params.id
+// Add inventory
+export const addInventory = asyncHandler(async (req: Request, res: Response) => {
+  const { stock, quantity, boughtPrice, sellingPrice } = req.body
+  const userId = (req as any).params.id
 
-  if ( !userId || !stockId || !stock || quantity == null
-    || boughtPrice == null || sellingPrice == null) {
+  if (
+    !userId ||
+    !stock ||
+    quantity == null ||
+    boughtPrice == null ||
+    sellingPrice == null
+  ) {
     return res.status(400).json({
       success: false,
       message: 'missing required item'
-    });
+    })
   }
 
-  const stockInventory = {
-    stockId,
+  const user = await userService.getUserById(userId as string)
+
+  if (!user) {
+    return res.status(401).json({
+      success: false,
+      message: 'user not found'
+    })
+  }
+
+  const inventoryStock = Inventory.create({
+    userId,
     stock,
     quantity,
     boughtPrice,
     sellingPrice,
-    date
-  };
+  })
 
-  await userService.addToMetaData(userId as string, stockInventory, 'inventory')
+  await setNotification(
+    user.id,
+    'new item added to inventory',
+    'inventory'
+  )
 
   return res.status(201).json({
     success: true,
-    message: 'new item added to inventory'
-  });
-});
-
-//deleting an item from the inventory
-export const deleteItem = asyncHandler(async(req: Request, res:Response) => {
-  const {stockId} = req.body
-  const userId = req.params.id
-
-  if(!stockId || !userId){
-    return res.status(400).json({
-        success: false,
-        message: 'missing stock or user'
-    })
-  }
-  
-  await userService.deleteFromMetaData(userId as string, stockId, "inventory")
-    
+    message: 'new item added to inventory',
+    inventoryStock,
+    stockId: (await inventoryStock).id
+  })
 })
 
-//updating inventory
-export const updateInventory = asyncHandler(async (req: Request, res: Response) => {
-    const { userId, inventory } = req.body;
 
-    if (!userId || !Array.isArray(inventory)) {
-      return res.status(400).json({
-        success: false,
-        message: 'invalid inventory data'
-      });
-    }
+// Delete item
+export const deleteItem = asyncHandler(async (req: Request, res: Response) => {
+  const { stockId } = req.body
+  const userId = req.params.id
 
-    await userService.addToMetaData(userId, inventory, 'inventory')
-
-    return res.status(200).json({
-      success: true,
-      message: 'inventory updated'
-    });
+  if (!stockId || !userId) {
+    return res.status(400).json({
+      success: false,
+      message: 'missing stock or user'
+    })
   }
-);
+
+  await Inventory.findOneAndDelete({
+    _id: stockId,
+    userId,
+  })
+
+  await setNotification(
+    userId.toString(),
+    'item removed from inventory',
+    'inventory'
+  )
+
+  return res.status(200).json({
+    success: true,
+    message: 'item deleted from inventory'
+  })
+})
+
+
+// Update inventory
+export const updateInventory = asyncHandler(async (req: Request, res: Response) => {
+  const { stock, quantity, boughtPrice, sellingPrice, stockId } = req.body
+  const userId = req.params.id
+
+  if (!req.body) {
+    return res.status(400).json({
+      success: false,
+      message: 'nothing to update'
+    })
+  }
+
+  if(!userId){
+    return res.status(404).json({
+      success: false,
+      message: 'user not found'
+    })
+  }
+
+  const user = await userService.getUserById(userId as string)
+
+  if (!user) {
+    return res.status(401).json({
+      success: false,
+      message: 'user not found'
+    })
+  }
+
+  const result = await Inventory.findOneAndUpdate(
+  {
+    _id: stockId,
+    userId,
+  },
+  {
+    $set: {
+      stock,
+      quantity,
+      boughtPrice,
+      sellingPrice,
+    },
+  },
+  {
+    new: true,
+  }
+)
+
+  await setNotification(
+    user.id,
+    'stock updated successfully',
+    'inventory'
+  )
+
+  return res.status(200).json({
+    success: true,
+    message: 'inventory updated',
+    result,
+    stockId: result?.id
+  })
+})

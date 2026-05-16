@@ -32,7 +32,7 @@ const reminderSchema = new mongoose.Schema(
     },
     status: {
       type: String,
-      enum: ["In Progress", "Completed", "Deleted"],
+      enum: ["In Progress", "Completed", "Missed"],
       default: "In Progress",
     },
     type: {

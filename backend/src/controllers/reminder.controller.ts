@@ -1,6 +1,7 @@
 import type { Request, Response, NextFunction } from "express";
 import { Reminder } from "../model/Reminder";
 import { asyncHandler } from "../utils/asyncHandler";
+import { setNotification } from "../service/notification.service";
 
 export const createReminder = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -15,6 +16,12 @@ export const createReminder = asyncHandler(
       time,
       priority,
     });
+
+    await setNotification(
+        userId,
+        'Reminder set',
+        'Reminder'
+      )
 
     res.status(201).json({
       success: true,
@@ -69,6 +76,12 @@ export const updateReminder = asyncHandler(
       return next(error);
     }
 
+    await setNotification(
+        userId,
+        'Reminder updated',
+        'Reminder'
+      )
+
     res.status(200).json({
       success: true,
       data: reminder,
@@ -89,6 +102,12 @@ export const deleteReminder = asyncHandler(
       (error as any).statusCode = 404;
       return next(error);
     }
+
+    await setNotification(
+        userId,
+        'Reminder deleted',
+        'Reminder'
+      )
 
     res.status(200).json({
       success: true,
