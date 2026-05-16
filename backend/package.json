@@ -35,6 +35,7 @@
     "passport-jwt": "^4.0.1",
     "redis": "^5.12.1",
     "resend": "^6.12.3",
+    "socket.io": "^4.8.3",
     "ua-parser-js": "^2.0.9",
     "zod": "^4.4.1"
   },
@@ -42,8 +43,7 @@
     "@types/bun": "latest",
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.6",
-    "@types/socket.io": "^3.0.2",
-    "socket.io": "^4.8.3"
+    "@types/socket.io": "^3.0.2"
   },
   "peerDependencies": {
     "typescript": "^6.0.3"
