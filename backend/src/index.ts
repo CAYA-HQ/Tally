@@ -9,6 +9,7 @@ import cookieParser from "cookie-parser";
 import passport from "passport";
 import helmet from "helmet";
 import { env } from "./model/validate.user";
+import { ioServer } from "./config/socket";
 
 dotenv.config();
 const app = express();
@@ -39,11 +40,12 @@ app.all(/.*/, (req, res) => {
 });
 
 app.use(errorHandler)
+const server = ioServer(app)
 
 const PORT = process.env.PORT || 3000;
 
 connectDB().then(() => {
-  app.listen(PORT, () => {
+  server.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
     console.log("MONGO:", env.MONGO_URI);
     console.log("REDIS:", env.REDIS_URL);

@@ -40,8 +40,15 @@ export const generateRefreshToken = async (res: Response, payload: object): Prom
 
 type payLoadType = { id: string; name: string; email: string, metadata: { session: Array<any>, registrationDate: string; registrationTime: string } };
 
-export const payLOad = (d: payLoadType) => {
-  return {id: d.id, name: d.name, email: d.email, session: d.metadata.session, registrationDate: d.metadata.registrationDate, registrationTime: d.metadata.registrationTime}
+export const payLoad = (d: payLoadType) => {
+  return {
+    id: d.id,
+    name: d.name,
+    email: d.email,
+    session: d.metadata.session,
+    registrationDate: d.metadata.registrationDate,
+    registrationTime: d.metadata.registrationTime
+  }
 }
 
 export const logOutUser = async (res: Response, token: string) => {
