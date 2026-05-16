@@ -1,4 +1,4 @@
-import { NavLink } from "react-router-dom"; // MUST IMPORT THIS
+import { NavLink, useNavigate } from "react-router-dom"; // MUST IMPORT THIS
 import { RiDashboardLine } from "react-icons/ri";
 import { MdOutlineInventory2 } from "react-icons/md";
 import { BsCart3 } from "react-icons/bs";
@@ -9,16 +9,48 @@ import { LuLogOut } from "react-icons/lu";
 import Logo from "../Logo";
 import "../../styles/layout/sidebar.css";
 import logogroup from "../../assets/logogroup.svg";
+import Cookies from "js-cookie";
+import RoutePaths from "../../routes/routePaths";
 
 const NAV_ITEMS = [
-  { id: "dashboard", label: "Dashboard", icon: <RiDashboardLine />, path: "/dashboard" },
-  { id: "inventory", label: "Inventory", icon: <MdOutlineInventory2 />, path: "/dashboard/inventory" },
-  { id: "orders",    label: "Orders",    icon: <BsCart3 />, path: "/dashboard/orders" },
-  { id: "reports",   label: "Reports",   icon: <HiOutlineDocumentReport />, path: "/dashboard/reports" },
-  { id: "record",    label: "Record",    icon: <LuClipboardList />, path: "/dashboard/record" },
+  {
+    id: "dashboard",
+    label: "Dashboard",
+    icon: <RiDashboardLine />,
+    path: "/dashboard",
+  },
+  {
+    id: "inventory",
+    label: "Inventory",
+    icon: <MdOutlineInventory2 />,
+    path: "/dashboard/inventory",
+  },
+  {
+    id: "orders",
+    label: "Orders",
+    icon: <BsCart3 />,
+    path: "/dashboard/orders",
+  },
+  {
+    id: "reports",
+    label: "Reports",
+    icon: <HiOutlineDocumentReport />,
+    path: "/dashboard/reports",
+  },
+  {
+    id: "record",
+    label: "Record",
+    icon: <LuClipboardList />,
+    path: "/dashboard/record",
+  },
 ];
 
 export default function Sidebar() {
+  const navigate = useNavigate();
+  const handleLogout = () => {
+    Cookies.remove("accessToken");
+    navigate(RoutePaths.LOGIN);
+  };
   return (
     <aside className="tally-sidebar">
       {/* Logo */}
@@ -34,7 +66,7 @@ export default function Sidebar() {
             key={item.id}
             to={item.path}
             // isActive is provided by React Router automatically
-            className={({ isActive }) => 
+            className={({ isActive }) =>
               `tally-nav-item${isActive ? " active" : ""}`
             }
             // Use 'end' for dashboard so it's not active when on /inventory
@@ -51,11 +83,15 @@ export default function Sidebar() {
       {/* Bottom nav */}
       <div className="tally-bottom">
         <button className="tally-nav-item">
-          <span className="tally-nav-icon"><IoSettingsOutline /></span>
+          <span className="tally-nav-icon">
+            <IoSettingsOutline />
+          </span>
           <span className="tally-nav-label">Settings</span>
         </button>
-        <button className="tally-nav-item">
-          <span className="tally-nav-icon"><LuLogOut /></span>
+        <button className="tally-nav-item" onClick={handleLogout}>
+          <span className="tally-nav-icon">
+            <LuLogOut />
+          </span>
           <span className="tally-nav-label">Log out</span>
         </button>
       </div>
