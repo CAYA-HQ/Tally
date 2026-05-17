@@ -35,9 +35,10 @@ export const userOnBoarding = asyncHandler(async(req: Request, res: Response)=>{
         "inventory.currency": currency,
         "inventory.unit": unit,
     });
-    
-    setNotification(user.id, 'set up complete', 'user')
     await user.save()
+    
+    setNotification(user.id, 'set up complete', 'user', user.name)
+    
     const data = {'usage': user.usage, 'business': user.business, 'inventory': user.inventory}
 
     res.status(200).json({

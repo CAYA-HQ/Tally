@@ -24,6 +24,5 @@ export const socketAuth = async (socket: Socket, next: (err?: Error) => void) =>
     next();
   } catch (error) {
     next(new Error("Unauthorized"));
-    
   }
 };

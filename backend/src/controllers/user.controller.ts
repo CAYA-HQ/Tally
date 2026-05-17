@@ -40,14 +40,14 @@ export const updateUser = asyncHandler(
     user.set(updates);
 
     await user.save();
-    
-    setNotification(
-      user.id,
-      "updated successfully 🎉",
-      "user"
-    );
-
     const sendUser = payLoad(user as any);
+
+    await setNotification(
+      user.id,
+      "You updated you information successfully 🎉",
+      "user",
+      (sendUser as any),
+    );
 
     return res.status(200).json({
       success: true,
@@ -90,7 +90,7 @@ export const updateAvatar = asyncHandler(
     };
 
     await user.save();
-    setNotification(user.id, 'avatar updated successfully', 'user')
+    await setNotification(user.id, 'avatar updated successfully', 'user', user.name)
 
     return res.status(200).json({
       success: true,
@@ -138,7 +138,7 @@ export const changePassword = asyncHandler(
     user.password = newEncryptedPassword
     await user.save()
     
-    setNotification(user.id, 'password changed successfully ✅', 'user')
+    await setNotification(user.id, 'password changed successfully ✅', 'user', user.name)
 
     
     res.status(200).json({

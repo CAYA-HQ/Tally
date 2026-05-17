@@ -5,6 +5,17 @@ import * as userService from '../service/user.service'
 import { setNotification } from '../service/notification.service'
 import { Inventory } from '../model/inventory.model'
 
+const data = async (d: any)=>{
+  const item = {
+    id: (await d).id,
+    name: (await d).stock,
+    qty: (await d).quantity,
+    boughtPrice: (await d).boughtPrice,
+    sellingPrice: (await d). sellingPrice
+  }
+  return item
+}
+
 // Add inventory
 export const addInventory = asyncHandler(async (req: Request, res: Response) => {
   const { stock, quantity, boughtPrice, sellingPrice } = req.body
@@ -40,9 +51,12 @@ export const addInventory = asyncHandler(async (req: Request, res: Response) => 
     sellingPrice,
   })
 
+  const newStock = await data(inventoryStock)
+
   await setNotification(
     user.id,
-    'new item added to inventory',
+    newStock,
+   `${newStock.name} item added to inventory`,
     'inventory'
   )
 
@@ -67,14 +81,22 @@ export const deleteItem = asyncHandler(async (req: Request, res: Response) => {
     })
   }
 
-  await Inventory.findOneAndDelete({
+  const deletedItem = await Inventory.findOneAndDelete({
     _id: stockId,
     userId,
   })
 
+  if(!deletedItem){
+    return res.status(404).json({
+      success: false,
+      message: 'item not found'
+    })
+  }
+  
   await setNotification(
     userId.toString(),
-    'item removed from inventory',
+    deleteItem,
+    `${deletedItem.stock} removed from inventory`,
     'inventory'
   )
 
@@ -104,15 +126,6 @@ export const updateInventory = asyncHandler(async (req: Request, res: Response) 
     })
   }
 
-  const user = await userService.getUserById(userId as string)
-
-  if (!user) {
-    return res.status(401).json({
-      success: false,
-      message: 'user not found'
-    })
-  }
-
   const result = await Inventory.findOneAndUpdate(
   {
     _id: stockId,
@@ -132,7 +145,8 @@ export const updateInventory = asyncHandler(async (req: Request, res: Response) 
 )
 
   await setNotification(
-    user.id,
+    userId as string,
+    data(result),
     'stock updated successfully',
     'inventory'
   )

@@ -26,6 +26,11 @@ const notificationSchema = new mongoose.Schema(
       default: false,
       index: true,
     },
+    
+    data: {
+      type: mongoose.Schema.Types.Mixed,
+      index: true,
+    }
 
   },
   {

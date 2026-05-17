@@ -17,10 +17,13 @@ export const createReminder = asyncHandler(
       priority,
     });
 
+    const reminderTitle = reminder?.title as string
+
     await setNotification(
         userId,
-        'Reminder set',
-        'Reminder'
+        `${reminderTitle} Reminder set`,
+        'Reminder',
+        reminderTitle
       )
 
     res.status(201).json({
@@ -78,8 +81,9 @@ export const updateReminder = asyncHandler(
 
     await setNotification(
         userId,
-        'Reminder updated',
-        'Reminder'
+        `${reminder.title} Reminder updated`,
+        'Reminder',
+        reminder.title
       )
 
     res.status(200).json({
@@ -105,8 +109,9 @@ export const deleteReminder = asyncHandler(
 
     await setNotification(
         userId,
-        'Reminder deleted',
-        'Reminder'
+        `${reminder.title} Reminder deleted`,
+        'Reminder',
+        reminder.title
       )
 
     res.status(200).json({

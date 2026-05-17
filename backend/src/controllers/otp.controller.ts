@@ -66,27 +66,20 @@ export const verifyOtp = async (req: Request, res: Response) => {
   if (!user.metadata.onboarding) user.metadata.onboarding = [];
 
   await OTP.clearOtp(email);
+  await user.save();
 
   if (user.isVerified) {
-
-    setNotification(user.id, `Welcome back ${user.name} 🎉`, 'login')
-
-    if(!user.phone || user.metadata.onBoarding === 0){
-      setNotification(user.id, 'Complete onboarding to get started', 'login')
-    }
-
+    await setNotification(user.id, `Welcome back ${user.name} 🎉`, 'login', user.id)
   } else {
     user.isVerified = true; 
+    await setNotification(user.id, `Welcome onboard ${user.name} 🎉`, 'signup', user.id)
+  }
 
-    if (!user.metadata.registrationDate || !user.metadata.registrationTime) {
-      user.metadata.registrationDate = getFullDate(now);
-      user.metadata.registrationTime = getTime(now);
-    } 
-    setNotification(user.id, `Welcome onboard ${user.name} 🎉`, 'signup')
+  if(!user.phone || user.metadata.onBoarding === 0){
+      await setNotification(user.id, 'Complete onboarding to get started', 'login', user.id)
+    }
+
     
-  } 
-
-  await user.save();  
 
   const payload = jwt.payLoad(user);
   const accessToken = jwt.genAccessToken(payload);  

@@ -17,10 +17,10 @@ const reminderSchema = new mongoose.Schema(
     },
     description: {
       type: String,
-      maxlength: [
-        1000,
-        "Reminder description must be at most 1000 characters long",
-      ],
+      // maxlength: [
+      //   1000,
+      //   "Reminder description must be at most 1000 characters long",
+      // ],
       trim: true,
     },
     date: {
@@ -37,7 +37,6 @@ const reminderSchema = new mongoose.Schema(
     },
     type: {
       type: String,
-      enum: ["task", "inventory_alert"],
       default: "task",
     },
     priority: {

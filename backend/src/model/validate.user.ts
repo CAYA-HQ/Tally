@@ -8,7 +8,6 @@ export const createUserSchema = z.object({
 
 const envSchema = z.object({
   PORT: z.string(),
-  SOCKET_PORT: z.string(),
   MONGO_URI: z.string(),
   REDIS_URL: z.string(),
   JWT_SECRET: z.string(),

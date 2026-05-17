@@ -89,14 +89,6 @@ const userSchema = new mongoose.Schema(
       category: String,
       currency: String,
       unit: Number,
-      inventoryStock: [{
-        stockId: String,
-        stock: String,
-        quantity: Number,
-        boughtPrice: Number,
-        sellingPrice: Number,
-        date: Date,
-      },]
     },
 
     metadata: {
