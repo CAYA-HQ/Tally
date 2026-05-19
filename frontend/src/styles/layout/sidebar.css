@@ -1,11 +1,10 @@
-@import '../variables.css';
-
+@import "../variables.css";
 
 /* ── Sidebar ───────────────────────────────────────────────── */
 .tally-sidebar {
   width: 260px;
   min-height: 100vh;
-  background-color: #593FEB;
+  background-color: #593feb;
   display: flex;
   flex-direction: column;
   padding: 28px 0 24px;
@@ -16,39 +15,44 @@
   z-index: 50;
   border-radius: 0 48px 48px 0;
   box-shadow: var(--shadow-md);
-  animation: slideIn var(--transition-normal) cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation: slideIn var(--transition-normal) cubic-bezier(0.22, 1, 0.36, 1)
+    both;
 }
 
 @keyframes slideIn {
-  from { transform: translateX(-100%); opacity: 0; }
-  to   { transform: translateX(0);     opacity: 1; }
+  from {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
 }
 
 .tally-page {
   padding: var(--spacing-md);
   flex: 1;
-  overflow-x: hidden;   
-  min-width: 0;         
+  overflow-x: hidden;
+  min-width: 0;
 }
-
-
 
 /* .tally-logo:hover .tally-logo-icon {
   background: rgba(255, 255, 255, 0.25);
 } */
 
- .tally-logo {
-    display: flex;
-    justify-content: center;
-    padding: 0;
-  }
+.tally-logo {
+  display: flex;
+  justify-content: center;
+  padding: 0;
+}
 
-  .tally-img{
-    width: 50px;
-    height: 50px;
-    margin-top: 40px;
-    margin-right: -20px;
-  }
+.tally-img {
+  width: 50px;
+  height: 50px;
+  margin-top: 40px;
+  margin-right: -20px;
+}
 
 .tally-logo-text {
   font-family: var(--font-logo);
@@ -85,28 +89,43 @@
   font-weight: 400;
   letter-spacing: 0.01em;
   position: relative;
-  transition:
-    background var(--transition-fast),
-    color      var(--transition-fast),
-    transform  var(--transition-fast);
+  transition: background var(--transition-fast), color var(--transition-fast),
+    transform var(--transition-fast);
   animation: fadeUp var(--transition-normal) both;
 }
 
-.tally-nav-item:nth-child(1) { animation-delay: 0.05s; }
-.tally-nav-item:nth-child(2) { animation-delay: 0.10s; }
-.tally-nav-item:nth-child(3) { animation-delay: 0.15s; }
-.tally-nav-item:nth-child(4) { animation-delay: 0.20s; }
-.tally-nav-item:nth-child(5) { animation-delay: 0.25s; }
+.tally-nav-item:nth-child(1) {
+  animation-delay: 0.05s;
+}
+.tally-nav-item:nth-child(2) {
+  animation-delay: 0.1s;
+}
+.tally-nav-item:nth-child(3) {
+  animation-delay: 0.15s;
+}
+.tally-nav-item:nth-child(4) {
+  animation-delay: 0.2s;
+}
+.tally-nav-item:nth-child(5) {
+  animation-delay: 0.25s;
+}
 
 @keyframes fadeUp {
-  from { opacity: 0; transform: translateY(10px); }
-  to   { opacity: 1; transform: translateY(0);     }
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .tally-nav-item:hover {
   background: rgba(255, 255, 255, 0.08);
   color: var(--color-text-white);
   transform: translateX(3px);
+  text-decoration: none;
 }
 
 .tally-nav-item.active {
@@ -118,7 +137,7 @@
 
 /* Active left-edge bar */
 .tally-nav-item.active::before {
-  content: '';
+  content: "";
   position: absolute;
   left: -8px;
   top: 50%;
@@ -165,11 +184,9 @@
   flex-direction: column;
   min-height: 100vh;
   background: var(--color-bg-light);
-  overflow-x: hidden;   /* ← add this */
-   min-width: 0;          
+  overflow-x: hidden; /* ← add this */
+  min-width: 0;
 }
-
-
 
 /* ── Responsive collapse ───────────────────────────────────── */
 @media (max-width: 768px) {
@@ -201,6 +218,6 @@
   }
 
   .tally-content {
-   margin-left: 68px;
+    margin-left: 68px;
   }
 }

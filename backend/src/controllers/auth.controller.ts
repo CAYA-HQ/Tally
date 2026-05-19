@@ -8,6 +8,7 @@ import { redis } from "../config/redis";
 import { sendOtp } from "../service/otp.service";
 import { buildMetaData } from "../utils/metaDataArg";
 
+
 //Controller for handling user registration
 export const register = asyncHandler(async (req: Request, res: Response) => {
   const { name, email, password } = req.body;
@@ -45,6 +46,7 @@ export const register = asyncHandler(async (req: Request, res: Response) => {
   });
 });
 
+
 //Controller for handling user login
 export const login = asyncHandler(async (req: Request, res: Response) => {
   const { email, password } = req.body;
@@ -73,7 +75,7 @@ export const login = asyncHandler(async (req: Request, res: Response) => {
     });
   }
 
-  const payload = jwt.payLOad(user);
+  const payload = jwt.payLoad(user);
   const accessToken = jwt.genAccessToken(payload);
   await jwt.generateRefreshToken(res, payload);
 
@@ -85,11 +87,13 @@ export const login = asyncHandler(async (req: Request, res: Response) => {
   });
 });
 
+
 //Controller for handling user logout
 export const logout = async (req: Request, res: Response) => {
   const token = req.cookies.token;
   jwt.logOutUser(res, token);
 };
+
 
 //Controller for handling token refresh
 export const refresh = asyncHandler(async (req: Request, res: Response) => {
@@ -116,7 +120,7 @@ export const refresh = asyncHandler(async (req: Request, res: Response) => {
       message: "Session compromised. Login again.",
     });
   }
-  const payload = jwt.payLOad(decoded);
+  const payload = jwt.payLoad(decoded);
   const newAccessToken = jwt.genAccessToken(payload);
   await jwt.generateRefreshToken(res, payload);
 

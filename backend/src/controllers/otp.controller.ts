@@ -3,6 +3,8 @@ import { getFullDate, getTime } from "../utils/date";
 import { getUserByEmail } from "../service/user.service";
 import * as jwt from "../utils/jwt";
 import * as OTP from '../service/otp.service'
+import { setNotification } from '../service/notification.service'
+
 
 export const verifyOtp = async (req: Request, res: Response) => {
   const { email, otp } = req.body;
@@ -42,7 +44,7 @@ export const verifyOtp = async (req: Request, res: Response) => {
   }
 
 
-  if (!storedOtp || storedOtp !== otp) {
+  if (!storedOtp || String(storedOtp)!== String(otp)) {
     const attempt = await OTP.incrementAttempts(email)
 
     if (attempt >= 5 && !user.isVerified) {
@@ -60,19 +62,18 @@ export const verifyOtp = async (req: Request, res: Response) => {
     });
   }
 
-  user.metadata = user.metadata || {};
-  user.metadata.notification = user.metadata.notification || [];  
+  if (!user.metadata.notification) user.metadata.notification = [];
+  if (!user.metadata.onboarding) user.metadata.onboarding = [];
 
-  await OTP.clearOtp(email);  
+  await OTP.clearOtp(email);
 
   if (user.isVerified) {
 
-    user.metadata.notification.push({
-      message: `Welcome back ${user.name} 🎉`,
-      date: getFullDate(now),
-      time: getTime(now),
-      category: "login",
-    })
+    setNotification(user.id, `Welcome back ${user.name} 🎉`, 'login')
+
+    if(!user.phone || user.metadata.onBoarding === 0){
+      setNotification(user.id, 'Complete onboarding to get started', 'login')
+    }
 
   } else {
     user.isVerified = true; 
@@ -81,19 +82,13 @@ export const verifyOtp = async (req: Request, res: Response) => {
       user.metadata.registrationDate = getFullDate(now);
       user.metadata.registrationTime = getTime(now);
     } 
-
-    user.metadata.notification.push({
-      message: `Welcome onboard ${user.name} 🎉`,
-      date: user.metadata.registrationDate,
-      time: user.metadata.registrationTime,
-      category: "signup",
-    })
+    setNotification(user.id, `Welcome onboard ${user.name} 🎉`, 'signup')
     
   } 
 
   await user.save();  
 
-  const payload = jwt.payLOad(user);
+  const payload = jwt.payLoad(user);
   const accessToken = jwt.genAccessToken(payload);  
 
   await jwt.generateRefreshToken(res, payload); 

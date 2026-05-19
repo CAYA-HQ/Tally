@@ -1,10 +1,9 @@
-import React from 'react';
-import { HiSelector } from "react-icons/hi"; 
+import React from "react";
+import { HiSelector } from "react-icons/hi";
 import "../../styles/layout/table.css";
 
 // Destructure columns and data from props
 const Table = ({ columns, data }) => {
-  
   // Safety check: If no props are passed, default to an empty state
   if (!columns || !data) {
     return <div className="table-container">No data available</div>;
@@ -15,9 +14,13 @@ const Table = ({ columns, data }) => {
       <table className="task-history-table">
         <thead>
           <tr>
-            {columns.map((col, index) => (
-              <th key={index} className={`col-${col.key}`} style={{ width: col.width }}>
-                {col.header} 
+            {columns.map((col) => (
+              <th
+                key={col.key}
+                className={`col-${col.key}`}
+                style={{ width: col.width }}
+              >
+                {col.header}
                 {col.sortable && <HiSelector className="sort-icon" />}
               </th>
             ))}
@@ -25,9 +28,15 @@ const Table = ({ columns, data }) => {
         </thead>
         <tbody>
           {data.map((item, rowIndex) => (
+<<<<<<< HEAD
             <tr key={rowIndex}>
               {columns.map((col, colIndex) => (
                 <td key={colIndex} className={`col-${col.key}`}>
+=======
+            <tr key={item.idNo || rowIndex}>
+              {columns.map((col) => (
+                <td key={col.key} className={`col-${col.key}`}>
+>>>>>>> 2cf96417c536efa4fcaf4290e67f7500cec4ba60
                   {/* If a 'render' function exists in the column definition, 
                     use it to display the data (useful for status colors).
                     Otherwise, just show the raw data.
