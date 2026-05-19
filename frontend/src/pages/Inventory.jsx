@@ -1,87 +1,13 @@
-import { useMemo, useState } from "react";
-import { FiPlus, FiSearch, FiCalendar } from "react-icons/fi";
+import { useEffect, useMemo, useState } from "react";
+import { FiPlus, FiSearch, FiCalendar, FiTrash2 } from "react-icons/fi";
 import Sidebar from "../components/Layout/Sidebar";
 import Navbar from "../components/Layout/Navbar";
 import Table from "../components/Layout/Tables";
 import FilterDropdown from "../components/FilterDropdown";
 import AddProductModal from "../components/AddProductModal";
+import { useInventory } from "../context/InventoryContext";
 import { toast } from "react-toastify";
 import "../styles/pages/inventory.css";
-
-const initialInventoryData = [
-  {
-    sn: 1,
-    idNo: "IVS-1002",
-    productName: "Hi-Drone",
-    category: "Electronics",
-    stocks: 50,
-    status: "Low Stock",
-    costPrice: 320,
-    sellingPrice: 450,
-    unit: "pcs",
-  },
-  {
-    sn: 2,
-    idNo: "BEN-6701",
-    productName: "Body-fit Compact",
-    category: "Wellness",
-    stocks: 95,
-    status: "In Stock",
-    costPrice: 120,
-    sellingPrice: 180,
-    unit: "pcs",
-  },
-  {
-    sn: 3,
-    idNo: "TIN-2090",
-    productName: "Peak Milk",
-    category: "Beverages",
-    stocks: 20,
-    status: "Out of Stock",
-    costPrice: 70,
-    sellingPrice: 110,
-    unit: "carton",
-  },
-  {
-    sn: 4,
-    idNo: "PAN-0076",
-    productName: "Paracetamol",
-    category: "Medication",
-    stocks: 15,
-    status: "Out of Stock",
-    costPrice: 40,
-    sellingPrice: 65,
-    unit: "box",
-  },
-  {
-    sn: 5,
-    idNo: "TIN-3044",
-    productName: "Nivea",
-    category: "Deodorant",
-    stocks: 400,
-    status: "In Stock",
-    costPrice: 150,
-    sellingPrice: 210,
-    unit: "pcs",
-  },
-];
-
-const inventoryColumns = [
-  { key: "sn", header: "S/N", width: "50px" },
-  { key: "idNo", header: "ID No." },
-  { key: "productName", header: "Product name" },
-  { key: "category", header: "Category" },
-  { key: "stocks", header: "Stocks" },
-  {
-    key: "status",
-    header: "Status",
-    sortable: true,
-    render: (value) => {
-      const statusClass = value.toLowerCase().replace(/\s+/g, "-");
-      return <span className={`status-pill ${statusClass}`}>{value}</span>;
-    },
-  },
-];
 
 const statusOptions = [
   { label: "All", value: "All" },
@@ -95,26 +21,29 @@ const sortOptions = [
   { label: "Low to High", value: "asc" },
 ];
 
-const createInventoryStatus = (quantity) => {
-  if (quantity <= 0) {
-    return "Out of Stock";
-  }
-
-  if (quantity <= 20) {
-    return "Low Stock";
-  }
-
-  return "In Stock";
-};
-
 const InventoryPage = () => {
-  const [inventoryItems, setInventoryItems] = useState(initialInventoryData);
+  const { inventoryItems, addProduct, updateProductQuantity, deleteProduct } =
+    useInventory();
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedStatus, setSelectedStatus] = useState("All");
   const [sortDirection, setSortDirection] = useState("desc");
   const [openDropdown, setOpenDropdown] = useState(null);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [modalInstanceKey, setModalInstanceKey] = useState(0);
+  const [quantityDrafts, setQuantityDrafts] = useState({});
+
+  useEffect(() => {
+    setQuantityDrafts((currentDrafts) => {
+      const nextDrafts = {};
+
+      inventoryItems.forEach((item) => {
+        nextDrafts[item.idNo] = currentDrafts[item.idNo] ?? String(item.stocks);
+      });
+
+      return nextDrafts;
+    });
+  }, [inventoryItems]);
 
   const filteredInventory = useMemo(() => {
     const normalizedSearch = searchTerm.trim().toLowerCase();
@@ -192,29 +121,120 @@ const InventoryPage = () => {
     outOfStock: `${(inventoryStats.outOfStock / totalStockBuckets) * 100}%`,
   };
 
-  const handleAddProduct = (product) => {
-    setInventoryItems((currentItems) => {
-      const nextItem = {
-        sn: currentItems.length + 1,
-        idNo: `INV-${String(Date.now()).slice(-6)}`,
-        productName: product.inventoryName,
-        category: product.category,
-        stocks: product.quantity,
-        status: createInventoryStatus(product.quantity),
-        costPrice: product.costPrice,
-        sellingPrice: product.sellingPrice,
-        unit: product.unit || "-",
-      };
-
-      return [...currentItems, nextItem];
-    });
-
-    toast.success("Product added successfully");
-  };
-
   const openAddModal = () => {
     setModalInstanceKey((current) => current + 1);
     setIsAddModalOpen(true);
+  };
+
+  const handleQuantityDraftChange = (idNo, nextValue) => {
+    setQuantityDrafts((currentDrafts) => ({
+      ...currentDrafts,
+      [idNo]: nextValue,
+    }));
+  };
+
+  const handleUpdateQuantity = (item) => {
+    const draftValue = quantityDrafts[item.idNo];
+    const parsedQuantity = Number(draftValue);
+
+    if (
+      draftValue === "" ||
+      Number.isNaN(parsedQuantity) ||
+      !Number.isInteger(parsedQuantity) ||
+      parsedQuantity < 0
+    ) {
+      toast.error("Quantity must be a whole number greater than or equal to 0");
+      return;
+    }
+
+    if (parsedQuantity === item.stocks) {
+      toast.info("Quantity is already up to date");
+      return;
+    }
+
+    updateProductQuantity(item.idNo, parsedQuantity);
+    toast.success(`${item.productName} quantity updated`);
+  };
+
+  const handleDeleteProduct = (item) => {
+    const shouldDelete = window.confirm(
+      `Delete ${item.productName} from inventory?`
+    );
+
+    if (!shouldDelete) {
+      return;
+    }
+
+    deleteProduct(item.idNo);
+    toast.success(`${item.productName} deleted`);
+  };
+
+  const inventoryColumns = useMemo(
+    () => [
+      { key: "sn", header: "S/N", width: "50px" },
+      { key: "idNo", header: "ID No." },
+      { key: "productName", header: "Product name" },
+      { key: "category", header: "Category" },
+      { key: "stocks", header: "Stocks" },
+      {
+        key: "status",
+        header: "Status",
+        sortable: true,
+        render: (value) => {
+          const statusClass = value.toLowerCase().replace(/\s+/g, "-");
+          return <span className={`status-pill ${statusClass}`}>{value}</span>;
+        },
+      },
+      {
+        key: "actions",
+        header: "Actions",
+        width: "260px",
+        render: (_, item) => (
+          <div className="inventory-actions-cell">
+            <input
+              type="number"
+              min="0"
+              step="1"
+              className="inventory-actions-qty"
+              value={quantityDrafts[item.idNo] ?? String(item.stocks)}
+              onChange={(event) =>
+                handleQuantityDraftChange(item.idNo, event.target.value)
+              }
+              aria-label={`Update quantity for ${item.productName}`}
+            />
+            <button
+              type="button"
+              className="inventory-actions-save"
+              onClick={() => handleUpdateQuantity(item)}
+            >
+              Save
+            </button>
+            <button
+              type="button"
+              className="inventory-actions-delete"
+              onClick={() => handleDeleteProduct(item)}
+              aria-label={`Delete ${item.productName}`}
+            >
+              <FiTrash2 />
+            </button>
+          </div>
+        ),
+      },
+    ],
+    [quantityDrafts]
+  );
+
+  const handleAddProduct = async (product) => {
+    setIsSubmitting(true);
+
+    try {
+      await new Promise((resolve) => setTimeout(resolve, 700));
+      addProduct(product);
+      toast.success("Product added successfully");
+      setIsAddModalOpen(false);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -340,6 +360,7 @@ const InventoryPage = () => {
       <AddProductModal
         key={modalInstanceKey}
         isOpen={isAddModalOpen}
+        isSubmitting={isSubmitting}
         onClose={() => setIsAddModalOpen(false)}
         onSubmit={handleAddProduct}
       />

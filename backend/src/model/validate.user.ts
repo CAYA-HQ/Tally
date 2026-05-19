@@ -3,30 +3,27 @@ import { z } from "zod";
 export const createUserSchema = z.object({
   name: z.string().min(2),
   email: z.email("Invalid email address"),
-  password: z.string().min(6, "Password must be at least 6 characters long")
+  password: z.string().min(6, "Password must be at least 6 characters long"),
 });
 
 const envSchema = z.object({
   PORT: z.string(),
-  SOCKET_PORT: z.string(),
+  SOCKET_PORT: z.string().optional(),
   MONGO_URI: z.string(),
   REDIS_URL: z.string(),
   JWT_SECRET: z.string(),
   REFRESH_JWT_SECRET: z.string(),
-  GOOGLE_EMAIL:z.string(),
-  GOOGLE_PASSWORD:z.string(),
-  GOOGLE_CALLBACK_URL:z.string(),
-  GOOGLE_CLIENT_ID:z.string(),
-  GOOGLE_CLIENT_SECRET:z.string(),
-  FRONTEND_URL:z.string(),
-  NODE_ENV: z.enum([
-    'production',
-    'development'
-  ]),
-  CLOUDINARY_API_SECRET: z.string(),
-  CLOUDINARY_API_KEY: z.string(),
-  CLOUDINARY_CLOUD_NAME: z.string(),
+  GOOGLE_EMAIL: z.string(),
+  GOOGLE_PASSWORD: z.string(),
+  GOOGLE_CALLBACK_URL: z.string(),
+  GOOGLE_CLIENT_ID: z.string(),
+  GOOGLE_CLIENT_SECRET: z.string(),
+  FRONTEND_URL: z.string(),
+  NODE_ENV: z.enum(["production", "development"]),
+  CLOUDINARY_API_SECRET: z.string().optional(),
+  CLOUDINARY_API_KEY: z.string().optional(),
+  CLOUDINARY_CLOUD_NAME: z.string().optional(),
 });
 
 export const env = envSchema.parse(process.env);
-export type CreateUserInput = z.infer<typeof createUserSchema>; 
+export type CreateUserInput = z.infer<typeof createUserSchema>;
