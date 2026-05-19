@@ -14,9 +14,9 @@ const Table = ({ columns, data }) => {
       <table className="task-history-table">
         <thead>
           <tr>
-            {columns.map((col, index) => (
+            {columns.map((col) => (
               <th
-                key={index}
+                key={col.key}
                 className={`col-${col.key}`}
                 style={{ width: col.width }}
               >
@@ -28,9 +28,9 @@ const Table = ({ columns, data }) => {
         </thead>
         <tbody>
           {data.map((item, rowIndex) => (
-            <tr key={rowIndex}>
-              {columns.map((col, colIndex) => (
-                <td key={colIndex} className={`col-${col.key}`}>
+            <tr key={item.idNo || rowIndex}>
+              {columns.map((col) => (
+                <td key={col.key} className={`col-${col.key}`}>
                   {/* If a 'render' function exists in the column definition, 
                     use it to display the data (useful for status colors).
                     Otherwise, just show the raw data.

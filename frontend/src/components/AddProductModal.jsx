@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { FiX } from "react-icons/fi";
+import { TailSpin } from "react-loader-spinner";
 import "../styles/components/addProductModal.css";
 
 const initialFormState = {
@@ -11,20 +12,25 @@ const initialFormState = {
   quantity: "",
 };
 
-const AddProductModal = ({ isOpen, onClose, onSubmit }) => {
+const AddProductModal = ({
+  isOpen,
+  isSubmitting = false,
+  onClose,
+  onSubmit,
+}) => {
   const [formData, setFormData] = useState(initialFormState);
   const [errors, setErrors] = useState({});
 
   useEffect(() => {
     const handleEscape = (event) => {
-      if (isOpen && event.key === "Escape") {
+      if (isOpen && !isSubmitting && event.key === "Escape") {
         onClose();
       }
     };
 
     document.addEventListener("keydown", handleEscape);
     return () => document.removeEventListener("keydown", handleEscape);
-  }, [isOpen, onClose]);
+  }, [isOpen, isSubmitting, onClose]);
 
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -69,15 +75,13 @@ const AddProductModal = ({ isOpen, onClose, onSubmit }) => {
       unit: formData.unit.trim(),
       quantity: Number(formData.quantity),
     });
-
-    onClose();
   };
 
   return (
     <div
       className={`inventory-modal-overlay${isOpen ? " is-open" : ""}`}
       onMouseDown={(event) => {
-        if (event.target === event.currentTarget) {
+        if (!isSubmitting && event.target === event.currentTarget) {
           onClose();
         }
       }}
@@ -95,6 +99,7 @@ const AddProductModal = ({ isOpen, onClose, onSubmit }) => {
             type="button"
             className="inventory-modal-close"
             onClick={onClose}
+            disabled={isSubmitting}
           >
             <FiX />
           </button>
@@ -110,6 +115,7 @@ const AddProductModal = ({ isOpen, onClose, onSubmit }) => {
                 value={formData.inventoryName}
                 onChange={handleChange}
                 placeholder="Enter inventory name"
+                disabled={isSubmitting}
               />
               {errors.inventoryName && <small>{errors.inventoryName}</small>}
             </label>
@@ -122,6 +128,7 @@ const AddProductModal = ({ isOpen, onClose, onSubmit }) => {
                 value={formData.category}
                 onChange={handleChange}
                 placeholder="Enter category"
+                disabled={isSubmitting}
               />
               {errors.category && <small>{errors.category}</small>}
             </label>
@@ -136,6 +143,7 @@ const AddProductModal = ({ isOpen, onClose, onSubmit }) => {
                 placeholder="Enter cost price"
                 min="0"
                 step="0.01"
+                disabled={isSubmitting}
               />
               {errors.costPrice && <small>{errors.costPrice}</small>}
             </label>
@@ -150,6 +158,7 @@ const AddProductModal = ({ isOpen, onClose, onSubmit }) => {
                 placeholder="Enter selling price"
                 min="0"
                 step="0.01"
+                disabled={isSubmitting}
               />
               {errors.sellingPrice && <small>{errors.sellingPrice}</small>}
             </label>
@@ -164,6 +173,7 @@ const AddProductModal = ({ isOpen, onClose, onSubmit }) => {
                 value={formData.unit}
                 onChange={handleChange}
                 placeholder="e.g. pcs, carton, box"
+                disabled={isSubmitting}
               />
             </label>
 
@@ -177,6 +187,7 @@ const AddProductModal = ({ isOpen, onClose, onSubmit }) => {
                 placeholder="Enter quantity"
                 min="0"
                 step="1"
+                disabled={isSubmitting}
               />
               {errors.quantity && <small>{errors.quantity}</small>}
             </label>
@@ -187,11 +198,30 @@ const AddProductModal = ({ isOpen, onClose, onSubmit }) => {
               type="button"
               className="inventory-modal-secondary"
               onClick={onClose}
+              disabled={isSubmitting}
             >
               Cancel
             </button>
-            <button type="submit" className="inventory-modal-primary">
-              Save Product
+            <button
+              type="submit"
+              className="inventory-modal-primary"
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? (
+                <span className="inventory-modal-loading">
+                  <TailSpin
+                    height="18"
+                    width="18"
+                    color="#fff"
+                    ariaLabel="saving inventory product"
+                    radius="1"
+                    visible
+                  />
+                  Saving...
+                </span>
+              ) : (
+                "Save Product"
+              )}
             </button>
           </div>
         </form>
