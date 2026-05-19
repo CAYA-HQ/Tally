@@ -1,0 +1,122 @@
+.report-main {
+  flex: 1;
+  background-color: #f8f9fd;
+  margin-left: 260px;
+}
+
+.report-content {
+  padding: 30px;
+}
+
+.report-metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 25px;
+  margin-bottom: 30px;
+  background-color: var(--bg-card);
+}
+
+/* Card specific overrides for Report Page */
+.report-metrics-grid .stat-card {
+  background-color: #D9D9D966 !important;
+  border-radius: 15px !important;
+  box-shadow: none;
+  border: none;
+}
+
+/* Target the '10% Than last Month' text */
+.report-metrics-grid .trend-container span {
+  font-size: 10px; /* The specific size you requested */
+  font-weight: 400;
+  color: #828282; /* Muted gray */
+  letter-spacing: -0.1px;
+}
+
+/* Scale the arrow icon to match the tiny text */
+.report-metrics-grid .trend-container svg {
+  font-size: 11px;
+  margin-right: 2px;
+}
+
+/* Alignment */
+.trend-container {
+  display: flex;
+  align-items: center;
+  margin-top: 4px;
+}
+
+.trend-container.up { color: #27ae60; }
+.trend-container.down { color: #eb5757; }
+
+/* Children styles for your StatCard */
+.trend-indicator {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 10px;
+  font-weight: 500;
+  margin-top: 10px;
+}
+
+.trend-indicator.up { color: #27ae60; }
+.trend-indicator.down { color: #eb5757; }
+
+/* Icon Colors for StatCard */
+.card-icon.purple { color: #6c5ce7; background: rgba(108, 92, 231, 0.1); border-radius: 8px; padding: 4px; }
+.card-icon.orange { color: #f39c12; background: rgba(243, 156, 18, 0.1); border-radius: 8px; padding: 4px; }
+.card-icon.green { color: #27ae60; background: rgba(39, 174, 96, 0.1); border-radius: 8px; padding: 4px; }
+
+/* Bottom Charts Layout */
+.report-charts-row {
+  display: grid;
+  grid-template-columns: 2.2fr 1fr;
+  gap: 25px;
+}
+
+.bar-chart-card, .stock-history-card {
+  background: white;
+  padding: 25px;
+  border-radius: 20px;
+}
+
+.chart-bars {
+  height: 280px;
+  display: flex;
+  justify-content: space-around;
+  align-items: flex-end;
+  border-bottom: 1px solid #f1f2f6;
+  padding-bottom: 15px;
+}
+
+.bar-stack {
+  display: flex;
+  align-items: flex-end;
+  gap: 6px;
+  height: 240px;
+}
+
+.bar { width: 12px; border-radius: 10px; }
+.bar.target { background: #E0E0E0; }
+.bar.sales { background: linear-gradient(to top, #EB5757, #F2994A); }
+.bar.stock { background: linear-gradient(to top, #6C5CE7, #A29BFE); }
+
+.chart-legend {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  margin-top: 25px;
+  font-size: 14px;
+  color: #828282;
+}
+
+.indicator { width: 30px; height: 8px; border-radius: 4px; display: inline-block; margin-right: 8px; }
+.indicator.target { background: #E0E0E0; }
+.indicator.sales { background: #EB5757; }
+.indicator.stock { background: #6C5CE7; }
+
+.stat-summary-box {
+  background: #F8F9FD;
+  padding: 25px;
+  border-radius: 15px;
+  margin-top: 20px;
+}

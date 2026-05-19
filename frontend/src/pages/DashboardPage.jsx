@@ -26,7 +26,7 @@ const DashboardPage = () => {
         <Navbar />
         
 
-          <button className="logout-btn" onClick={handleLogout}>Logout</button>
+          
       </main>
     </div>
   );

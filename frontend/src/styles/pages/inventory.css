@@ -22,17 +22,10 @@
 }
 
 .page-title {
-<<<<<<< HEAD
   font-size: 24px;
   font-weight: 700;
   color: var(--color-text-primary);
   font-family: var(--font-poppins);
-=======
-  font-size: var(--font-size-lg);
-  font-weight: 600;
-  color: var(--color-text-primary);
-  /* font: var(--font-poppins); */
->>>>>>> d569d39c4836f929c4ed475ca460ca9e7e663616
 }
 
 .add-product-btn {

@@ -14,7 +14,7 @@ const NAV_ITEMS = [
   { id: "dashboard", label: "Dashboard", icon: <RiDashboardLine />, path: "/dashboard" },
   { id: "inventory", label: "Inventory", icon: <MdOutlineInventory2 />, path: "/dashboard/inventory" },
   { id: "orders",    label: "Orders",    icon: <BsCart3 />, path: "/dashboard/orders" },
-  { id: "reports",   label: "Reports",   icon: <HiOutlineDocumentReport />, path: "/dashboard/reports" },
+  { id: "reports",   label: "Reports",   icon: <HiOutlineDocumentReport />, path: "/dashboard/report" },
   { id: "record",    label: "Record",    icon: <LuClipboardList />, path: "/dashboard/record" },
 ];
 

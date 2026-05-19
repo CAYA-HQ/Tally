@@ -45,6 +45,16 @@
   align-items: flex-end;
 }
 
+.card-trend {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 500;
+}
+.card-trend.up { color: #27ae60; }
+.card-trend.down { color: #eb5757; }
+
 .chart-placeholder {
   display: flex;
   align-items: flex-end;

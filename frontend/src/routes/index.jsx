@@ -7,6 +7,7 @@ import VerifyPage from "../pages/VerifyPage";
 import DashboardPage from "../pages/DashboardPage";
 import InventoryPage from "../pages/Inventory";
 import TaskHistoryPage from "../pages/Orders";
+import Reportpage from "../pages/Reportpage";
 import Recordpage from "../pages/Recordpage";
 import RoutePaths from "./routePaths";
 
@@ -45,7 +46,6 @@ export const router = createBrowserRouter([
         index: true,
         element: <DashboardPage />,
       },
-<<<<<<< HEAD
       {
         path: "inventory", 
         element: <InventoryPage />,
@@ -54,12 +54,14 @@ export const router = createBrowserRouter([
         path: "orders",
         element: <TaskHistoryPage />,
       },
+      {
+        path: "report",
+        element: <Reportpage />,
+      },
        {
         path: "record",
         element: <Recordpage />,
       },
-=======
->>>>>>> d569d39c4836f929c4ed475ca460ca9e7e663616
     ],
   },
 ]);
