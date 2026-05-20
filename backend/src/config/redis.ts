@@ -1,4 +1,5 @@
 import { createClient } from "redis";
+import IORedis from "ioredis";
 import { env } from "../model/validate.user";
 
 const redisClient = createClient({
@@ -13,5 +14,6 @@ export const connectRedis = async () => {
   }
 }
 
+export const ioRedis = new IORedis(env.REDIS_URL!);
 
 export const redis = redisClient;   

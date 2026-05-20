@@ -5,6 +5,7 @@ import inventoryRouter from './inventoryRouter'
 import reminderRouter from "./reminderRouter";
 import { upload } from "../middleware/uploadImg"; 
 import { userOnBoarding } from "../controllers/onboarding.controller";
+import { getNotification } from "../controllers/notification.controller";
 
 const UserRouter = Router();
 UserRouter.use(verifyUser)
@@ -16,5 +17,6 @@ UserRouter.patch("/avatar",upload.single("avatar"),userController.updateAvatar);
 UserRouter.use('/reminder', reminderRouter)
 UserRouter.use('/inventory', inventoryRouter )
 UserRouter.post('/onboarding', userOnBoarding)
+UserRouter.get('/notification', getNotification)
 
 export default UserRouter

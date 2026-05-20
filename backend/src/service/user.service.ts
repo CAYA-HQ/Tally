@@ -105,6 +105,20 @@ export const addToMetaData = async ( userId: string, data: any | string , cat: s
   );
 };
 
+export const addToMetaDataCat = async ( userId: string, data: any | string , cat: string) => {
+
+  return User.findByIdAndUpdate( userId, {
+      $push: {
+        [`metadata.${cat}`]: data
+      }
+    },
+    {
+      new: true,
+      runValidators: true,
+    }
+  );
+};
+
 export const newMetaData = async ( userId: string, data: any | string , cat: string) => {
 
   return User.findByIdAndUpdate( userId, {

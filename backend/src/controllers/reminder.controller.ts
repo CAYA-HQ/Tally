@@ -1,5 +1,5 @@
 import type { Request, Response, NextFunction } from "express";
-import { Reminder } from "../model/Reminder";
+import { Reminder } from "../model/Reminder.model";
 import { asyncHandler } from "../utils/asyncHandler";
 import { setNotification } from "../service/notification.service";
 
