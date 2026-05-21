@@ -1,13 +1,13 @@
 import type { Request, Response } from "express";
-import { getFullDate, getTime } from "../utils/date";
 import { getUserByEmail } from "../service/user.service";
 import * as jwt from "../utils/jwt";
 import * as OTP from '../service/otp.service'
 import { setNotification } from '../service/notification.service'
+import { createAlert, type reminderData } from "../service/alertWorker";
 
 
 export const verifyOtp = async (req: Request, res: Response) => {
-  const { email, otp } = req.body;
+  const { email, otp, timezone } = req.body;
 
   if (!email || !otp) {
     return res.status(400).json({
@@ -25,7 +25,6 @@ export const verifyOtp = async (req: Request, res: Response) => {
     });
   }
 
-  const now = new Date();
   const storedOtp = await OTP.getOtp(email)
   const locked = await OTP.isLocked(email);
 
@@ -63,28 +62,47 @@ export const verifyOtp = async (req: Request, res: Response) => {
   }
 
   if (!user.metadata.notification) user.metadata.notification = [];
-  if (!user.metadata.onboarding) user.metadata.onboarding = [];
+  if (!user.metadata.onBoarding) user.metadata.onBoarding = [];
 
   await OTP.clearOtp(email);
   await user.save();
 
   if (user.isVerified) {
+    
     await setNotification(user.id, `Welcome back ${user.name} 🎉`, 'login', user.id)
+
   } else {
-    user.isVerified = true; 
+
+    const reminderDate = new Date();
+    reminderDate.setHours( 20, 0, 0, 0); // Set to 8 PM today
+
+    const dailyReinderData: reminderData = {
+      userId: user.id,
+      title: "Daily Reminder",
+      reminder: "Don't forget to log your expenses in Tally today!",
+      alertAt: reminderDate.toISOString(),
+      repeatDays: [],
+      repeatType: "daily",
+      timezone: timezone,
+    }
+
+    const dailyReminder = await createAlert(dailyReinderData)
+    user.isVerified = true;
+    await user.save();
     await setNotification(user.id, `Welcome onboard ${user.name} 🎉`, 'signup', user.id)
   }
 
-  if(!user.phone || user.metadata.onBoarding === 0){
-      await setNotification(user.id, 'Complete onboarding to get started', 'login', user.id)
-    }
-
-    
+  if(!user.phone || user.metadata.onBoarding.length === 0){
+    await setNotification(user.id, 'Complete onboarding to get started', 'login', user.id)
+  }
 
   const payload = jwt.payLoad(user);
   const accessToken = jwt.genAccessToken(payload);  
 
-  await jwt.generateRefreshToken(res, payload); 
+  await jwt.generateRefreshToken(res, payload);
+
+
+
 
   return res.status(200).json({
     success: true,

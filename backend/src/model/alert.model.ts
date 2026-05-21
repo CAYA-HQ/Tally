@@ -52,8 +52,25 @@ const AlertSchema = new mongoose.Schema(
    jobId: {
     type: String,
     trim: true
-   }
+   },
 
+   repeatType: {
+    type: String,
+    enum: ["none", "daily", "weekly", "monthly"],
+    default: "none",
+   },
+   
+   repeatDays: [{
+    type: Number,
+    min: 0,
+    max: 6,
+   }],
+
+   timezone: {
+    type: String,
+    trim: true,
+    required: true,
+   },
   },
   {
     timestamps: true,

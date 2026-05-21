@@ -91,6 +91,11 @@ const userSchema = new mongoose.Schema(
       unit: Number,
     },
 
+    timezone: {
+      type: String,
+      trim: true,
+    },
+
     metadata: {
       type: mongoose.Schema.Types.Mixed,
       default: {},
