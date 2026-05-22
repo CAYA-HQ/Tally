@@ -9,10 +9,12 @@ import passport from "passport";
 import helmet from "helmet";
 import { env } from "./model/validate.user";
 import { ioServer } from "./config/socket";
+import morgan from "morgan";
 
 const app = express();
 
 app.use(helmet());
+app.use(morgan("dev"));
 
 await connectRedis();
 app.use(express.json());
@@ -21,7 +23,7 @@ app.use(
   cors({
     origin: env.FRONTEND_URL,
     credentials: true,
-  })
+  }),
 );
 
 app.use(passport.initialize());
