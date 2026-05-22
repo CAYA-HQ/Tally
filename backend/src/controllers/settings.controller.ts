@@ -4,23 +4,6 @@ import * as settingsService from "../service/settings.service";
 import * as userService from "../service/user.service";
 import { redis } from "../config/redis";
 
-export const getProfile = asyncHandler(async (req: Request, res: Response) => {
-  const userId = (req.user as any)?.id;
-  const profile = await settingsService.getProfile(userId);
-
-  if (!profile) {
-    return res.status(404).json({
-      success: false,
-      message: "Profile not found",
-    });
-  }
-
-  return res.status(200).json({
-    success: true,
-    profile,
-  });
-});
-
 export const getNotifications = asyncHandler(
   async (req: Request, res: Response) => {
     const userId = (req.user as any)?.id;

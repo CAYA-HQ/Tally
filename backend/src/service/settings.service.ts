@@ -1,20 +1,6 @@
 import { User } from "../model/User";
 import { addToMetaData } from "./user.service";
 
-export const getProfile = async (userId: string) => {
-  const user = await User.findById(userId);
-  if (!user) return null;
-  return user.metadata;
-};
-
-export const updateProfile = async (
-  userId: string,
-  updateData: Record<string, any>,
-) => {
-  const user = await User.findByIdAndUpdate(userId, updateData, { new: true });
-  return user;
-};
-
 export const getNotifications = async (userId: string) => {
   const user = await User.findById(userId);
   if (!user) return null;
