@@ -1,15 +1,11 @@
-import type { Request, Response } from "express";
+import type { Request, Response, RequestHandler } from "express";
 import { asyncHandler } from "../utils/asyncHandler";
 import { Notification } from "../model/notification.model";
 import * as notificationService from "../service/notification.service";
-import type { Types } from "mongoose";
 
-interface UserPayload {
-  id: Types.ObjectId | string;
-  [key: string]: any;
-}
 
-export const getNotification = asyncHandler(
+// Get notifications with pagination
+export const getNotification: RequestHandler = asyncHandler(
   async (req: Request, res: Response) => {
     const { cursor } = req.query;
     const userId = (req.user! as any).id;
@@ -35,6 +31,8 @@ export const getNotification = asyncHandler(
   },
 );
 
+
+// Mark a notification as read
 export const markAsRead = asyncHandler(async (req: Request, res: Response) => {
   const { id } = req.params;
   const userId = (req.user! as any).id;
@@ -42,6 +40,8 @@ export const markAsRead = asyncHandler(async (req: Request, res: Response) => {
   res.status(200).json({ message: "Notification marked as read" });
 });
 
+
+// Mark all notifications as read
 export const markAllAsRead = asyncHandler(
   async (req: Request, res: Response) => {
     const userId = (req.user! as any).id;
@@ -50,6 +50,8 @@ export const markAllAsRead = asyncHandler(
   },
 );
 
+
+// Delete a notification
 export const deleteNotification = asyncHandler(
   async (req: Request, res: Response) => {
     const { id } = req.params;
@@ -59,6 +61,8 @@ export const deleteNotification = asyncHandler(
   },
 );
 
+
+// Delete all notifications
 export const deleteAllNotification = asyncHandler(
   async (req: Request, res: Response) => {
     const userId = (req.user! as any).id;
