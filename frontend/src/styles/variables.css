@@ -2,6 +2,14 @@
 
 :root {
   /* COLORS */
+
+  /* BTNS */
+  --btn-primary: #7c4dff;
+  --btn-primary-hover: #5b6cff;
+  --btn-text-color: #1a1a1a;
+  --btn-delete: #eb5757;
+  --btn-delete-hover: #d92d20;
+
   --color-primary: #2f6fed;
   --color-primary-hover: #3a7de8;
   --color-dark-bg: #0a1929;
@@ -21,8 +29,8 @@
   --color-bg-hover: #f5f5f5;
 
   /* FONTS */
-  --font-primary:
-    -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", sans-serif;
+  --font-primary: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto",
+    sans-serif;
   --font-logo: "Lancelot", serif;
   --font-poppins: "Poppins", sans-serif;
   --font-inter: "Inter", sans-serif;

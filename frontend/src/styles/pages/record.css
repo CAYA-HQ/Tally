@@ -71,9 +71,23 @@
   display: flex;
   gap: 8px;
   align-items: center;
-  
 }
 
+.record-schedule-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.schedule-primary {
+  color: var(--color-text-primary);
+  font-weight: 600;
+}
+
+.schedule-secondary {
+  color: #8b95a7;
+  font-size: 12px;
+}
 
 .task-history-table th {
   font-size: var(--size-base);
@@ -81,10 +95,10 @@
   font-family: var(--font-poppins);
 }
 
-.date-text{
-    color: #979797;
-    font-weight: 500;
-    font-family: var(--font-poppins);
+.date-text {
+  color: #979797;
+  font-weight: 500;
+  font-family: var(--font-poppins);
 }
 
 .time-text {
@@ -97,24 +111,120 @@
   justify-content: space-between;
   align-items: center;
   width: 100%;
+  gap: 12px;
 }
 
-.status-pill.upcoming {
-  color: #f2994a; /* Orange for upcoming */
-  display: flex;
+.status-pill {
+  display: inline-flex;
   align-items: center;
   gap: 6px;
   font-weight: 600;
+  border-radius: 999px;
+  padding: 7px 12px;
+}
+
+.status-pill.upcoming,
+.status-pill.scheduled {
+  color: #f2994a;
+  background: rgba(242, 153, 74, 0.12);
+}
+
+.status-pill.active {
+  color: #2f80ed;
+  background: rgba(47, 128, 237, 0.12);
+}
+
+.status-pill.upcoming {
+  display: inline-flex;
+  display: flex;
+  align-items: center;
+  gap: 6px;
 }
 
 .status-pill.upcoming .status-icon {
   font-size: 16px;
-  color: #1C274C;
+  color: #1c274c;
+}
+
+.status-pill.active .status-icon,
+.status-pill.scheduled .status-icon {
+  font-size: 16px;
+  color: currentColor;
 }
 
 .more-options-icon {
   color: #828282;
   cursor: pointer;
+}
+
+.more-options-wrap {
+  position: relative;
+  display: inline-flex;
+}
+
+.more-options-icon-btn {
+  border: none;
+  background: transparent;
+  padding: 4px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.more-options-icon-btn:hover {
+  background: rgba(130, 130, 130, 0.1);
+}
+
+.reminder-row-menu {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  min-width: 180px;
+  background: #ffffff;
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  border-radius: 16px;
+  box-shadow: 0 18px 40px rgba(15, 23, 42, 0.14);
+  padding: 6px;
+  z-index: 5;
+  max-height: 220px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.reminder-row-menu-up {
+  top: auto;
+  bottom: calc(100% + 10px);
+}
+
+.reminder-row-menu-down {
+  top: calc(100% + 10px);
+  bottom: auto;
+}
+
+.reminder-row-menu-item {
+  width: 100%;
+  border: none;
+  background: transparent;
+  padding: 11px 12px;
+  border-radius: 12px;
+  text-align: left;
+  font-weight: 500;
+  color: #1f2937;
+  cursor: pointer;
+}
+
+.reminder-row-menu-item:hover {
+  background: #f3f5fb;
+}
+
+.reminder-row-menu-item.danger {
+  color: #d92d20;
+}
+
+.reminder-row-menu-item.danger:hover {
+  background: rgba(217, 45, 32, 0.08);
 }
 
 .page-title {

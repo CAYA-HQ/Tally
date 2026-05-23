@@ -8,6 +8,7 @@ import DashboardPage from "../pages/DashboardPage";
 import InventoryPage from "../pages/Inventory";
 import TaskHistoryPage from "../pages/Orders";
 import Recordpage from "../pages/Recordpage";
+import NotFoundPage from "../pages/NotFoundPage";
 import RoutePaths from "./routePaths";
 
 export const router = createBrowserRouter([
@@ -58,5 +59,9 @@ export const router = createBrowserRouter([
         element: <Recordpage />,
       },
     ],
+  },
+  {
+    path: "*",
+    element: <NotFoundPage />,
   },
 ]);
