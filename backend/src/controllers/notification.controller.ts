@@ -2,6 +2,12 @@ import type { Request, Response } from "express";
 import { asyncHandler } from "../utils/asyncHandler";
 import { Notification } from "../model/notification.model";
 import * as notificationService from "../service/notification.service";
+import type { Types } from "mongoose";
+
+interface UserPayload {
+  id: Types.ObjectId | string;
+  [key: string]: any;
+}
 
 export const getNotification = asyncHandler(
   async (req: Request, res: Response) => {

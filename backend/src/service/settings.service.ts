@@ -11,7 +11,24 @@ export const updateNotifications = async (
   userId: string,
   updateData: Record<string, any>,
 ) => {
-  // updateData = {email_notifications: {news_and_updates: true, tips_and_tutorials: true, reminders: true}, push_notifications: {comments: true, reminders: true}}
+  // {
+  //   email_notifications:
+  //    {
+  //       news_and_updates: bool,
+  //       tips_and_tutorials: bool,
+  //       reminders: bool
+  //     },
+  //   push_notifications:
+  //     {
+  //        comments: bool,
+  //        reminders: bool
+  //     }
+  //   dailyReminder: bool
+  //   toWhatsapp: bool
+  //   toEmail: bool
+  //   stockStatus: bool
+  // }
+
   return await addToMetaData(userId, updateData, "notification");
 };
 
