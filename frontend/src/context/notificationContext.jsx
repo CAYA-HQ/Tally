@@ -1,24 +1,48 @@
 import { useEffect } from "react";
-import { socket } from "../utils/ioSocket";
+import { socket, connectSocket } from "../utils/ioSocket";
 import { useNotificationStore } from "../utils/zustand";
+import api from "../utils/api";
+import { getAccessToken } from "../utils/session/token";
 
 export const NotificationProvider = ({children}) => {
 
   const addNotification = useNotificationStore(
     (state) => state.addNotification
   );
+  const setNotifications = useNotificationStore(
+    (state) => state.setNotifications
+  );
 
+  // Fetch notifications on mount only if the user is authenticated
   useEffect(() => {
+    const token = getAccessToken();
+    if (!token) {
+      return;
+    }
 
+    connectSocket(token);
+
+    const fetchNotifications = async () => {
+      try {
+        const response = await api.get("/user/notification");
+        const notifications = response.data.notification || [];
+        setNotifications(notifications);
+      } catch (error) {
+        console.error("Failed to fetch notifications:", error);
+      }
+    };
+    fetchNotifications();
+  }, [setNotifications]);
+
+  // Listen for real-time notifications via socket
+  useEffect(() => {
     socket.on("notification:new", (data) => {
       addNotification(data);
     });
-    console.log(useNotificationStore.getState().notifications)
 
     return () => {
       socket.off("notification:new");
     };
-
   }, [addNotification]);
 
   return <>{children}</>;

@@ -10,6 +10,7 @@ import TaskHistoryPage from "../pages/Orders";
 import Recordpage from "../pages/Recordpage";
 import NotFoundPage from "../pages/NotFoundPage";
 import RoutePaths from "./routePaths";
+import NotificationPage from "../pages/Notification";
 
 export const router = createBrowserRouter([
   {
@@ -58,10 +59,15 @@ export const router = createBrowserRouter([
         path: "record",
         element: <Recordpage />,
       },
+    
     ],
   },
   {
-    path: "*",
+    path: "/notifications",
+    element: <NotificationPage />,
+  },  
+
+  { path: "*",
     element: <NotFoundPage />,
   },
 ]);

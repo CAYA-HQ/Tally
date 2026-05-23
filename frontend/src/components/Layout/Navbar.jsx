@@ -4,6 +4,7 @@ import { IoChatbubbleOutline } from 'react-icons/io5';
 import "../../styles/layout/navbar.css";
 import Ellipse2 from "../../assets/Ellipse2.png";
 import { useNotificationStore } from '../../utils/zustand';
+import { NavLink } from 'react-router-dom';
 
 const Navbar = () => {
   const { notifications } = useNotificationStore();
@@ -21,13 +22,13 @@ const Navbar = () => {
 
       <div className="nav-actions">
         <div className="icon-group">
-          <button className="icon-btn">
+          <NavLink to="/notifications" className="icon-btn">
             <FiBell />
             {hasNotification && <span className="notification-dot"></span>}
-          </button>
-          <button className="icon-btn">
+          </NavLink>
+          <NavLink className="icon-btn">
             <IoChatbubbleOutline />
-          </button>
+          </NavLink>
         </div>
 
         <div className="user-profile">

@@ -1,4 +1,5 @@
 import Cookies from "js-cookie";
+import { connectSocket, disconnectSocket } from "../ioSocket";
 
 let accessToken = Cookies.get("accessToken") || null;
 
@@ -12,8 +13,10 @@ export const setAccessToken = (token, user) => {
 
   if (value) {
     Cookies.set("accessToken", value, { expires: 1 });
+    connectSocket(value);
   } else {
     Cookies.remove("accessToken");
+    disconnectSocket();
   }
 
   // Optionally persist user info for later use
@@ -21,7 +24,7 @@ export const setAccessToken = (token, user) => {
     try {
       localStorage.setItem("user", JSON.stringify(user));
     } catch {
-      // ignore storage errors
+      console.warn("Failed to save user info to localStorage");
     }
   }
 };

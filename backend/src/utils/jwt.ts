@@ -34,7 +34,7 @@ export const verifyAccessToken = (token: string) => {
 export const cookieOption = {
   httpOnly: true,
   secure: env.NODE_ENV === "production",
-  sameSite: "lax" as const,
+  sameSite: "none" as const,
 }
 
 export const generateRefreshToken = async (res: Response, payload: object): Promise<string> => {

@@ -3,23 +3,8 @@ import { asyncHandler } from "../utils/asyncHandler";
 import * as settingsService from "../service/settings.service";
 import * as userService from "../service/user.service";
 import { redis } from "../config/redis";
+import { updateNotificationSchema } from "../model/validate.settings";
 
-export const getProfile = asyncHandler(async (req: Request, res: Response) => {
-  const userId = (req.user as any)?.id;
-  const profile = await settingsService.getProfile(userId);
-
-  if (!profile) {
-    return res.status(404).json({
-      success: false,
-      message: "Profile not found",
-    });
-  }
-
-  return res.status(200).json({
-    success: true,
-    profile,
-  });
-});
 
 export const getNotifications = asyncHandler(
   async (req: Request, res: Response) => {
@@ -40,43 +25,30 @@ export const getNotifications = asyncHandler(
   },
 );
 
-export const updateProfile = asyncHandler(
+export const updateNotifications = asyncHandler(
   async (req: Request, res: Response) => {
     const userId = (req.user as any)?.id;
-    const updateData = req.body; // { email, name, phone, }
+    const updateData = updateNotificationSchema.parse(req.body);
 
-    const user = await settingsService.updateProfile(userId, updateData);
+    const updatedUser = await settingsService.updateNotifications(
+      userId,
+      updateData,
+    );
+
+    if (!updatedUser) {
+      return res.status(400).json({
+        success: false,
+        message: "Failed to update notifications",
+      });
+    }
 
     return res.status(200).json({
       success: true,
-      message: "Profile updated successfully",
-      user,
+      message: "Notifications updated successfully",
+      notification: updatedUser.metadata.notifications,
     });
   },
 );
-
-export const updateNotifications = async (req: Request, res: Response) => {
-  const userId = (req.user as any)?.id;
-  const updateData = req.body; // { email_notifications: { news_and_updates: true, tips_and_tutorials: true, reminders: true }, push_notifications: { comments: true, reminders: true } }
-
-  const updatedUser = await settingsService.updateNotifications(
-    userId,
-    updateData,
-  );
-
-  if (!updatedUser) {
-    return res.status(400).json({
-      success: false,
-      message: "Failed to update notifications",
-    });
-  }
-
-  return res.status(200).json({
-    success: true,
-    message: "Notifications updated successfully",
-    notification: updatedUser.metadata.notifications,
-  });
-};
 
 // export const updateSecurity = async (req: Request, res: Response) => {
 //   const userId = (req.user as any)?.id;

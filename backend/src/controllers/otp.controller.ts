@@ -107,7 +107,7 @@ export const verifyOtp = asyncHandler(async (req: Request, res: Response) => {
   if (user.isVerified) {
     await user.save();
     
-    await setNotification(user.id, `Welcome back ${user.name} 🎉`, 'login', user.id)
+    await setNotification(user.id, `Welcome back ${user.name} 🎉`, 'login', '')
     console.log(`User logged in: ${user.email}`)
 
   } else {
@@ -134,11 +134,11 @@ export const verifyOtp = asyncHandler(async (req: Request, res: Response) => {
       console.error("Failed to create daily reminder:", error);
     }
 
-    await setNotification(user.id, `Welcome onboard ${user.name} 🎉`, 'signup', user.id)
+    await setNotification(user.id, `Welcome onboard ${user.name} 🎉`, 'signup', '')
   }
 
   if(!user.phone || user.metadata.onBoarding.length === 0){
-    await setNotification(user.id, 'Complete onboarding to get started', 'login', user.id)
+    await setNotification(user.id, 'Complete onboarding to get started', 'login', '')
   }
 
   const payload = jwt.payLoad(user);

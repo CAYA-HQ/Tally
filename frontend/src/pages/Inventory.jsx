@@ -9,6 +9,7 @@ import { useInventory } from "../context/InventoryContext";
 import { toast } from "react-toastify";
 import api from "../utils/api";
 import "../styles/pages/inventory.css";
+import { useNotificationStore } from "../utils/zustand";
 
 const statusOptions = [
   { label: "All", value: "All" },
@@ -237,6 +238,7 @@ const InventoryPage = () => {
         unit: product.unit,
         quantity: product.quantity,
       });
+      console.log(useNotificationStore.getState().notifications)
 
       addProduct(product);
       toast.success("Product added successfully");
