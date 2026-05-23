@@ -1,0 +1,116 @@
+.not-found-page {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  position: relative;
+  overflow: hidden;
+}
+
+.not-found-backdrop {
+  position: absolute;
+  border-radius: 999px;
+  filter: blur(24px);
+  opacity: 0.75;
+  pointer-events: none;
+}
+
+.not-found-card {
+  width: min(720px, 100%);
+  position: relative;
+  z-index: 1;
+  padding: 36px;
+  text-align: center;
+}
+
+.not-found-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  border-radius: 999px;
+  background: #eff4ff;
+  color: #2f6fed;
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 18px;
+}
+
+.not-found-code {
+  font-size: clamp(64px, 12vw, 116px);
+  line-height: 1;
+  font-weight: 800;
+  letter-spacing: -0.06em;
+  color: #0f172a;
+  margin: 0;
+}
+
+.not-found-title {
+  margin: 14px auto 0;
+  max-width: 560px;
+  font-size: clamp(28px, 4vw, 46px);
+  line-height: 1.1;
+  color: var(--color-text-primary);
+}
+
+.not-found-copy {
+  margin: 14px auto 0;
+  max-width: 520px;
+  color: var(--color-text-secondary);
+  font-size: 16px;
+  line-height: 1.7;
+}
+
+.not-found-actions {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 28px;
+  flex-wrap: wrap;
+}
+
+.not-found-primary,
+.not-found-secondary {
+  border: none;
+  border-radius: 14px;
+  padding: 12px 18px;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 600;
+  transition: transform var(--transition-normal),
+    opacity var(--transition-normal);
+}
+
+.not-found-primary:hover,
+.not-found-secondary:hover {
+  transform: translateY(-1px);
+}
+
+.not-found-primary {
+  background: var(--btn-primary);
+  color: #ffffff;
+}
+
+.not-found-secondary {
+  background: #ffffff;
+  color: var(--btn-text-color);
+  border: 1px solid rgba(15, 23, 42, 0.1);
+}
+
+@media (max-width: 640px) {
+  .not-found-card {
+    padding: 24px;
+    border-radius: 22px;
+  }
+
+  .not-found-actions {
+    flex-direction: column;
+  }
+
+  .not-found-primary,
+  .not-found-secondary {
+    width: 100%;
+    justify-content: center;
+  }
+}
