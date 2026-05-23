@@ -5,6 +5,7 @@ import * as userService from "../service/user.service";
 import { redis } from "../config/redis";
 import { updateNotificationSchema } from "../model/validate.settings";
 
+
 export const getNotifications = asyncHandler(
   async (req: Request, res: Response) => {
     const userId = (req.user as any)?.id;

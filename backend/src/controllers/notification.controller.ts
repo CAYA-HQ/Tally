@@ -38,7 +38,7 @@ export const getNotification = asyncHandler(
 export const markAsRead = asyncHandler(async (req: Request, res: Response) => {
   const { id } = req.params;
   const userId = (req.user! as any).id;
-  await notificationService.markAsRead(userId, id);
+  await notificationService.markAsRead(userId, id as string);
   res.status(200).json({ message: "Notification marked as read" });
 });
 
@@ -54,7 +54,7 @@ export const deleteNotification = asyncHandler(
   async (req: Request, res: Response) => {
     const { id } = req.params;
     const userId = (req.user! as any).id;
-    await notificationService.deleteNotification(userId, id);
+    await notificationService.deleteNotification(userId, id as string);
     res.status(200).json({ message: "Notification deleted" });
   },
 );
