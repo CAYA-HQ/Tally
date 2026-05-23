@@ -2,7 +2,7 @@
     const fetchNotifications = async (setNotification, setCursor, setHasMore, setLoading)=>{
         setLoading(true)
 
-        const res = await api.get('/notification', {
+        const res = await api.get('/user/notification', {
             params: {
                 cursor
             }

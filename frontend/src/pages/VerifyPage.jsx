@@ -26,6 +26,7 @@ export default function VerifyPage() {
     icon: null,
     show: false,
   });
+  const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
   const inputRefs = useRef([]);
 
   // Redirect if no email provided
@@ -107,7 +108,7 @@ export default function VerifyPage() {
 
     setStatus("loading");
     try {
-      const { data } = await api.post("/auth/otp", { email, otp: code });
+      const { data } = await api.post("/auth/otp", { email, otp: code, timezone });
       setAccessToken(data.accessToken, data.user);
       setStatus("success");
       showToast("Verified successfully!", <BsCheckCircleFill size={14} />);
@@ -124,7 +125,7 @@ export default function VerifyPage() {
     if (cooldown > 0) return;
 
     try {
-      await api.post("/auth/register", { email }); // or a dedicated resend endpoint
+      await api.post("/auth/otp/resend", { email });
       setDigits(Array(CODE_LENGTH).fill(""));
       setStatus("idle");
       setCooldown(30);

@@ -1,6 +1,6 @@
 import type { Request, Response, RequestHandler } from "express";
 import { Alert } from "../model/alert.model";
-import { createAlert, removeAlertJob } from "../service/alertWorker";
+import { createAlert, removeAlertJob } from "../service/alertWorker.service";
 import { asyncHandler } from "../utils/asyncHandler";
 import { setNotification } from "../service/notification.service";
 
@@ -123,14 +123,14 @@ export const editAlert = asyncHandler(async (req: Request, res: Response) => {
 
    await setNotification(
     userId,
-    "alert",
-    `Alert "${updatedAlert.title}" has been updated successfully!`,
     {
       alertId,
       title: updatedAlert.title,
       reminder: updatedAlert.reminder,
       alertAt: updatedAlert.alertAt,
-    } as any
+    },
+    `Alert "${updatedAlert.title}" has been updated successfully!`,
+    "alert"
   )
 
   const newAlert = await createAlert({

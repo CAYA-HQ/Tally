@@ -1,10 +1,13 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { FiSearch, FiBell } from 'react-icons/fi';
 import { IoChatbubbleOutline } from 'react-icons/io5';
 import "../../styles/layout/navbar.css";
 import Ellipse2 from "../../assets/Ellipse2.png";
+import { useNotificationStore } from '../../utils/zustand';
 
 const Navbar = () => {
+  const { notifications } = useNotificationStore();
+  const hasNotification = notifications.length > 0;[notifications]
   return (
     <nav className="top-navbar">
       <div className="search-container">
@@ -20,7 +23,7 @@ const Navbar = () => {
         <div className="icon-group">
           <button className="icon-btn">
             <FiBell />
-            <span className="notification-dot"></span>
+            {hasNotification && <span className="notification-dot"></span>}
           </button>
           <button className="icon-btn">
             <IoChatbubbleOutline />

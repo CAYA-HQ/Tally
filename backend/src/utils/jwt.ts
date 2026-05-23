@@ -23,6 +23,14 @@ export const verifyRefreshToken = (token: string) => {
   }
 }
 
+export const verifyAccessToken = (token: string) => {
+  try {
+    return jwt.verify(token, JWT_SECRET as string) as any;
+  } catch (err) {
+    return null;
+  }
+}
+
 export const cookieOption = {
   httpOnly: true,
   secure: env.NODE_ENV === "production",
@@ -38,16 +46,28 @@ export const generateRefreshToken = async (res: Response, payload: object): Prom
   return token;
 }
 
-type payLoadType = { id: string; name: string; email: string, metadata: { session: Array<any>, registrationDate: string; registrationTime: string } };
+type payLoadType = {
+  id: string;
+  name: string;
+  email: string;
+  session?: Array<any>;
+  registrationDate?: string;
+  registrationTime?: string;
+  metadata?: {
+    session?: Array<any>;
+    registrationDate?: string;
+    registrationTime?: string;
+  };
+};
 
 export const payLoad = (d: payLoadType) => {
   return {
     id: d.id,
     name: d.name,
     email: d.email,
-    session: d.metadata.session,
-    registrationDate: d.metadata.registrationDate,
-    registrationTime: d.metadata.registrationTime
+    session: d.metadata?.session ?? d.session ?? [],
+    registrationDate: d.metadata?.registrationDate ?? d.registrationDate,
+    registrationTime: d.metadata?.registrationTime ?? d.registrationTime
   }
 }
 

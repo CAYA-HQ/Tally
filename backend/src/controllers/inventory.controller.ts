@@ -11,22 +11,25 @@ const data = async (d: any)=>{
     name: (await d).stock,
     qty: (await d).quantity,
     boughtPrice: (await d).boughtPrice,
-    sellingPrice: (await d). sellingPrice
+    sellingPrice: (await d). sellingPrice,
+    category: (await d).category,
+    unit: (await d).unit
   }
   return item
 }
 
 // Add inventory
 export const addInventory = asyncHandler(async (req: Request, res: Response) => {
-  const { stock, quantity, boughtPrice, sellingPrice } = req.body
-  const userId = (req as any).params.id
+  const { stock, quantity, boughtPrice, sellingPrice, category, unit } = req.body
+  const userId = (req as any).user.id
 
   if (
     !userId ||
     !stock ||
     quantity == null ||
     boughtPrice == null ||
-    sellingPrice == null
+    sellingPrice == null ||
+    !category
   ) {
     return res.status(400).json({
       success: false,
@@ -49,9 +52,12 @@ export const addInventory = asyncHandler(async (req: Request, res: Response) => 
     quantity,
     boughtPrice,
     sellingPrice,
+    category,
+    unit
   })
 
   const newStock = await data(inventoryStock)
+  console.log(`item added to inventory: ${newStock.name}`)
 
   await setNotification(
     user.id,
@@ -71,8 +77,8 @@ export const addInventory = asyncHandler(async (req: Request, res: Response) => 
 
 // Delete item
 export const deleteItem = asyncHandler(async (req: Request, res: Response) => {
-  const { stockId } = req.body
-  const userId = req.params.id
+  const { stockId } = req.params
+  const userId = (req as any).user.id
 
   if (!stockId || !userId) {
     return res.status(400).json({
@@ -109,8 +115,9 @@ export const deleteItem = asyncHandler(async (req: Request, res: Response) => {
 
 // Update inventory
 export const updateInventory = asyncHandler(async (req: Request, res: Response) => {
-  const { stock, quantity, boughtPrice, sellingPrice, stockId } = req.body
-  const userId = req.params.id
+  const { stock, quantity, boughtPrice, sellingPrice } = req.body
+  const userId = (req as any).user.id
+  const stockId = req.params.id
 
   if (!req.body) {
     return res.status(400).json({

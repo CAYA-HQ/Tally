@@ -27,15 +27,15 @@ export const router = createBrowserRouter([
         path: RoutePaths.REGISTER,
         element: <RegisterPage />,
       },
-      {
-        path: RoutePaths.VERIFY,
-        element: <VerifyPage />,
-      },
       // {
       //   path: "inventory",
       //   element: <InventoryPage />,
       // },
     ],
+  },
+  {
+    path: RoutePaths.VERIFY,
+    element: <VerifyPage />,
   },
   {
     path: RoutePaths.DASHBOARD,

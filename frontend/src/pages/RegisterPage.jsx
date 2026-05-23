@@ -34,6 +34,7 @@ function RegisterPage() {
       toast.error(
         err.response?.data?.message || "Something went wrong. Please try again."
       );
+      console.log(err); 
     } finally {
       setIsLoading(false);
     }

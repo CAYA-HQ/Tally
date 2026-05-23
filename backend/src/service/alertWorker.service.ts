@@ -6,7 +6,7 @@ import { Alert } from "../model/alert.model";
 import { io } from "../config/socket";
 import { env } from "../model/validate.user";
 import { emailQueue } from "../config/bullQ";
-import { setNotification } from "../service/notification.service";
+import { setNotification } from "./notification.service";
 import { User } from "../model/User";
 
 const workerConnection = new IORedis({
@@ -236,17 +236,18 @@ export const createAlert = async(body: reminderData ) => {
     repeatDays,
   });
   const alertId = alert._id
+  
   // Set notification for the user
   await setNotification(
     userId,
-    "alert",
-    `Alert "${title}" has been set for ${new Date(alertAt).toLocaleString()}`,
     {
       alertId,
       title,
       reminder,
       alertAt,
-    } as any
+    },
+    `Alert "${title}" has been set for ${new Date(alertAt).toLocaleString()}`,
+    "alert"
   )
 
   if (alert.repeatType !== "none") {
@@ -298,14 +299,14 @@ export const createAlert = async(body: reminderData ) => {
   // set notification for alert creation
   await setNotification(
     userId,
-    "alert",
-    `Alert "${title}" has been emailed successfully!`,
     {
       alertId,
       title,
       reminder,
       alertAt,
-    } as any
+    },
+    `Alert "${title}" has been emailed successfully!`,
+    "alert"
   )
   return {
     alert,

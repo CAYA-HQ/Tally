@@ -28,6 +28,14 @@ const inventoryStockSchema = new mongoose.Schema(
     sellingPrice: {
       type: Number,
     },
+    category: {
+      type: String,
+      trim: true,
+    },
+    unit: {
+      type: String,
+      trim: true,
+    },
 
   },
   {

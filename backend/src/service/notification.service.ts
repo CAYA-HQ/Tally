@@ -13,6 +13,6 @@ export const setNotification = async ( userId: string, data: any, message: strin
     "notification:new",
     notification
   );
-
+  console.log(`Notification emitted to user ${userId}: ${message}`);
   return notification;
 };

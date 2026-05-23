@@ -3,10 +3,47 @@ import { getUserByEmail } from "../service/user.service";
 import * as jwt from "../utils/jwt";
 import * as OTP from '../service/otp.service'
 import { setNotification } from '../service/notification.service'
-import { createAlert, type reminderData } from "../service/alertWorker";
+import { createAlert, type reminderData } from "../service/alertWorker.service";
+import { asyncHandler } from "../utils/asyncHandler";
 
 
-export const verifyOtp = async (req: Request, res: Response) => {
+export const resendOtp = asyncHandler(async (req: Request, res: Response) => {
+  const { email } = req.body;
+
+  if (!email) {
+    return res.status(400).json({
+      success: false,
+      message: "Email is required",
+    });
+  }
+
+  const user = await getUserByEmail(email);
+
+  if (!user) {
+    return res.status(404).json({
+      success: false,
+      message: "User not found",
+    });
+  }
+
+  if (user.isVerified) {
+    return res.status(409).json({
+      success: false,
+      message: "Account already verified",
+    });
+  }
+
+  await OTP.sendOtp(email, user);
+
+  return res.status(200).json({
+    success: true,
+    message: "OTP sent to email.",
+    email,
+  });
+});
+
+
+export const verifyOtp = asyncHandler(async (req: Request, res: Response) => {
   const { email, otp, timezone } = req.body;
 
   if (!email || !otp) {
@@ -61,22 +98,26 @@ export const verifyOtp = async (req: Request, res: Response) => {
     });
   }
 
+  user.metadata = user.metadata || {};
   if (!user.metadata.notification) user.metadata.notification = [];
   if (!user.metadata.onBoarding) user.metadata.onBoarding = [];
 
   await OTP.clearOtp(email);
-  await user.save();
 
   if (user.isVerified) {
+    await user.save();
     
     await setNotification(user.id, `Welcome back ${user.name} 🎉`, 'login', user.id)
+    console.log(`User logged in: ${user.email}`)
 
   } else {
-
+    user.isVerified = true;
+    await user.save();
+    console.log(`User verified: ${user.email}`)
     const reminderDate = new Date();
     reminderDate.setHours( 20, 0, 0, 0); // Set to 8 PM today
 
-    const dailyReinderData: reminderData = {
+    const dailyReminderData: reminderData = {
       userId: user.id,
       title: "Daily Reminder",
       reminder: "Don't forget to log your expenses in Tally today!",
@@ -86,9 +127,13 @@ export const verifyOtp = async (req: Request, res: Response) => {
       timezone: timezone,
     }
 
-    const dailyReminder = await createAlert(dailyReinderData)
-    user.isVerified = true;
-    await user.save();
+    try {
+      await createAlert(dailyReminderData)
+      console.log(`Daily reminder set for user: ${user.email}`)
+    } catch (error) {
+      console.error("Failed to create daily reminder:", error);
+    }
+
     await setNotification(user.id, `Welcome onboard ${user.name} 🎉`, 'signup', user.id)
   }
 
@@ -110,4 +155,4 @@ export const verifyOtp = async (req: Request, res: Response) => {
     user: payload,
     accessToken,
   });
-}
+});

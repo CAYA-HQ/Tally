@@ -18,6 +18,27 @@ export const register = asyncHandler(async (req: Request, res: Response) => {
       message: "Name, email, and password are required",
     });
   }
+
+  const existingUser = await userService.getUserByEmail(email);
+
+  if (existingUser) {
+    if (!existingUser.isVerified) {
+      console.log(`Unverified user attempted to register again: ${email}`)
+      await sendOtp(email, existingUser);
+
+      return res.status(200).json({
+        success: true,
+        message: "Account already exists. OTP sent to email.",
+        email,
+      });
+    }
+
+    return res.status(409).json({
+      success: false,
+      message: "Email already exists",
+    });
+  }
+
   const { ip, parser } = buildMetaData(req);
   const metaData = await userService.metaDataInfo(ip, parser);
 
@@ -27,7 +48,8 @@ export const register = asyncHandler(async (req: Request, res: Response) => {
     name,
     email,
     password: hashedPassword,
-  });
+  }); 
+  console.log(`new unverified User created: ${newUser.email}`)
   newUser.isVerified = false;
 
   newUser.metadata.session = newUser.metadata.session || [];
@@ -36,10 +58,11 @@ export const register = asyncHandler(async (req: Request, res: Response) => {
   newUser.metadata.fingerprint = newUser.metadata.fingerprint || [];
   newUser.metadata.fingerprint.push(metaData.fingerprint);
   await newUser.save();
+ 
 
   await sendOtp(email, newUser);
 
-  return res.status(200).json({
+  return res.status(201).json({
     success: true,
     message: "Account created. OTP sent to email.",
     email: email,

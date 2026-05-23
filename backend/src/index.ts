@@ -9,6 +9,7 @@ import passport from "passport";
 import helmet from "helmet";
 import { env } from "./model/validate.user";
 import { ioServer } from "./config/socket";
+import { startSock } from "./config/whatsappBaileys";
 
 const app = express();
 
@@ -44,11 +45,12 @@ const server = ioServer(app);
 
 const PORT = process.env.PORT || 3000;
 
-connectDB().then(() => {
-  server.listen(PORT, () => {
+connectDB().then(async () => {
+  server.listen(PORT, async () => {
     console.log(`Server running on port ${PORT}`);
     console.log("MONGO:", env.MONGO_URI);
     console.log("REDIS:", env.REDIS_URL);
     console.log("FRONTEND_URL:", env.FRONTEND_URL);
+    await startSock();
   });
 });

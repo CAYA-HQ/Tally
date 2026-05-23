@@ -11,32 +11,3 @@ socket.auth = {
 }
 
 socket.connect()
-
-export const liveNotification = (setNotifications) => {
-
-  const handleNotification = (notification) => {
-
-    setNotifications((prev) => {
-
-      const exists = prev.some(
-        (item) => item._id === notification._id
-      );
-
-      if (exists) return prev;
-
-      return [notification, ...prev];
-    });
-  };
-
-  socket.on(
-    "notification:new",
-    handleNotification
-  );
-
-  return () => {
-    socket.off(
-      "notification:new",
-      handleNotification
-    );
-  };
-};

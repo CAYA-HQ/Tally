@@ -3,7 +3,7 @@ import { addInventory, deleteItem, updateInventory } from "../controllers/invent
 
 const inventoryRouter = Router()
 
-inventoryRouter.post('/:id', addInventory)
+inventoryRouter.post('/', addInventory)
 inventoryRouter.delete('/:id', deleteItem)
 inventoryRouter.put('/:id', updateInventory)
 
