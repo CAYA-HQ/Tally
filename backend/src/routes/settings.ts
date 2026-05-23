@@ -1,8 +1,6 @@
 import { Router } from "express";
 import {
-  getProfile,
   getNotifications,
-  updateProfile,
   updateNotifications,
   deleteSessions,
   get2FA,
@@ -13,9 +11,7 @@ import {
 
 const settings = Router();
 
-settings.get("/profile", getProfile);
 settings.get("/notifications", getNotifications);
-settings.put("/profile", updateProfile);
 settings.put("/notifications", updateNotifications);
 // settings.put("/security", updateSecurity);
 // settings.put("/billing", updateBillings);
