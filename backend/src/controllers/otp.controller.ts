@@ -1,13 +1,50 @@
 import type { Request, Response } from "express";
-import { getFullDate, getTime } from "../utils/date";
 import { getUserByEmail } from "../service/user.service";
 import * as jwt from "../utils/jwt";
 import * as OTP from '../service/otp.service'
 import { setNotification } from '../service/notification.service'
+import { createAlert, type reminderData } from "../service/alertWorker.service";
+import { asyncHandler } from "../utils/asyncHandler";
 
 
-export const verifyOtp = async (req: Request, res: Response) => {
-  const { email, otp } = req.body;
+export const resendOtp = asyncHandler(async (req: Request, res: Response) => {
+  const { email } = req.body;
+
+  if (!email) {
+    return res.status(400).json({
+      success: false,
+      message: "Email is required",
+    });
+  }
+
+  const user = await getUserByEmail(email);
+
+  if (!user) {
+    return res.status(404).json({
+      success: false,
+      message: "User not found",
+    });
+  }
+
+  if (user.isVerified) {
+    return res.status(409).json({
+      success: false,
+      message: "Account already verified",
+    });
+  }
+
+  await OTP.sendOtp(email, user);
+
+  return res.status(200).json({
+    success: true,
+    message: "OTP sent to email.",
+    email,
+  });
+});
+
+
+export const verifyOtp = asyncHandler(async (req: Request, res: Response) => {
+  const { email, otp, timezone } = req.body;
 
   if (!email || !otp) {
     return res.status(400).json({
@@ -25,7 +62,6 @@ export const verifyOtp = async (req: Request, res: Response) => {
     });
   }
 
-  const now = new Date();
   const storedOtp = await OTP.getOtp(email)
   const locked = await OTP.isLocked(email);
 
@@ -62,36 +98,56 @@ export const verifyOtp = async (req: Request, res: Response) => {
     });
   }
 
+  user.metadata = user.metadata || {};
   if (!user.metadata.notification) user.metadata.notification = [];
-  if (!user.metadata.onboarding) user.metadata.onboarding = [];
+  if (!user.metadata.onBoarding) user.metadata.onBoarding = [];
 
   await OTP.clearOtp(email);
 
   if (user.isVerified) {
-
-    setNotification(user.id, `Welcome back ${user.name} 🎉`, 'login')
-
-    if(!user.phone || user.metadata.onBoarding === 0){
-      setNotification(user.id, 'Complete onboarding to get started', 'login')
-    }
+    await user.save();
+    
+    await setNotification(user.id, `Welcome back ${user.name} 🎉`, 'login', user.id)
+    console.log(`User logged in: ${user.email}`)
 
   } else {
-    user.isVerified = true; 
+    user.isVerified = true;
+    await user.save();
+    console.log(`User verified: ${user.email}`)
+    const reminderDate = new Date();
+    reminderDate.setHours( 20, 0, 0, 0); // Set to 8 PM today
 
-    if (!user.metadata.registrationDate || !user.metadata.registrationTime) {
-      user.metadata.registrationDate = getFullDate(now);
-      user.metadata.registrationTime = getTime(now);
-    } 
-    setNotification(user.id, `Welcome onboard ${user.name} 🎉`, 'signup')
-    
-  } 
+    const dailyReminderData: reminderData = {
+      userId: user.id,
+      title: "Daily Reminder",
+      reminder: "Don't forget to log your expenses in Tally today!",
+      alertAt: reminderDate.toISOString(),
+      repeatDays: [],
+      repeatType: "daily",
+      timezone: timezone,
+    }
 
-  await user.save();  
+    try {
+      await createAlert(dailyReminderData)
+      console.log(`Daily reminder set for user: ${user.email}`)
+    } catch (error) {
+      console.error("Failed to create daily reminder:", error);
+    }
+
+    await setNotification(user.id, `Welcome onboard ${user.name} 🎉`, 'signup', user.id)
+  }
+
+  if(!user.phone || user.metadata.onBoarding.length === 0){
+    await setNotification(user.id, 'Complete onboarding to get started', 'login', user.id)
+  }
 
   const payload = jwt.payLoad(user);
   const accessToken = jwt.genAccessToken(payload);  
 
-  await jwt.generateRefreshToken(res, payload); 
+  await jwt.generateRefreshToken(res, payload);
+
+
+
 
   return res.status(200).json({
     success: true,
@@ -99,4 +155,4 @@ export const verifyOtp = async (req: Request, res: Response) => {
     user: payload,
     accessToken,
   });
-}
+});

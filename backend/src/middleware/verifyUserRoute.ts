@@ -17,16 +17,16 @@ export const verifyUser = (
 
   const token = authHeader.split(" ")[1] as string;
 
-  try {
-    const decoded = jwt.verifyRefreshToken(token);
+  const decoded = jwt.verifyAccessToken(token);
 
-    (req as any).user = decoded;
-
-    next();
-  } catch {
-    return res.status(403).json({
+  if (!decoded) {
+    return res.status(401).json({
       success: false,
       message: "Invalid token",
     });
   }
+
+  (req as any).user = decoded;
+
+  next();
 };

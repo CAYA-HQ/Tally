@@ -1,6 +1,7 @@
 // Import necessary dependencies
+import axios from "axios";
 import { getAccessToken, setAccessToken } from "./token";
-import api from "./api";
+import api from "../api";
 
 // Add a request interceptor to include the access token in the Authorization header of every request
 api.interceptors.request.use((config) => {
@@ -52,7 +53,7 @@ api.interceptors.response.use((res) => res, async (err) => {
 
       try {
         const res = await axios.post(
-          `${import.meta.env.VITE_BASE_URL}/api/refresh`,
+          `${api.defaults.baseURL}/auth/refresh`,
           {},
           { withCredentials: true }
         );
@@ -68,6 +69,7 @@ api.interceptors.response.use((res) => res, async (err) => {
         return api(originalRequest);
       } catch (refreshError) {
         processQueue(refreshError, null);
+        setAccessToken(null);
 
         window.location.href = "/login";
 

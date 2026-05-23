@@ -3,8 +3,8 @@ import { addInventory, deleteItem, updateInventory } from "../controllers/invent
 
 const inventoryRouter = Router()
 
-inventoryRouter.post('/:id', addInventory)
-inventoryRouter.put('/:id', deleteItem)
-inventoryRouter.post('/:id', updateInventory)
+inventoryRouter.post('/', addInventory)
+inventoryRouter.delete('/:id', deleteItem)
+inventoryRouter.put('/:id', updateInventory)
 
 export default inventoryRouter

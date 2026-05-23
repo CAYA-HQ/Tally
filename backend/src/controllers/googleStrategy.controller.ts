@@ -8,6 +8,7 @@ import { env } from "../model/validate.user";
 import { getFullDate, getTime } from "../utils/date";
 import { buildMetaData } from "../utils/metaDataArg";
 import { asyncHandler } from "../utils/asyncHandler";
+import { setNotification } from "../service/notification.service";
 
 passport.use(
   new GoogleStrategy(
@@ -42,6 +43,7 @@ passport.use(
               registrationTime: getTime(new Date()),
             },
           } as any);
+          await setNotification(user.id, `Welcome onboard ${user.name} 🎉`, 'signup', user.id)
         }
 
         else {
@@ -50,7 +52,8 @@ passport.use(
             authProvider: "google",
             isVerified: true,
           } as any);
-          user = await userService.getUserByEmail(email);
+
+          await setNotification(user.id, `Welcome onboard ${user.name} 🎉`, 'signup', user.id)
         }
 
         return done(null, user as any);

@@ -7,6 +7,7 @@ import FilterDropdown from "../components/FilterDropdown";
 import AddProductModal from "../components/AddProductModal";
 import { useInventory } from "../context/InventoryContext";
 import { toast } from "react-toastify";
+import api from "../utils/api";
 import "../styles/pages/inventory.css";
 
 const statusOptions = [
@@ -228,10 +229,20 @@ const InventoryPage = () => {
     setIsSubmitting(true);
 
     try {
-      await new Promise((resolve) => setTimeout(resolve, 700));
+      await api.post("/user/inventory", {
+        stock: product.inventoryName,
+        category: product.category,
+        boughtPrice: product.costPrice,
+        sellingPrice: product.sellingPrice,
+        unit: product.unit,
+        quantity: product.quantity,
+      });
+
       addProduct(product);
       toast.success("Product added successfully");
       setIsAddModalOpen(false);
+    } catch (err) {
+      toast.error(err.response?.data?.message || "Failed to add product");
     } finally {
       setIsSubmitting(false);
     }
