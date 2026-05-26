@@ -145,6 +145,7 @@ const ReminderModal = ({ isOpen, onClose, onSubmit, initialReminder }) => {
   const handleChange = (event) => {
     const { name, value } = event.target;
     setFormData((current) => ({ ...current, [name]: value }));
+    console.log({ name, value });
   };
 
   const handleSubmit = (event) => {

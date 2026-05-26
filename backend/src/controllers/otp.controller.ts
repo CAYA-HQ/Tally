@@ -3,7 +3,7 @@ import { getUserByEmail } from "../service/user.service";
 import * as jwt from "../utils/jwt";
 import * as OTP from '../service/otp.service'
 import { setNotification } from '../service/notification.service'
-import { createAlert, type reminderData } from "../service/alertWorker.service";
+import { createAlert, type noteData } from "../service/alertWorker.service";
 import { asyncHandler } from "../utils/asyncHandler";
 
 
@@ -79,7 +79,6 @@ export const verifyOtp = asyncHandler(async (req: Request, res: Response) => {
     });
   }
 
-
   if (!storedOtp || String(storedOtp)!== String(otp)) {
     const attempt = await OTP.incrementAttempts(email)
 
@@ -99,8 +98,8 @@ export const verifyOtp = asyncHandler(async (req: Request, res: Response) => {
   }
 
   user.metadata = user.metadata || {};
-  if (!user.metadata.notification) user.metadata.notification = [];
   if (!user.metadata.onBoarding) user.metadata.onBoarding = [];
+  if (!user.metadata.timezone) user.metadata.timezone = timezone || 'UTC';
 
   await OTP.clearOtp(email);
 
@@ -115,24 +114,25 @@ export const verifyOtp = asyncHandler(async (req: Request, res: Response) => {
     await user.save();
     console.log(`User verified: ${user.email}`)
     const reminderDate = new Date();
-    reminderDate.setHours( 20, 0, 0, 0); // Set to 8 PM today
+    reminderDate.setDate(reminderDate.getDate() + 1);
+    reminderDate.setHours( 20, 0, 0, 0);
 
-    const dailyReminderData: reminderData = {
-      userId: user.id,
-      title: "Daily Reminder",
-      reminder: "Don't forget to log your expenses in Tally today!",
-      alertAt: reminderDate.toISOString(),
-      repeatDays: [],
-      repeatType: "daily",
-      timezone: timezone,
-    }
+    // const dailyReminderData: noteData = {
+    //   userId: user.id,
+    //   title: "Daily Reminder",
+    //   note: "Don't forget to log your expenses in Tally today!",
+    //   alertAt: reminderDate.toISOString(),
+    //   frequency: "daily",
+    //   timezone: timezone,
+    //   repeatType: "daily",
+    // }
 
-    try {
-      await createAlert(dailyReminderData)
-      console.log(`Daily reminder set for user: ${user.email}`)
-    } catch (error) {
-      console.error("Failed to create daily reminder:", error);
-    }
+    // try {
+    //   await createAlert(dailyReminderData)
+    //   console.log(`Daily reminder set for user: ${user.email}`)
+    // } catch (error) {
+    //   console.error("Failed to create daily reminder:", error);
+    // }
 
     await setNotification(user.id, `Welcome onboard ${user.name} 🎉`, 'signup', '')
   }
