@@ -6,7 +6,13 @@
 .record-main {
   flex: 1;
   background-color: #f8f9fd;
-  margin-left: 260px;
+  margin-left: 0;
+}
+
+@media (min-width: 1024px) {
+  .record-main {
+    margin-left: 260px;
+  }
 }
 
 .record-content {

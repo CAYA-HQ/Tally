@@ -6,7 +6,13 @@
 
 .inventory-main {
   flex: 1;
-  margin-left: 260px;
+  margin-left: 0;
+}
+
+@media (min-width: 1024px) {
+  .inventory-main {
+    margin-left: 260px;
+  }
 }
 
 .inventory-content {

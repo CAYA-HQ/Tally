@@ -26,6 +26,7 @@ const sortOptions = [
 const InventoryPage = () => {
   const { inventoryItems, addProduct, updateProductQuantity, deleteProduct } =
     useInventory();
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedStatus, setSelectedStatus] = useState("All");
   const [sortDirection, setSortDirection] = useState("desc");
@@ -252,10 +253,10 @@ const InventoryPage = () => {
 
   return (
     <div className="inventory-wrapper">
-      <Sidebar />
+      <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
 
       <main className="inventory-main">
-        <Navbar />
+        <Navbar onMenuToggle={() => setSidebarOpen((prev) => !prev)} />
 
         <div className="inventory-content">
           <div className="inventory-header">

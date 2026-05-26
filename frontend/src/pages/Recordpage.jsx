@@ -54,6 +54,7 @@ const initialReminders = [
 ];
 
 const RecordPage = () => {
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const [reminders, setReminders] = useState(initialReminders);
   const [isReminderModalOpen, setIsReminderModalOpen] = useState(false);
   const [dropdownState, setDropdownState] = useState({
@@ -225,9 +226,9 @@ const RecordPage = () => {
 
   return (
     <div className="record-wrapper">
-      <Sidebar />
+      <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
       <main className="record-main">
-        <Navbar />
+        <Navbar onMenuToggle={() => setSidebarOpen((prev) => !prev)} />
         <div className="record-content">
           <div className="record-header">
             <h1 className="page-title">Reminders</h1>

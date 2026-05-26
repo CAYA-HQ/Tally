@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { FiSearch, FiCalendar, FiFilter } from 'react-icons/fi';
 import { LuChevronDown } from "react-icons/lu";
 import Sidebar from "../components/Layout/Sidebar";
@@ -7,6 +7,7 @@ import Table from "../components/Layout/Tables";
 import "../styles/pages/orders.css";
 
 const TaskHistoryPage = () => {
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const taskColumns = [
     { key: 'sn', header: 'S/N', sortable: true, width: '80px' },
@@ -44,9 +45,9 @@ const TaskHistoryPage = () => {
 
   return (
     <div className="page-wrapper">
-      <Sidebar />
+      <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
       <main className="main-content">
-        <Navbar />
+        <Navbar onMenuToggle={() => setSidebarOpen((prev) => !prev)} />
         <div className="content-container">
           <h1 className="page-title">Task history</h1>
 
