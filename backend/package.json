@@ -4,8 +4,8 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "dev": "bun run --watch ./src/index.ts",
-    "start": "bun run ./src/index.ts"
+    "dev": "tsx watch ./src/index.ts",
+    "start": "node ./src/index.ts"
   },
   "dependencies": {
     "@hapi/boom": "^10.0.1",
@@ -46,6 +46,7 @@
     "redis": "^5.12.1",
     "resend": "^6.12.3",
     "socket.io": "^4.8.3",
+    "ts-node": "^10.9.2",
     "ua-parser-js": "^2.0.9",
     "zod": "^4.4.1"
   },
@@ -54,7 +55,10 @@
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.6",
     "@types/morgan": "^1.9.10",
-    "@types/socket.io": "^3.0.2"
+    "@types/node": "^25.9.1",
+    "@types/socket.io": "^3.0.2",
+    "tsx": "^4.22.3",
+    "typescript": "^6.0.3"
   },
   "peerDependencies": {
     "typescript": "^6.0.3"
