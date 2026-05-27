@@ -15,6 +15,8 @@
   justify-content: space-between;
   align-items: center;
   margin-bottom: 20px;
+  flex-wrap: wrap;
+  gap: 12px;
 }
 
 .tabs {
@@ -70,4 +72,43 @@
   cursor: pointer;
   font-size: 14px;
   font-family: var(--font-poppins);
+}
+
+@media (max-width: 1023px) {
+  .content-container {
+    padding: var(--spacing-sm);
+  }
+
+  .page-title {
+    margin-bottom: 20px;
+  }
+
+  .filter-bar {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .tabs {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 4px;
+    gap: 20px;
+  }
+
+  .tab {
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .action-btn {
+    margin-left: 0;
+  }
 }

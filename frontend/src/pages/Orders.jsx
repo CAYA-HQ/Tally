@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { FiSearch, FiCalendar, FiFilter } from 'react-icons/fi';
+import React, { useState } from "react";
+import { FiSearch, FiCalendar, FiFilter } from "react-icons/fi";
 import { LuChevronDown } from "react-icons/lu";
 import Sidebar from "../components/Layout/Sidebar";
 import Navbar from "../components/Layout/Navbar";
@@ -10,37 +10,63 @@ const TaskHistoryPage = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const taskColumns = [
-    { key: 'sn', header: 'S/N', sortable: true, width: '80px' },
-    { key: 'description', header: 'Description', width: '450px' },
-    { 
-      key: 'date', 
-      header: 'Date', 
+    { key: "sn", header: "S/N", sortable: true, width: "87px" },
+    { key: "description", header: "Description", width: "450px" },
+    {
+      key: "date",
+      header: "Date",
       sortable: true,
       render: (value, row) => (
         <div className="date-column">
           <span className="date-text">{value}</span>
           <span className="time-text">{row.time}</span>
         </div>
-      )
+      ),
     },
-    { 
-      key: 'status', 
-      header: 'Status', 
+    {
+      key: "status",
+      header: "Status",
       sortable: false,
       render: (value) => (
-        <span className={`status-text ${value.toLowerCase()}`}>
-          {value}
-        </span>
-      )
+        <span className={`status-text ${value.toLowerCase()}`}>{value}</span>
+      ),
     },
   ];
 
   // Data mapped from the image
   const taskData = [
-    { sn: 1, description: "Neque porro quisquam est qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit...", date: "12/06/2026", time: "10:30am", status: "Completed" },
-    { sn: 2, description: "Neque porro quisquam est qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit...", date: "12/06/2026", time: "10:30am", status: "Completed" },
-    { sn: 3, description: "Neque porro quisquam est qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit...", date: "12/06/2026", time: "10:30am", status: "Completed" },
-    { sn: 4, description: "Neque porro quisquam est qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit...", date: "12/06/2026", time: "10:30am", status: "Deleted" },
+    {
+      sn: 1,
+      description:
+        "Neque porro quisquam est qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit...",
+      date: "12/06/2026",
+      time: "10:30am",
+      status: "Completed",
+    },
+    {
+      sn: 2,
+      description:
+        "Neque porro quisquam est qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit...",
+      date: "12/06/2026",
+      time: "10:30am",
+      status: "Completed",
+    },
+    {
+      sn: 3,
+      description:
+        "Neque porro quisquam est qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit...",
+      date: "12/06/2026",
+      time: "10:30am",
+      status: "Completed",
+    },
+    {
+      sn: 4,
+      description:
+        "Neque porro quisquam est qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit...",
+      date: "12/06/2026",
+      time: "10:30am",
+      status: "Deleted",
+    },
   ];
 
   return (
@@ -61,9 +87,15 @@ const TaskHistoryPage = () => {
             </div>
 
             <div className="actions">
-              <button className="action-btn"><FiCalendar /> Jan-Sept 2026 <LuChevronDown /></button>
-              <button className="action-btn">Status <LuChevronDown /></button>
-              <button className="action-btn"><FiFilter /> Filter</button>
+              <button className="action-btn">
+                <FiCalendar /> Jan-Sept 2026 <LuChevronDown />
+              </button>
+              <button className="action-btn">
+                Status <LuChevronDown />
+              </button>
+              <button className="action-btn">
+                <FiFilter /> Filter
+              </button>
             </div>
           </div>
 
