@@ -13,6 +13,7 @@
     "@types/bcrypt": "^6.0.0",
     "@types/cookie-parser": "^1.4.10",
     "@types/jsonwebtoken": "^9.0.10",
+    "@types/luxon": "^3.7.1",
     "@types/multer": "^2.1.0",
     "@types/nodemailer": "^8.0.0",
     "@types/passport-google-oauth20": "^2.0.17",

@@ -1,127 +1,38 @@
-import { Worker } from "bullmq";
 import type { JobsOptions, RepeatOptions } from "bullmq";
-import IORedis from "ioredis";
-import { transporter } from "./otp.service";
-import { Alert } from "../model/alert.model";
-import { io } from "../config/socket";
-import { env } from "../model/validate.user";
+import { Alert } from "../model/Reminders.model";
 import { emailQueue } from "../config/bullQ";
 import { setNotification } from "./notification.service";
-import { User } from "../model/User";
-
-const workerConnection = new IORedis({
-  host: 'redis',
-  port: Number(env.REDIS_PORT),
-  maxRetriesPerRequest: null,
-});
-
-
-new Worker(
-  "emailQueue",
-
-  async (job) => {
-    const {
-      alertId,
-      email,
-      title,
-      reminder,
-      userId,
-    } = job.data;
-
-    try {
-      // 1. Send email
-      await transporter.sendMail({
-        from: env.GOOGLE_EMAIL,
-        to: email,
-        subject: title,
-        html: `
-          <h2>${title}</h2>
-          <p>${reminder}</p>
-        `,
-      });
-
-      // 2. Update DB
-      await Alert.findByIdAndUpdate(
-        alertId,
-        {
-          status: "sent",
-        }
-      );
-
-      // 3. Notify frontend in real-time
-      io.to(userId).emit("alert:sent", {
-        alertId,
-        title,
-        reminder,
-        sentAt: new Date(),
-      });
-
-      console.log("Email sent:", email);
-    } catch (err) {
-      console.log("Email failed:", err);
-
-      await Alert.findByIdAndUpdate(
-        alertId,
-        {
-          status: "failed",
-        }
-      );
-
-      io.to(userId).emit("alert:failed", {
-        alertId,
-        title,
-        reminder,
-      });
-
-      throw err;
-    }
-  },
-
-  {
-    connection: workerConnection,
-  }
-);
 
 
 // Helper function to build job options based on repeat type
 
-type RepeatType = 
-  | "none"
-  | "daily"
-  | "weekly"
-  | "monthly";
+const daysOfTheWeek = ['Sunday' ,'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
 
-interface ReminderOptions {
+type RepeatType =   "none" | "daily" | "weekly" | "monthly";
+
+interface noteOptions {
   alertAt: string;
   repeatType: RepeatType;
-  repeatDays?: number[];
+  repeatDays?: string;
+  monthDay?: number;
   timezone?: string;
+  startDate?: Date;
 }
+
 type ProcessedJobConfig = JobsOptions & {
   repeat?: RepeatOptions;
 };
 
-export const jobOptions = (data: ReminderOptions): ProcessedJobConfig => {
-
+// Service function to create alert job
+export const jobOptions = (data: noteOptions): ProcessedJobConfig => {
+  if(!data) return {};
   const date = new Date(data.alertAt);
 
-  if (isNaN(date.getTime())) {
-    throw new Error("Invalid date");
-  }
-
-  if (
-    data.repeatType === "none" &&
-    date.getTime() < Date.now()
-  ) {
-    throw new Error(
-    "Alert time is in the past"
-  )}
+  if (isNaN(date.getTime())) throw new Error("Invalid date");
 
   const minutes = date.getMinutes();
   const hours = date.getHours();
-  const dayOfMonth = date.getDate();
-
-  const timezone = data.timezone || "Africa/Lagos";
+  const timezone = data.timezone || "U";
 
   // Base options for all jobs
   const baseOptions: JobsOptions = {
@@ -138,10 +49,33 @@ export const jobOptions = (data: ReminderOptions): ProcessedJobConfig => {
 
   // ONE TIME
   if (data.repeatType === "none") {
+    const now = Date.now();
+    const target = Date.parse(data.alertAt);
+    
+    if (isNaN(target)) {
+      throw new Error("Invalid alertAt format");
+    }
+    console.log({
+  currentUTC: new Date().toISOString(),
+  alertUTC: data.alertAt,
+});
+    const delay = target - now;
+
+    if (delay <= 0) {
+      console.log({
+        'date': date,
+        'alertAt': data.alertAt,
+        'now': now,
+        'target': target.toLocaleString(),
+        delay
+      })
+      throw new Error("alertAt must be in the future");
+    }
+    
     return {
       ...baseOptions,
 
-      delay: date.getTime() - Date.now(),
+      delay: delay,
     };
   }
 
@@ -153,33 +87,40 @@ export const jobOptions = (data: ReminderOptions): ProcessedJobConfig => {
       repeat: {
         pattern: `${minutes} ${hours} * * *`,
         tz: timezone,
+        startDate: data.startDate ? new Date(data.startDate) : undefined,
       },
     };
   }
 
   // WEEKLY
-  if (
-    data.repeatType === "weekly" &&
-    data.repeatDays?.length
-  ) {
+  if (data.repeatType === "weekly") {
+    if (!data.repeatDays) throw new Error("Weekly repeat requires repeatDays");
+    
+    const weekDay = daysOfTheWeek.indexOf(data.repeatDays)
+    if(weekDay === -1) throw new Error("Invalid repeatDays value for weekly repeat");
+
     return {
       ...baseOptions,
 
       repeat: {
-        pattern: `${minutes} ${hours} * * ${data.repeatDays.join(",")}`,
+        pattern: `${minutes} ${hours} * * ${weekDay}`,
         tz: timezone,
+        startDate: data.startDate ? new Date(data.startDate) : undefined,
       },
     };
   }
 
   // MONTHLY
   if (data.repeatType === "monthly") {
+    if (data.monthDay === undefined) throw new Error("Monthly repeat requires monthDay");
+
     return {
       ...baseOptions,
 
       repeat: {
-        pattern: `${minutes} ${hours} ${dayOfMonth} * *`,
+        pattern: `${minutes} ${hours} ${data.monthDay} * *`,
         tz: timezone,
+        startDate: data.startDate ? new Date(data.startDate) : undefined,
       },
     };
   }
@@ -188,69 +129,100 @@ export const jobOptions = (data: ReminderOptions): ProcessedJobConfig => {
 };
 
 
-export type reminderData = {
+// Service function to create alert and corresponding job
+export type noteData = {
   title: string,
-  reminder: string,
+  note: string,
   alertAt: string,
   timezone: string,
-  repeatType:  "none" | "daily" | "weekly" | "monthly",
-  repeatDays?: number[],
-  userId: string
+  repeatType:  RepeatType,
+  repeatDays?: string,
+  userId: string,
+  alertMode?: ("whatsapp" | "email" | "push")[],
+  date?: string,
+  time?: string,
+  mode?: "One-time" | "Recurring",
+  frequency?: string,
+  weekday?: string,
+  monthDay?: number,
+  startDate?: Date,
+  alertId: string,
 }
 
 // Service function to create alert and corresponding job
-export const createAlert = async(body: reminderData ) => {
-  
-  const {
-    title,
-    reminder,
-    alertAt,
-    timezone,
-    repeatType,
-    repeatDays,
-    userId,
-  } = body;
+const Alertdata = (d: any )=> {return {
+  alertId: d.alertId,
+  userId: d.userId,
+  email: d.email,
+  title: d.title,
+  note: d.note,
+  mode: d.mode,
+  date: d.date,
+  time: d.time,
+  frequency: d.frequency,
+  weekday: d.weekday,
+  monthDay: d.monthDay,
+  alertAt: d.alertAt,
+}}
 
-  const user = await User.findById(userId);
-  if (!user) {
-    throw new Error("User not found");
-  }
 
+// Service function to reschedule alert job
+export const scheduleAlertJob = async (alert: any) => {
   const options = jobOptions({
-  alertAt,
-  timezone,
-  repeatType,
-  repeatDays,
+    alertAt: alert.alertAt,
+    timezone: alert.timezone,
+    repeatType: alert.repeatType,
+    repeatDays: alert.repeatDays,
   });
-
-
-  const alert = await Alert.create({
-    userId,
-    email: user.email,
-    whatsappNumber: user.phone,
-    title,
-    reminder,
-    alertAt,
-    timezone,
-    repeatType,
-    repeatDays,
-  });
-  const alertId = alert._id
-  
-  // Set notification for the user
-  await setNotification(
-    userId,
-    {
-      alertId,
-      title,
-      reminder,
-      alertAt,
-    },
-    `Alert "${title}" has been set for ${new Date(alertAt).toLocaleString()}`,
-    "alert"
-  )
 
   if (alert.repeatType !== "none") {
+    const { repeat, ...baseOptions } = options as ProcessedJobConfig;
+    if (!repeat) throw new Error("Missing repeat configuration for alert repeat job");
+      
+    const schedulerId = `${alert._id}--repeat`;
+
+    await emailQueue.upsertJobScheduler(
+      schedulerId,
+      repeat,
+      {
+        name: "scheduled-email",
+        data: Alertdata(alert),
+        opts: baseOptions,
+      }
+    );
+
+    alert.jobId = schedulerId;
+  } else {
+    const job = await emailQueue.add(
+      "scheduled-email",
+      Alertdata(alert),
+      options
+    );
+
+    alert.jobId = job.id as string;
+  }
+  alert.sent = false;
+
+  await alert.save();
+
+  return alert;
+};
+
+// Service function to create alert and corresponding job
+export const createAlert = async(alert: noteData ) => {
+  
+  const {
+    title, note, alertAt, timezone, repeatType, repeatDays, userId,
+    alertMode, date, time, mode, frequency, weekday, monthDay, alertId,
+  } = alert;
+
+  const options = jobOptions({
+    alertAt, timezone, repeatType, repeatDays,
+  });
+
+  let jobId
+
+  if (repeatType !== "none") {
     const { repeat, ...baseOptions } = options as ProcessedJobConfig;
 
     if (!repeat) {
@@ -259,59 +231,28 @@ export const createAlert = async(body: reminderData ) => {
 
     const schedulerId = `${alertId}--repeat`
 
-    await emailQueue.upsertJobScheduler(
+    const job = await emailQueue.upsertJobScheduler(
       schedulerId,
       repeat,
       {
         name: "scheduled-email",
-        data: {
-          alertId,
-          userId,
-          email: user.email,
-          title,
-          reminder,
-        },
+        data: Alertdata(alert),
         opts: baseOptions,
       }
     );
-
-    alert.jobId = schedulerId;
+    jobId = schedulerId
 
   } else {
 
     const job = await emailQueue.add(
       "scheduled-email",
-      {
-        alertId,
-        userId,
-        email: user.email,
-        title,
-        reminder,
-      },
+      Alertdata(alert),
       options
     );
-
-    alert.jobId = job.id as string;
+    jobId = job.id
   }
-  
-  await alert.save();
 
-  // set notification for alert creation
-  await setNotification(
-    userId,
-    {
-      alertId,
-      title,
-      reminder,
-      alertAt,
-    },
-    `Alert "${title}" has been emailed successfully!`,
-    "alert"
-  )
-  return {
-    alert,
-  };
-
+  return jobId
 }
 
 // Service function to delete alert job

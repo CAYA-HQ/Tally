@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-const AlertSchema = new mongoose.Schema(
+const RemindersSchema = new mongoose.Schema(
   {
     userId: {
       type: mongoose.Schema.Types.ObjectId,
@@ -24,7 +24,8 @@ const AlertSchema = new mongoose.Schema(
 
     alertMode: [{
       type: String,
-      enum: ['whatsapp', 'email', 'push']
+      enum: ['whatsapp', 'email', 'push'],
+      default: ['email'],
     }],
 
     title: {
@@ -33,16 +34,50 @@ const AlertSchema = new mongoose.Schema(
       required: true,
     },
 
-    reminder: {
+    note: {
       type: String,
       trim: true,
       required: true,
     },
 
+    mode: {
+      type: String,
+      enum: ["One-time", "Recurring"] as const,
+      trim: true,
+      default: "One-time",  
+    },
+
+    date: {
+      type: String,
+      trim: true,
+    },
+
+    time: {
+      type: String,
+      trim: true,
+    },
+
+    frequency: {
+      type: String,
+      enum: ['', "Daily", "weekly", "monthly"] as const,
+      trim: true,
+      default: " ",
+    },
+
+    weekday: {
+      type: String,
+      trim: true,
+    },
+
+    monthDays: {
+      type: Number,
+      min: 1,
+      max: 31,
+    },
+
     alertAt: {
       type: Date,
-      required: true,
-   },
+    },
 
    sent: {
     type: Boolean,
@@ -56,7 +91,7 @@ const AlertSchema = new mongoose.Schema(
 
    repeatType: {
     type: String,
-    enum: ["none", "daily", "weekly", "monthly"],
+    enum: ["none", "daily", "weekly", "monthly"] as const,
     default: "none",
    },
    
@@ -80,5 +115,5 @@ const AlertSchema = new mongoose.Schema(
 
 export const Alert = mongoose.model(
   "Alert",
-  AlertSchema
+  RemindersSchema
 );
