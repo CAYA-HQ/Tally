@@ -11,6 +11,16 @@ export const transporter = nodemailer.createTransport({
     },
 });
 
+export const verifyMailer = async () => {
+  try {
+    console.log("📧 VERIFY START");
+    await transporter.verify();
+    console.log("📧 VERIFY SUCCESS");
+  } catch (err) {
+    console.error("📧 SMTP VERIFY FAILED:", err);
+  }
+};
+
 //google mail services options
 export const mailOptions = (otp: any, email: string)=> ({
     from: env.GOOGLE_EMAIL,
@@ -36,6 +46,7 @@ export const sendOtp = async (email: string, user: any) => {
   });
 
   await transporter.sendMail(mailOptions(otp, email));
+  console.log("📧 OTP sent to:", email);
 
   return otp;
 };

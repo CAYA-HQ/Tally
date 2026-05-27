@@ -7,7 +7,7 @@ import VerifyPage from "../pages/VerifyPage";
 import DashboardPage from "../pages/DashboardPage";
 import InventoryPage from "../pages/Inventory";
 import TaskHistoryPage from "../pages/Orders";
-import Recordpage from "../pages/Recordpage";
+import Reminderpage from "../pages/ReminderPage";
 import NotFoundPage from "../pages/NotFoundPage";
 import RoutePaths from "./routePaths";
 import NotificationPage from "../pages/Notification";
@@ -29,10 +29,6 @@ export const router = createBrowserRouter([
         path: RoutePaths.REGISTER,
         element: <RegisterPage />,
       },
-      // {
-      //   path: "inventory",
-      //   element: <InventoryPage />,
-      // },
     ],
   },
   {
@@ -56,8 +52,8 @@ export const router = createBrowserRouter([
         element: <TaskHistoryPage />,
       },
       {
-        path: "record",
-        element: <Recordpage />,
+        path: "reminders",
+        element: <Reminderpage />,
       },
     
     ],
