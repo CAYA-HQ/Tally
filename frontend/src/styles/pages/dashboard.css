@@ -5,8 +5,9 @@
 }
 
 .main-content {
-  flex: 1; /* Takes up remaining space next to sidebar */
+  flex: 1;
   margin-left: 0;
+  min-width: 0;
   display: flex;
   flex-direction: column;
 }
