@@ -106,16 +106,16 @@ const InventoryPage = () => {
           inStock: 0,
           lowStock: 0,
           outOfStock: 0,
-        }
+        },
       ),
-    [filteredInventory]
+    [filteredInventory],
   );
 
   const totalStockBuckets = Math.max(
     inventoryStats.inStock +
       inventoryStats.lowStock +
       inventoryStats.outOfStock,
-    1
+    1,
   );
 
   const stockDistribution = {
@@ -161,7 +161,7 @@ const InventoryPage = () => {
 
   const handleDeleteProduct = (item) => {
     const shouldDelete = window.confirm(
-      `Delete ${item.productName} from inventory?`
+      `Delete ${item.productName} from inventory?`,
     );
 
     if (!shouldDelete) {
@@ -224,7 +224,7 @@ const InventoryPage = () => {
         ),
       },
     ],
-    [quantityDrafts]
+    [quantityDrafts],
   );
 
   const handleAddProduct = async (product) => {
@@ -239,7 +239,7 @@ const InventoryPage = () => {
         unit: product.unit,
         quantity: product.quantity,
       });
-      console.log(useNotificationStore.getState().notifications)
+      console.log(useNotificationStore.getState().notifications);
 
       addProduct(product);
       toast.success("Product added successfully");
