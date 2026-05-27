@@ -239,3 +239,23 @@
   color: var(--color-text-primary);
   font-family: var(--font-poppins);
 }
+
+@media (max-width: 640px) {
+  .record-content {
+    padding: var(--spacing-sm);
+  }
+
+  .record-main {
+    min-width: 0;
+  }
+
+  .record-header {
+    flex-wrap: wrap;
+    gap: 0px;
+    margin-bottom: var(--spacing-sm);
+  }
+
+  .header-actions {
+    flex-wrap: wrap;
+  }
+}
