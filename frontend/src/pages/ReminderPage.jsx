@@ -13,10 +13,10 @@ import Table from "../components/Layout/Tables";
 import "../styles/pages/record.css";
 import ReminderModal from "../components/ReminderModal";
 import DeleteReminderModal from "../components/DeleteReminderModal";
-import api from '../utils/api'
-
+import api from "../utils/api";
 
 const ReminderPage = () => {
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const [reminders, setReminders] = useState([]);
   const [isReminderModalOpen, setIsReminderModalOpen] = useState(false);
   const [dropdownState, setDropdownState] = useState({
@@ -67,7 +67,7 @@ const ReminderPage = () => {
         key: "status",
         header: (
           <div className="header-with-icon">
-            Status 
+            Status
             {/* <FiChevronDown className="header-dropdown-icon" /> */}
           </div>
         ),
@@ -95,7 +95,7 @@ const ReminderPage = () => {
                   setDropdownState((current) =>
                     current.id === row.id
                       ? { id: null, direction: "down" }
-                      : { id: row.id, direction: nextDirection }
+                      : { id: row.id, direction: nextDirection },
                   );
                 }}
                 aria-label="Open reminder actions"
@@ -111,7 +111,7 @@ const ReminderPage = () => {
                     className="reminder-row-menu-item"
                     onClick={() => {
                       setSelectedReminder(
-                        reminders.find((item) => item.id === row.id) || null
+                        reminders.find((item) => item.id === row.id) || null,
                       );
                       setIsReminderModalOpen(true);
                       setDropdownState({ id: null, direction: "down" });
@@ -136,7 +136,7 @@ const ReminderPage = () => {
         ),
       },
     ],
-    [dropdownState, reminders]
+    [dropdownState, reminders],
   );
 
   const reminderData = useMemo(
@@ -152,62 +152,59 @@ const ReminderPage = () => {
           reminder.mode === "One-time"
             ? reminder.time
             : reminder.frequency === "Daily"
-            ? `Every day at ${reminder.time}`
-            : reminder.frequency === "Weekly"
-            ? `Every ${reminder.weekday} at ${reminder.time}`
-            : `Every month on day ${reminder.monthDay} at ${reminder.time}`,
+              ? `Every day at ${reminder.time}`
+              : reminder.frequency === "Weekly"
+                ? `Every ${reminder.weekday} at ${reminder.time}`
+                : `Every month on day ${reminder.monthDay} at ${reminder.time}`,
       })),
-    [reminders]
+    [reminders],
   );
 
   const handleAddReminder = async (nextReminder) => {
-
-    try{
-      const res = selectedReminder 
+    try {
+      const res = selectedReminder
         ? await api.put(`/user/reminder/${selectedReminder.id}`, nextReminder)
-        : await api.post('/user/reminder', nextReminder);
-      const data = res.data
-      const id = data.id
-      const newReminder = data.alert
- 
+        : await api.post("/user/reminder", nextReminder);
+      const data = res.data;
+      const id = data.id;
+      const newReminder = data.alert;
+
       const remind = {
         id: id,
         title: newReminder.title,
         mode: newReminder.frequency === "" ? "One-time" : "Recurring",
-        date: newReminder.date ? new Date(newReminder.date).toLocaleDateString() : "",
+        date: newReminder.date
+          ? new Date(newReminder.date).toLocaleDateString()
+          : "",
         time: newReminder.time,
         frequency: newReminder.frequency,
         weekday: newReminder.weekday || "",
         monthDay: newReminder.monthDay || "",
         note: newReminder.note,
         status: newReminder.sent ? "Sent" : "Scheduled",
-      }
+      };
 
-    setReminders((current) => {
-      if (selectedReminder) {
-        return current.map((item) =>
-          item.id === selectedReminder.id
-            ? { ...item, ...remind }
-            : item
-        );
-        
-      }
+      setReminders((current) => {
+        if (selectedReminder) {
+          return current.map((item) =>
+            item.id === selectedReminder.id ? { ...item, ...remind } : item,
+          );
+        }
 
-      return [
-        {
-          ...remind,
-          id: id,
-        },
-        ...current,
-      ];
-      
-    });
-    if (selectedReminder)window.location.reload()
-    setSelectedReminder(null);
-    setIsReminderModalOpen(false);
-  }catch(error){
-    console.error("Error adding reminder:", error);
-  }
+        return [
+          {
+            ...remind,
+            id: id,
+          },
+          ...current,
+        ];
+      });
+      if (selectedReminder) window.location.reload();
+      setSelectedReminder(null);
+      setIsReminderModalOpen(false);
+    } catch (error) {
+      console.error("Error adding reminder:", error);
+    }
   };
 
   const openAddReminderModal = () => {
@@ -217,20 +214,24 @@ const ReminderPage = () => {
   useEffect(() => {
     const fetchReminders = async () => {
       try {
-        const response = await api.get('/user/reminder');
+        const response = await api.get("/user/reminder");
         const fetchedReminders = response.data.alerts || [];
-        setReminders(fetchedReminders.map((reminder) => ({
-          id: reminder._id,
-          title: reminder.title,
-          mode: reminder.frequency === "" ? "One-time" : "Recurring",
-          date: reminder.date ? new Date(reminder.date).toLocaleDateString() : "",
-          time: reminder.time,
-          frequency: reminder.frequency,
-          weekday: reminder.weekday || "",
-          monthDay: reminder.monthDay || "",
-          note: reminder.note,
-          status: reminder.sent ? "Sent" : "Scheduled",
-        })));
+        setReminders(
+          fetchedReminders.map((reminder) => ({
+            id: reminder._id,
+            title: reminder.title,
+            mode: reminder.frequency === "" ? "One-time" : "Recurring",
+            date: reminder.date
+              ? new Date(reminder.date).toLocaleDateString()
+              : "",
+            time: reminder.time,
+            frequency: reminder.frequency,
+            weekday: reminder.weekday || "",
+            monthDay: reminder.monthDay || "",
+            note: reminder.note,
+            status: reminder.sent ? "Sent" : "Scheduled",
+          })),
+        );
       } catch (error) {
         console.error("Error fetching reminders:", error);
       }
@@ -242,9 +243,9 @@ const ReminderPage = () => {
 
   return (
     <div className="record-wrapper">
-      <Sidebar />
+      <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
       <main className="record-main">
-        <Navbar />
+        <Navbar onMenuToggle={() => setSidebarOpen((prev) => !prev)} />
         <div className="record-content">
           <div className="record-header">
             <h1 className="page-title">Reminders</h1>
@@ -311,10 +312,10 @@ const ReminderPage = () => {
             const del = await api.delete(`/user/reminder/${id}`);
           } catch (error) {
             console.error("Error deleting reminder:", error);
-            return error
+            return error;
           }
           setReminders((current) =>
-            current.filter((item) => item.id !== reminderToDelete?.id)
+            current.filter((item) => item.id !== reminderToDelete?.id),
           );
           setReminderToDelete(null);
         }}

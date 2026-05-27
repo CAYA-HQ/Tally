@@ -6,7 +6,13 @@
 .record-main {
   flex: 1;
   background-color: #f8f9fd;
-  margin-left: 260px;
+  margin-left: 0;
+}
+
+@media (min-width: 1024px) {
+  .record-main {
+    margin-left: 260px;
+  }
 }
 
 .record-content {
@@ -232,4 +238,24 @@
   font-weight: 600;
   color: var(--color-text-primary);
   font-family: var(--font-poppins);
+}
+
+@media (max-width: 640px) {
+  .record-content {
+    padding: var(--spacing-sm);
+  }
+
+  .record-main {
+    min-width: 0;
+  }
+
+  .record-header {
+    flex-wrap: wrap;
+    gap: 0px;
+    margin-bottom: var(--spacing-sm);
+  }
+
+  .header-actions {
+    flex-wrap: wrap;
+  }
 }

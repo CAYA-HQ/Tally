@@ -516,8 +516,17 @@
 }
 
 @media (max-width: 760px) {
+  .reminder-modal-overlay {
+    align-items: flex-start;
+    overflow-y: auto;
+    overscroll-behavior: none;
+    padding: 16px;
+  }
+
   .reminder-modal {
-    padding: 22px;
+    width: 100%;
+    padding: 20px;
+    margin: auto;
   }
 
   .reminder-grid {
@@ -535,5 +544,11 @@
 
   .reminder-modal-actions {
     flex-direction: column-reverse;
+  }
+
+  .reminder-secondary,
+  .reminder-primary {
+    width: 100%;
+    text-align: center;
   }
 }
