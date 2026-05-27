@@ -1,4 +1,4 @@
-import { NavLink, useNavigate } from "react-router-dom"; // MUST IMPORT THIS
+import { NavLink, useNavigate } from "react-router-dom";
 import { RiDashboardLine } from "react-icons/ri";
 import { MdOutlineInventory2 } from "react-icons/md";
 import { BsCart3 } from "react-icons/bs";
@@ -39,9 +39,9 @@ const NAV_ITEMS = [
   },
   {
     id: "record",
-    label: "Record",
+    label: "Reminders",
     icon: <LuClipboardList />,
-    path: "/dashboard/record",
+    path: "/dashboard/reminders",
   },
 ];
 

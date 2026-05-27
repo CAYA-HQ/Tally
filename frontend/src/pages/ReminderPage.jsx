@@ -13,49 +13,11 @@ import Table from "../components/Layout/Tables";
 import "../styles/pages/record.css";
 import ReminderModal from "../components/ReminderModal";
 import DeleteReminderModal from "../components/DeleteReminderModal";
+import api from "../utils/api";
 
-const initialReminders = [
-  {
-    id: 1,
-    title: "Review vendor invoice",
-    mode: "One-time",
-    date: "24/06/2026",
-    time: "10:30 AM",
-    frequency: "",
-    weekday: "",
-    monthDay: "",
-    note: "Approve before end of day.",
-    status: "Scheduled",
-  },
-  {
-    id: 2,
-    title: "Check stock levels",
-    mode: "Recurring",
-    date: "",
-    time: "09:00 AM",
-    frequency: "Weekly",
-    weekday: "Monday",
-    monthDay: "",
-    note: "Prepare reorder list.",
-    status: "Active",
-  },
-  {
-    id: 3,
-    title: "Send monthly summary",
-    mode: "Recurring",
-    date: "",
-    time: "05:00 PM",
-    frequency: "Monthly",
-    weekday: "",
-    monthDay: "1",
-    note: "Share with the finance team.",
-    status: "Active",
-  },
-];
-
-const RecordPage = () => {
+const ReminderPage = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [reminders, setReminders] = useState(initialReminders);
+  const [reminders, setReminders] = useState([]);
   const [isReminderModalOpen, setIsReminderModalOpen] = useState(false);
   const [dropdownState, setDropdownState] = useState({
     id: null,
@@ -105,12 +67,13 @@ const RecordPage = () => {
         key: "status",
         header: (
           <div className="header-with-icon">
-            Status <FiChevronDown className="header-dropdown-icon" />
+            Status
+            {/* <FiChevronDown className="header-dropdown-icon" /> */}
           </div>
         ),
         render: (value, row) => (
           <div className="status-container">
-            <span className={`status-pill ${value.toLowerCase()}`}>
+            <span className={`status-pill ${value?.toLowerCase()}`}>
               <FiCheckSquare className="status-icon" /> {value}
             </span>
             <div className="more-options-wrap">
@@ -132,7 +95,7 @@ const RecordPage = () => {
                   setDropdownState((current) =>
                     current.id === row.id
                       ? { id: null, direction: "down" }
-                      : { id: row.id, direction: nextDirection }
+                      : { id: row.id, direction: nextDirection },
                   );
                 }}
                 aria-label="Open reminder actions"
@@ -148,10 +111,10 @@ const RecordPage = () => {
                     className="reminder-row-menu-item"
                     onClick={() => {
                       setSelectedReminder(
-                        reminders.find((item) => item.id === row.id) || null
+                        reminders.find((item) => item.id === row.id) || null,
                       );
                       setIsReminderModalOpen(true);
-                      setDropdownOpenId(null);
+                      setDropdownState({ id: null, direction: "down" });
                     }}
                   >
                     Edit reminder
@@ -161,7 +124,7 @@ const RecordPage = () => {
                     className="reminder-row-menu-item danger"
                     onClick={() => {
                       setReminderToDelete(row);
-                      setDropdownOpenId(null);
+                      setDropdownState({ id: null, direction: "down" });
                     }}
                   >
                     Delete reminder
@@ -173,7 +136,7 @@ const RecordPage = () => {
         ),
       },
     ],
-    [dropdownState, reminders]
+    [dropdownState, reminders],
   );
 
   const reminderData = useMemo(
@@ -189,40 +152,94 @@ const RecordPage = () => {
           reminder.mode === "One-time"
             ? reminder.time
             : reminder.frequency === "Daily"
-            ? `Every day at ${reminder.time}`
-            : reminder.frequency === "Weekly"
-            ? `Every ${reminder.weekday} at ${reminder.time}`
-            : `Every month on day ${reminder.monthDay} at ${reminder.time}`,
+              ? `Every day at ${reminder.time}`
+              : reminder.frequency === "Weekly"
+                ? `Every ${reminder.weekday} at ${reminder.time}`
+                : `Every month on day ${reminder.monthDay} at ${reminder.time}`,
       })),
-    [reminders]
+    [reminders],
   );
 
-  const handleAddReminder = (nextReminder) => {
-    setReminders((current) => {
-      if (selectedReminder) {
-        return current.map((item) =>
-          item.id === selectedReminder.id
-            ? { ...nextReminder, id: selectedReminder.id }
-            : item
-        );
-      }
+  const handleAddReminder = async (nextReminder) => {
+    try {
+      const res = selectedReminder
+        ? await api.put(`/user/reminder/${selectedReminder.id}`, nextReminder)
+        : await api.post("/user/reminder", nextReminder);
+      const data = res.data;
+      const id = data.id;
+      const newReminder = data.alert;
 
-      return [
-        {
-          ...nextReminder,
-          id: Date.now(),
-        },
-        ...current,
-      ];
-    });
-    setSelectedReminder(null);
-    setIsReminderModalOpen(false);
+      const remind = {
+        id: id,
+        title: newReminder.title,
+        mode: newReminder.frequency === "" ? "One-time" : "Recurring",
+        date: newReminder.date
+          ? new Date(newReminder.date).toLocaleDateString()
+          : "",
+        time: newReminder.time,
+        frequency: newReminder.frequency,
+        weekday: newReminder.weekday || "",
+        monthDay: newReminder.monthDay || "",
+        note: newReminder.note,
+        status: newReminder.sent ? "Sent" : "Scheduled",
+      };
+
+      setReminders((current) => {
+        if (selectedReminder) {
+          return current.map((item) =>
+            item.id === selectedReminder.id ? { ...item, ...remind } : item,
+          );
+        }
+
+        return [
+          {
+            ...remind,
+            id: id,
+          },
+          ...current,
+        ];
+      });
+      if (selectedReminder) window.location.reload();
+      setSelectedReminder(null);
+      setIsReminderModalOpen(false);
+    } catch (error) {
+      console.error("Error adding reminder:", error);
+    }
   };
 
   const openAddReminderModal = () => {
     setSelectedReminder(null);
     setIsReminderModalOpen(true);
   };
+  useEffect(() => {
+    const fetchReminders = async () => {
+      try {
+        const response = await api.get("/user/reminder");
+        const fetchedReminders = response.data.alerts || [];
+        setReminders(
+          fetchedReminders.map((reminder) => ({
+            id: reminder._id,
+            title: reminder.title,
+            mode: reminder.frequency === "" ? "One-time" : "Recurring",
+            date: reminder.date
+              ? new Date(reminder.date).toLocaleDateString()
+              : "",
+            time: reminder.time,
+            frequency: reminder.frequency,
+            weekday: reminder.weekday || "",
+            monthDay: reminder.monthDay || "",
+            note: reminder.note,
+            status: reminder.sent ? "Sent" : "Scheduled",
+          })),
+        );
+      } catch (error) {
+        console.error("Error fetching reminders:", error);
+      }
+    };
+
+    fetchReminders();
+    console.log("Fetch reminders called", reminders);
+  }, []);
 
   return (
     <div className="record-wrapper">
@@ -288,9 +305,17 @@ const RecordPage = () => {
         isOpen={Boolean(reminderToDelete)}
         reminder={reminderToDelete}
         onClose={() => setReminderToDelete(null)}
-        onConfirm={() => {
+        onConfirm={async () => {
+          console.log("Deleting reminder with id:", reminderToDelete?.id);
+          try {
+            const id = reminderToDelete?._id || reminderToDelete?.id;
+            const del = await api.delete(`/user/reminder/${id}`);
+          } catch (error) {
+            console.error("Error deleting reminder:", error);
+            return error;
+          }
           setReminders((current) =>
-            current.filter((item) => item.id !== reminderToDelete?.id)
+            current.filter((item) => item.id !== reminderToDelete?.id),
           );
           setReminderToDelete(null);
         }}
@@ -299,4 +324,4 @@ const RecordPage = () => {
   );
 };
 
-export default RecordPage;
+export default ReminderPage;

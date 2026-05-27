@@ -1,3 +1,4 @@
+import "./config/bullQ";
 import express from "express";
 import api from "./routes/api";
 import cors from "cors";
@@ -11,6 +12,7 @@ import { env } from "./model/validate.user";
 import { ioServer } from "./config/socket";
 import { startSock } from "./config/whatsappBaileys";
 import morgan from "morgan";
+import { verifyMailer } from "./service/otp.service";
 
 const app = express();
 
@@ -54,5 +56,6 @@ connectDB().then(async () => {
     console.log("REDIS:", env.REDIS_URL);
     console.log("FRONTEND_URL:", env.FRONTEND_URL);
     await startSock();
+    await verifyMailer()
   });
 });

@@ -1,3 +1,5 @@
+import { DateTime } from "luxon";
+
 export const getFullDate = (date: Date): string => {
     const month = String(date.getMonth() + 1).padStart(2, "0");
     const day = String(date.getDate()).padStart(2, "0");
@@ -11,3 +13,18 @@ export const getTime = (date: Date): string => {
     const seconds = String(date.getSeconds()).padStart(2, "0");
     return `${hours}:${minutes}:${seconds}`;
 }
+
+export const AlertAt = (
+  date: string,
+  time: string,
+  timezone: string
+) => {
+  const dt = DateTime.fromISO(
+    `${date}T${time}`,
+    { zone: timezone }
+  );
+
+  if (!dt.isValid) return null;
+
+  return dt.toUTC().toISO();
+};
