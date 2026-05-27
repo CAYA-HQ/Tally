@@ -1,6 +1,7 @@
 .table-container {
   width: 100%;
-  /* overflow-x: auto; */
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 .task-history-table {
@@ -83,4 +84,24 @@
 .task-history-table tbody tr:hover {
   background-color: var(--color-bg-light);
   transition: background-color var(--transition-fast);
+}
+
+@media (max-width: 640px) {
+  .task-history-table {
+    min-width: 560px;
+  }
+
+  .task-history-table th,
+  .task-history-table td {
+    padding: 10px var(--spacing-xs);
+  }
+
+  .task-history-table th {
+    font-size: var(--font-size-xs);
+    white-space: nowrap;
+  }
+
+  .task-history-table td {
+    font-size: var(--font-size-xs);
+  }
 }
