@@ -11,6 +11,7 @@ import {
 import { useMemo, useState } from "react";
 import { useInventory } from "../context/InventoryContext";
 import "../styles/pages/dashboard.css";
+import ChartBox from "../components/chart";
 
 const dashboardColumns = [
   { key: "productName", header: "Product" },
@@ -90,6 +91,7 @@ const DashboardPage = () => {
   const recentProducts = [...inventoryItems].slice(-5).reverse();
 
   return (
+   
     <div className="dashboard-wrapper">
       <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
 
@@ -107,8 +109,9 @@ const DashboardPage = () => {
                 iconColor={stat.iconColor}
               />
             ))}
+            
           </div>
-
+          
           <section className="table-section">
             <h2 className="section-title">Recent inventory additions</h2>
             <Table columns={dashboardColumns} data={recentProducts} />

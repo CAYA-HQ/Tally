@@ -59,7 +59,7 @@ const RemindersSchema = new mongoose.Schema(
 
     frequency: {
       type: String,
-      enum: ['', "Daily", "weekly", "monthly"] as const,
+      enum: ['', "Daily", "Weekly", "Monthly"] as const,
       trim: true,
       default: " ",
     },

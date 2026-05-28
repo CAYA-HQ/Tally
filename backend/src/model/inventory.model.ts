@@ -18,7 +18,12 @@ const inventoryStockSchema = new mongoose.Schema(
 
     quantity: {
       type: Number,
-      trim: true,
+      default: 0,
+    },
+
+    updatedQuantity: {
+      type: Number,
+      default: 0,
     },
 
     boughtPrice: {

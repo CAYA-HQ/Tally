@@ -6,6 +6,7 @@ import { setNotification } from "../service/notification.service";
 import { getUserById } from "../service/user.service";
 import { AlertAt } from "../utils/date";
 
+
 // create alert
 export const createReminder = asyncHandler(async(req: Request, res: Response)=>{
   const{
@@ -24,13 +25,13 @@ export const createReminder = asyncHandler(async(req: Request, res: Response)=>{
   }
   const timezone = await user.metadata?.timezone;
 
-  // Set startDate to tomorrow
   const startdate = new Date();
   startdate.setDate(startdate.getDate() + 1);
   startdate.setHours(0, 0, 0, 0);
 
-  // Calculate alertAt from date and time
   const alertAt = AlertAt(date, time, timezone) as string
+  console.log('alertAt saved:', alertAt)
+
   const now = new Date();
 
   const hours = now.getHours();
@@ -101,6 +102,7 @@ export const createReminder = asyncHandler(async(req: Request, res: Response)=>{
   })
 
 })
+
 
 // Delete alert
 export const deleteReminder = asyncHandler(async (req: Request, res: Response) => {
@@ -187,7 +189,6 @@ export const updateReminder = asyncHandler(async (req: Request, res: Response) =
     timezone: requestTimezone, repeatType, repeatDays, alertMode,
   } = req.body;
 
-  // Parse date/time into alertAt when the user sends a new date and time
   const updates: any = {
     title, note, date, time, mode, frequency, weekday, monthDay,
     timezone: requestTimezone || timezone, repeatType, repeatDays,
@@ -230,9 +231,6 @@ export const updateReminder = asyncHandler(async (req: Request, res: Response) =
     });
    }
 
-    // updatedAlert.jobId = rescheduledAlert as string;
-    // updatedAlert.sent = false;
-
   return res.status(200).json({
     success: true,
     message: "Alert updated successfully",
@@ -240,6 +238,7 @@ export const updateReminder = asyncHandler(async (req: Request, res: Response) =
   });
 
 })
+
 
 // Get all alerts for a user
 export const getReminders = asyncHandler(async (req: Request, res: Response) => {

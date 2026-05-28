@@ -14,13 +14,19 @@ export const getTime = (date: Date): string => {
     return `${hours}:${minutes}:${seconds}`;
 }
 
-export const AlertAt = (
-  date: string,
-  time: string,
-  timezone: string
-) => {
+export const AlertAt = ( date: string, time: string, timezone: string ) => {
+  let finalDate ;
+
+  if (!date) {
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    finalDate = tomorrow.toISOString().split("T")[0]; 
+  } else {
+    finalDate = date
+  }
+
   const dt = DateTime.fromISO(
-    `${date}T${time}`,
+    `${finalDate}T${time}`,
     { zone: timezone }
   );
 
@@ -28,3 +34,20 @@ export const AlertAt = (
 
   return dt.toUTC().toISO();
 };
+
+export const getWeekRange = (date: string | Date | number) => {
+  const now = new Date(date);
+
+  const startOfThisWeek = new Date(now);
+  startOfThisWeek.setDate(now.getDate() - startOfThisWeek.getDay());
+  startOfThisWeek.setHours(0, 0, 0, 0);
+
+  const start = new Date(startOfThisWeek)
+  start.setDate(startOfThisWeek.getDate() - 7)
+  startOfThisWeek.setHours(0, 0, 0, 0);
+
+  const end = new Date(start);
+  end.setDate(start.getDate() + 7);
+
+  return { start, end };
+}

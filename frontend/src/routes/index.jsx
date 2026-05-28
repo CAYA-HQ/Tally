@@ -11,6 +11,7 @@ import Reminderpage from "../pages/ReminderPage";
 import NotFoundPage from "../pages/NotFoundPage";
 import RoutePaths from "./routePaths";
 import NotificationPage from "../pages/Notification";
+import ReportsPage from "../pages/ReportsPage";
 
 export const router = createBrowserRouter([
   {
@@ -50,6 +51,10 @@ export const router = createBrowserRouter([
       {
         path: "orders",
         element: <TaskHistoryPage />,
+      },
+      {
+        path: "reports",
+        element: <ReportsPage />,
       },
       {
         path: "reminders",

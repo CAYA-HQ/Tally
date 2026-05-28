@@ -43,6 +43,7 @@ const NAV_ITEMS = [
     icon: <LuClipboardList />,
     path: "/dashboard/reminders",
   },
+  
 ];
 
 export default function Sidebar({ isOpen, onClose }) {

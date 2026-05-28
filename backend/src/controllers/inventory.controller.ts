@@ -165,3 +165,27 @@ export const updateInventory = asyncHandler(async (req: Request, res: Response) 
     stockId: result?.id
   })
 })
+
+export const getInventory = asyncHandler(async(req: Request, res: Response)=>{
+
+  const userId = (req.user as any).id
+
+  if(!userId) return res.status(404).json({
+    message: 'user id missing',
+    success: false
+  })
+
+  const inventory = await Inventory.findById(userId)
+
+  if(!inventory) return res.status(400).json({
+    success: false,
+    message: 'no inventory found for this user'
+  })
+
+  return res.status(200).json({
+    success: true,
+    message: 'user inventory sent ✈️ successfully ✅',
+    inventory
+  })
+
+})
