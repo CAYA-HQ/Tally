@@ -1,4 +1,4 @@
-import "./config/bullQ";
+import "./config/bullMQ";
 import express from "express";
 import api from "./routes/api";
 import cors from "cors";
