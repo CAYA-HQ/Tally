@@ -25,6 +25,10 @@ const inventoryStockSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
+    soldQuantity: {
+      type: Number,
+      default: 0,
+    },
 
     boughtPrice: {
       type: Number,

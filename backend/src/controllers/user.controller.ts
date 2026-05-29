@@ -147,3 +147,29 @@ export const changePassword = asyncHandler(
     })
   }
 )
+
+export const getUser = asyncHandler(async(req: Request, res: Response)=>{
+  console.log('get user fn connected')
+  const userId = (req.user as any).id
+  if(!userId) return res.status(404).json({
+    success: false,
+    mesage: 'no user id found'
+  })
+
+  const userInfo = await userService.getUserById(userId)
+  if(!userInfo) return res.status(400).json({
+    success: false,
+    mesage: 'failed to get users info'
+  })
+
+  const payload = payLoad(userInfo as any)
+  console.log({
+    'userData sent': payload
+  })
+
+  res.status(200).json({
+    success: true,
+    message: 'user successfuly sent✅',
+    payload
+  })
+})

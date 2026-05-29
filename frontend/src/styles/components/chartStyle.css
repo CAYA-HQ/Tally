@@ -1,28 +1,143 @@
+.report-div {
+    margin-left: clamp(20%, 20vw, 25%);
+    background-color: #f8f9fd;
+    height: 100vh;
+}
+
+.report-header {
+    width: 90%;
+    margin: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+
+    && h1{
+        font-size: 24px;
+        font-weight: 600;
+        color: var(--color-text-primary);
+        font-family: var(--font-poppins);
+        margin: 30px auto 20px 30px;
+    }
+    }
+
+.reports-wrapper, .big-chart-wrapper{
+    display: flex;
+    flex-wrap: wrap;
+    padding: 20px;
+    justify-content: center;
+}
+
 .chart-box {
     display: flex;
     border-radius: 20px;
     width: clamp(150px, 40vw, 250px);
-    height: clamp(50px, 20vw, 150px);
+    height: clamp(50px, 20vh, 150px);
     position: relative;
     padding: 10px;
     box-shadow: 0 0 10px -1px rgb(175, 173, 173);
+    gap: clamp(5px, 9%, 38px);
+    overflow: hidden;
+    margin: 25px;
+    flex-direction: column;
+    background: rgba(223, 219, 219, 0.797);
+
+    && p{
+        font-size: 15px;
+        font-weight: 600;
+        color: var(--color-text-primary);
+        font-family: var(--font-poppins);
+    }
 }
 
-.bar-chart {
+.big-chart-box {
+    display: flex;
+    border-radius: 20px;
+    position: relative;
+    padding: 10px;
+    gap: clamp(5px, 9%, 38px);
+    margin: 25px;
+    width: clamp(40vw, 100px, 300px);
+    height: clamp(25vh, 25vh, 35vw);
+    background-color: white;
+}
+
+.bar-div, .big-bar-div {
+    display: flex;
+    flex-direction: row;
+    height: 100%;
+    width: 100%;
+    gap: 10px;
+}
+
+.bar-chart, .big-bar-chart {
     position: relative;
     width: clamp(15px, 8%, 30px);
+    height: 100%;
     background: rgb(209, 205, 201);
     border-radius: 20px;
-    
 }
 
-.bar-chart2 {
+.big-bar-chart {
+    width: 70%;
+}
+
+.bar-fill {
     position: absolute;
-    height: 80%;
     bottom: 0;
     left: 0;
     right: 0;
     background: rgb(119, 94, 221);
     border-radius: 20px;
     content: '';
+}
+
+.extra-bar-fill {
+    background: palevioletred;
+    width: 60%;
+    border-radius: 10px;
+    margin-bottom: 0;
+    position: absolute;
+    bottom: 0;
+}
+
+.extra-bar-div {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    position: relative;
+    margin: 0;
+    gap: 5px
+}
+
+.big-bar-div p {
+    position: absolute;
+    bottom: -15%;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--color-text-primary);
+    font-family: var(--font-poppins);
+    opacity: .7;
+}
+
+.chart-indicator {
+    display: flex;
+    position: absolute;
+    bottom: -20%;
+    width: 100%;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding-right: 10%;
+
+
+    && p {
+        font-size: 12px;
+        opacity: .8;
+    }
+}
+
+.indicator-dot {
+    height: 10px;
+    width: 70px;
+    border-radius: 30px;
 }

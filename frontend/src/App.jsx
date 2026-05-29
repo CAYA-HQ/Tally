@@ -1,3 +1,4 @@
+import React, { useEffect } from 'react'
 import "./styles/variables.css";
 import "./styles/global.css";
 import { RouterProvider } from "react-router-dom";
@@ -7,6 +8,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { InventoryProvider } from "./context/InventoryContext";
 
 function App() {
+
   return (
     <InventoryProvider>
       <>

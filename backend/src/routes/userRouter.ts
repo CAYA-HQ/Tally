@@ -6,6 +6,7 @@ import reminderRouter from "./reminderRouter";
 import notificationRouter from "./notificationRouter";
 import { upload } from "../middleware/uploadImg"; 
 import { userOnBoarding } from "../controllers/onboarding.controller";
+import { getReports } from "../controllers/reports.controller";
 
 const UserRouter = Router();
 UserRouter.use(verifyUser)
@@ -17,5 +18,12 @@ UserRouter.use('/reminder', reminderRouter)
 UserRouter.use('/inventory', inventoryRouter )
 UserRouter.post('/onboarding', userOnBoarding)
 UserRouter.use('/notification', notificationRouter)
+UserRouter.get('/reports', getReports)
+UserRouter.get('/', (req, res, next)=>{
+  
+    console.log('get user route active')
+    
+    next()
+}, userController.getUser)
 
 export default UserRouter

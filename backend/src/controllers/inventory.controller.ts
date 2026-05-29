@@ -4,18 +4,19 @@ import { asyncHandler } from '../utils/asyncHandler'
 import * as userService from '../service/user.service'
 import { setNotification } from '../service/notification.service'
 import { Inventory } from '../model/inventory.model'
+import { setRecordsJob } from '../service/reports.service'
 
-const data = async (d: any)=>{
-  const item = {
-    id: (await d).id,
-    name: (await d).stock,
-    qty: (await d).quantity,
-    boughtPrice: (await d).boughtPrice,
-    sellingPrice: (await d). sellingPrice,
-    category: (await d).category,
-    unit: (await d).unit
-  }
-  return item
+const data = (d: any)=>{
+  const data = {
+    id:  d._id,
+    name:  d.stock,
+    qty:  d.quantity,
+    boughtPrice:  d.boughtPrice,
+    sellingPrice:  d.sellingPrice,
+    category:  d.category,
+    unit:  d.unit,
+  };
+  return data
 }
 
 // Add inventory
@@ -56,8 +57,21 @@ export const addInventory = asyncHandler(async (req: Request, res: Response) => 
     unit
   })
 
-  const newStock = await data(inventoryStock)
-  console.log(`item added to inventory: ${newStock.name}`)
+  const Stock = await inventoryStock
+  const newStock = data(Stock)
+ 
+
+  const reportJobId = user.reportsJobId
+
+  if(reportJobId){
+    return null
+  }else{
+    try{
+      setRecordsJob(userId)
+    }catch(error){
+      console.log(`Error creating Recorde ${error}`)
+    }
+  }
 
   await setNotification(
     user.id,
@@ -69,7 +83,7 @@ export const addInventory = asyncHandler(async (req: Request, res: Response) => 
   return res.status(201).json({
     success: true,
     message: 'new item added to inventory',
-    inventoryStock,
+    newStock,
     stockId: (await inventoryStock).id
   })
 })
@@ -101,7 +115,7 @@ export const deleteItem = asyncHandler(async (req: Request, res: Response) => {
   
   await setNotification(
     userId.toString(),
-    deleteItem,
+    deletedItem,
     `${deletedItem.stock} removed from inventory`,
     'inventory'
   )
@@ -141,7 +155,6 @@ export const updateInventory = asyncHandler(async (req: Request, res: Response) 
   {
     $set: {
       stock,
-      quantity,
       boughtPrice,
       sellingPrice,
     },
@@ -149,7 +162,25 @@ export const updateInventory = asyncHandler(async (req: Request, res: Response) 
   {
     new: true,
   }
-)
+  )
+  if(!result){
+    console.error(`failed to update inventory with this error: ${Error}`)
+    return res.status(400).json({
+      success: false,
+      message: 'failed to update inventory'
+    })
+  }
+  const qtySaved = result.quantity  
+  const base = result.updatedQuantity ?? result.quantity;
+  const qtyDifference = base - quantity;
+
+  if(qtyDifference < 0) result.quantity = qtySaved + Math.abs(qtyDifference)
+  if(qtyDifference > 0) result.soldQuantity += qtyDifference
+
+  result.updatedQuantity = quantity
+  await result.save()
+  
+  const updatedResult = data(result)
 
   await setNotification(
     userId as string,
@@ -161,8 +192,8 @@ export const updateInventory = asyncHandler(async (req: Request, res: Response) 
   return res.status(200).json({
     success: true,
     message: 'inventory updated',
-    result,
-    stockId: result?.id
+    updatedResult,
+    stockId: result?._id
   })
 })
 
@@ -175,17 +206,18 @@ export const getInventory = asyncHandler(async(req: Request, res: Response)=>{
     success: false
   })
 
-  const inventory = await Inventory.findById(userId)
-
+  const inventory = await Inventory.findById({userId})
+  
   if(!inventory) return res.status(400).json({
     success: false,
     message: 'no inventory found for this user'
   })
+  const sentInventory = data(inventory)
 
   return res.status(200).json({
     success: true,
     message: 'user inventory sent ✈️ successfully ✅',
-    inventory
+    sentInventory
   })
 
 })

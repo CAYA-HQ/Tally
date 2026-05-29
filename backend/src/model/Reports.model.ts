@@ -8,7 +8,7 @@ const ReportsSchema = new mongoose.Schema(
             index: true,
             ref: 'User',
         },
-        totalWeeklyRev:{
+        totalWeeklyCost:{
             type: Number,
             default: 0,
         },
@@ -24,14 +24,6 @@ const ReportsSchema = new mongoose.Schema(
             type: Number,
             default: 0,
         },
-        start: {
-            type: Date,
-            default: 0
-        },
-        end: {
-            type: Date,
-            default: 0
-        },
     },
     {
         timestamps: true,
@@ -39,5 +31,5 @@ const ReportsSchema = new mongoose.Schema(
     }
 )
 
-const Reports = mongoose.model( 'ReportsSchema', ReportsSchema )
+const Reports = mongoose.model( 'Reports', ReportsSchema )
 export default Reports
