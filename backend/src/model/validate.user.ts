@@ -1,4 +1,7 @@
 import { z } from "zod";
+import dotenv from "dotenv"; 
+
+dotenv.config();
 
 export const createUserSchema = z.object({
   name: z.string().min(2),
@@ -27,3 +30,5 @@ const envSchema = z.object({
 
 export const env = envSchema.parse(process.env);
 export type CreateUserInput = z.infer<typeof createUserSchema>;
+ 
+
