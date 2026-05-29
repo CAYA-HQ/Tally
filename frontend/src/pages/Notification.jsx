@@ -55,12 +55,13 @@ const NotificationPage = () => {
       }}
     >
       <p style={{ margin: 0, fontWeight: 600 }}>{notification.message}</p>
-      <p style={{ margin: 0, opacity: 0.7 }}>
+      <p style={{ margin: 0, opacity: 0.6 }}>
         {notification.category || "General Notification"}
+        </p>
       <p style={{ margin: 0, opacity: 0.5 }}>
         {new Date(notification.createdAt).toLocaleString()}
       </p>
-      </p>
+      
     </div>
   );
 

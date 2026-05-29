@@ -5,128 +5,122 @@ import Reports from "../model/Reports.model";
 import { getUserById } from "./user.service";
 import { getWeekRange } from "../utils/date";
 
-
+// Report Queue
 export const reportQueue = new Queue("recordQueue", {
   connection: ioRedis,
 });
 
-
-const getTotal = async ( field: string, userId: string, start: Date, end: Date) => {
-
+const getWeeklyStats = async (
+  userId: string,
+  start: Date,
+  end: Date
+) => {
   const result = await Inventory.aggregate([
     {
       $match: {
         userId,
-        createdAt: {
-          $gte: start,
-          $lt: end,
-        },
+        createdAt: { $gte: start, $lt: end },
       },
     },
-
     {
       $group: {
         _id: null,
 
-        total: {
-          $sum: `$${field}`,
+        totalQtyBought: { $sum: "$quantity" },
+        totalQtySold: { $sum: "$soldQuantity" },
+
+        totalSales: {
+          $sum: {
+            $multiply: ["$sellingPrice", "$soldQuantity"],
+          },
+        },
+
+        totalCost: {
+          $sum: {
+            $multiply: ["$boughtPrice", "$quantity"],
+          },
         },
       },
     },
   ]);
 
-  return result[0]?.total || 0;
+  return (
+    result[0] || {
+      totalQtyBought: 0,
+      totalQtySold: 0,
+      totalSales: 0,
+      totalCost: 0,
+    }
+  );
 };
 
 
-
+// Report scheduler worker
 new Worker(
-
   "recordQueue",
-
   async (job) => {
-
-    const { userId } = job.data;
-    const now = new Date()
-
     try {
+      const { userId } = job.data;
+      const now = new Date();
 
       const { start, end } = getWeekRange(now);
-      const totalWeeklyRev = await getTotal("boughtPrice",userId,start,end);
-      const totalWeeklySales = await getTotal("sellingPrice",userId,start,end);
-      const totalQtyBought = await getTotal("quantity",userId,start,end);
-      const totalQtyUpdated = await getTotal("updatedQuantity",userId,start,end);
 
-      const totalQtySold = totalQtyBought - totalQtyUpdated;
+      const stats = await getWeeklyStats(userId, start, end);
 
       await Reports.create({
         userId,
-        totalQtyBought,
-        totalQtySold,
-        totalWeeklyRev,
-        totalWeeklySales,
-        start,
-        end,
+        totalQtyBought: stats.totalQtyBought,
+        totalQtySold: stats.totalQtySold,
+        totalWeeklyCost: stats.totalCost,
+        totalWeeklySales: stats.totalSales,
       });
 
-      console.log(
-        `Weekly record updated for user ${userId}`
-      );
-
+      console.log(`Weekly report generated for user: ${userId}`);
     } catch (error) {
-
-      console.log(`Failed processing weekly records: ${error}`);
-
+      console.error("Failed processing weekly records:", error);
       throw error;
     }
   },
-
   {
     connection: ReportsConnection,
   }
 );
 
+//Report SCHEDULER
 
-type ReportSchedulerData = {
-  userId: string;
-};
-
-
-
-export const setDateRecords = async (data: ReportSchedulerData) => {
-
-  const user = await getUserById(data.userId);
+export const setRecordsJob = async (userId: string) => {
+  const user = await getUserById(userId);
 
   if (!user) {
-    console.log(
-      "User not found to create records"
-    );
-
+    console.log("User not found");
     return null;
   }
 
-  const timeZone =
-    user.metadata?.timezone || "Africa/Lagos";
+  const schedulerId = `${userId}--recordJob`;
 
-  const schedulerId =
-    `${data.userId}--recordJob`;
+  // prevent duplicate schedulers
+  const existing = await reportQueue.getJobSchedulers();
+
+  const alreadyExists = existing.some(
+    (job) => job.id === schedulerId
+  );
+
+  if (alreadyExists) {
+    console.log("Scheduler already exists:", schedulerId);
+    return null;
+  }
 
   await reportQueue.upsertJobScheduler(
-
     schedulerId,
-
     {
       pattern: "0 0 * * 0",
-      tz: timeZone,
+      tz: user.metadata?.timezone || "Africa/Lagos",
     },
-
     {
       name: "weekly-records",
-
       data: {
-        userId: data.userId,
+        userId,
       },
-
       opts: {
         removeOnComplete: true,
         removeOnFail: 100,
@@ -134,7 +128,5 @@ export const setDateRecords = async (data: ReportSchedulerData) => {
     }
   );
 
-  console.log(
-    `Weekly scheduler created for ${data.userId}`
-  );
+  console.log(`Weekly scheduler created for user: ${userId}`);
 };

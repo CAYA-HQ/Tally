@@ -43,6 +43,7 @@ const userSchema = new mongoose.Schema(
       type: String,
       trim: true,
       match: [/^\+?[1-9]\d{7,14}$/, "Invalid phone number"],
+      default: ""
     },
 
     googleId: {
@@ -94,6 +95,11 @@ const userSchema = new mongoose.Schema(
     timezone: {
       type: String,
       trim: true,
+    },
+    
+    reportsJobId: {
+      type: String,
+      trim: true
     },
 
     metadata: {

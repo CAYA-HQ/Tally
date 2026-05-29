@@ -8,10 +8,17 @@ import {
   FiAlertTriangle,
   FiTrendingDown,
 } from "react-icons/fi";
-import { useMemo } from "react";
+import { useMemo, useEffect } from "react";
 import { useInventory } from "../context/InventoryContext";
 import "../styles/pages/dashboard.css";
 import ChartBox from "../components/chart";
+import { useReportStore, useUserStore } from "../utils/zustand";
+import api from '../utils/api'
+import { toast } from "react-toastify";
+import {getReport, getUser} from '../utils/fetchBackend'
+import { Reports } from "../utils/dummyData";
+import { percentage } from "./ReportsPage";
+
 
 const dashboardColumns = [
   { key: "productName", header: "Product" },
@@ -28,6 +35,20 @@ const dashboardColumns = [
 ];
 
 const DashboardPage = () => {
+
+    useEffect(() => {
+      const init = async () => {
+        try {
+          await getUser();
+          await getReport();
+        } catch (err) {
+          console.log(err);
+        }
+      };  
+  
+      init();
+    }, []);
+  
   const { inventoryItems } = useInventory();
 
   const dashboardStats = useMemo(() => {
@@ -76,7 +97,7 @@ const DashboardPage = () => {
         title: "Low Stock",
         amount: totals.lowStock,
         icon: FiAlertTriangle,
-        iconColor: "yellow",
+        iconColor: "rgba(241, 241, 41, 0.872)",
       },
       {
         title: "Out of Stock",
@@ -99,7 +120,7 @@ const DashboardPage = () => {
 
         <div className="content-padding">
           <div className="stats-grid">
-            {dashboardStats.map((stat) => (
+            {/* {dashboardStats.map((stat) => (
               <Card
                 key={stat.title}
                 title={stat.title}
@@ -107,8 +128,31 @@ const DashboardPage = () => {
                 icon={stat.icon}
                 iconColor={stat.iconColor}
               />
-            ))}
+            ))} */}
+
+          {dashboardStats.map((stat, i) => (
+            <ChartBox
+              key={i}
+              data={percentage}
+              boxStyle={{background: 'white'}}
+              chartBoxClass="chart-box"
+              barChartClass="bar-chart"
+              barFillClass="bar-fill"
+              barDivClass="bar-div"
+              barFillStyle={{background: stat.iconColor}}
+            >
             
+              {/* TEXT INSIDE CHART */}
+              <div className="chart-header">
+                <stat.icon style={{ color: stat.iconColor }} />
+                <div>
+                  <p>{stat.title}</p>
+                  <h3>{stat.amount}</h3>
+                </div>
+              </div>
+          
+            </ChartBox>
+          ))}            
           </div>
           
           <section className="table-section">

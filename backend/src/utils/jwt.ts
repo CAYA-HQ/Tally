@@ -50,6 +50,8 @@ type payLoadType = {
   id: string;
   name: string;
   email: string;
+  phone: string;
+  avatar: { url: string; public_id: string; };
   session?: Array<any>;
   registrationDate?: string;
   registrationTime?: string;
@@ -62,9 +64,11 @@ type payLoadType = {
 
 export const payLoad = (d: payLoadType) => {
   return {
-    id: d.id,
-    name: d.name,
-    email: d.email,
+    id: d?.id,
+    name: d?.name,
+    email: d?.email,
+    phone: d?.phone,
+    avatar: d?.avatar,
     session: d.metadata?.session ?? d.session ?? [],
     registrationDate: d.metadata?.registrationDate ?? d.registrationDate,
     registrationTime: d.metadata?.registrationTime ?? d.registrationTime
