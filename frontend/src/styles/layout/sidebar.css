@@ -188,36 +188,57 @@
   min-width: 0;
 }
 
-/* ── Responsive collapse ───────────────────────────────────── */
-@media (max-width: 768px) {
-  .tally-sidebar {
-    width: 68px;
+/* ── Overlay backdrop (tablet + mobile) ────────────────────────────── */
+.sidebar-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  z-index: 49;
+  opacity: 0;
+  transition: opacity var(--transition-normal) ease;
+  pointer-events: none;
+}
+
+/* ── Tablet + Mobile: drawer ───────────────────────────────────────── */
+@media (max-width: 1023px) {
+  .sidebar-overlay {
+    display: block;
   }
 
-  .tally-logo-text,
-  .tally-nav-label {
-    display: none;
+  .sidebar-overlay.active {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .tally-sidebar {
+    width: 260px;
+    transform: translateX(-100%);
+    animation: none;
+    transition: transform var(--transition-normal) cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .tally-sidebar.open {
+    transform: translateX(0);
   }
 
   .tally-logo {
+    display: flex;
     justify-content: center;
     padding: 0;
   }
 
+  .tally-logo-text,
+  .tally-nav-label {
+    display: block;
+  }
+
   .tally-nav-item {
-    justify-content: center;
-    padding: 12px;
+    justify-content: flex-start;
+    padding: 11px 14px;
   }
 
   .tally-nav-item.active::before {
-    display: none;
-  }
-
-  .tally-divider {
-    margin: var(--spacing-xs) 10px;
-  }
-
-  .tally-content {
-    margin-left: 68px;
+    display: block;
   }
 }

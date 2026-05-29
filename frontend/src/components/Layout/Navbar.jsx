@@ -1,16 +1,20 @@
 import React, { useEffect, useState } from 'react';
-import { FiSearch, FiBell } from 'react-icons/fi';
+import { FiSearch, FiBell, FiMenu } from 'react-icons/fi';
 import { IoChatbubbleOutline } from 'react-icons/io5';
 import "../../styles/layout/navbar.css";
 import Ellipse2 from "../../assets/Ellipse2.png";
 import { useNotificationStore } from '../../utils/zustand';
 import { NavLink } from 'react-router-dom';
 
-const Navbar = () => {
+const Navbar = ({ onMenuToggle }) => {
   const { notifications } = useNotificationStore();
   const hasNotification = notifications.length > 0;[notifications]
   return (
     <nav className="top-navbar">
+      <button className="hamburger-btn" onClick={onMenuToggle} aria-label="Toggle menu">
+        <FiMenu />
+      </button>
+
       <div className="search-container">
         <FiSearch className="search-icon" />
         <input 

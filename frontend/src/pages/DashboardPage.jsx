@@ -8,9 +8,10 @@ import {
   FiAlertTriangle,
   FiTrendingDown,
 } from "react-icons/fi";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { useInventory } from "../context/InventoryContext";
 import "../styles/pages/dashboard.css";
+import ChartBox from "../components/chart";
 
 const dashboardColumns = [
   { key: "productName", header: "Product" },
@@ -28,6 +29,7 @@ const dashboardColumns = [
 
 const DashboardPage = () => {
   const { inventoryItems } = useInventory();
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const dashboardStats = useMemo(() => {
     const totals = inventoryItems.reduce(
@@ -55,7 +57,7 @@ const DashboardPage = () => {
         inStock: 0,
         lowStock: 0,
         outOfStock: 0,
-      }
+      },
     );
 
     return [
@@ -89,11 +91,12 @@ const DashboardPage = () => {
   const recentProducts = [...inventoryItems].slice(-5).reverse();
 
   return (
+   
     <div className="dashboard-wrapper">
-      <Sidebar />
+      <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
 
       <main className="main-content">
-        <Navbar />
+        <Navbar onMenuToggle={() => setSidebarOpen((prev) => !prev)} />
 
         <div className="content-padding">
           <div className="stats-grid">
@@ -106,8 +109,9 @@ const DashboardPage = () => {
                 iconColor={stat.iconColor}
               />
             ))}
+            
           </div>
-
+          
           <section className="table-section">
             <h2 className="section-title">Recent inventory additions</h2>
             <Table columns={dashboardColumns} data={recentProducts} />

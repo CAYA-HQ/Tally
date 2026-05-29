@@ -1,6 +1,5 @@
 import type { JobsOptions, RepeatOptions } from "bullmq";
-import { Alert } from "../model/Reminders.model";
-import { emailQueue } from "../config/bullQ";
+import { emailQueue } from "../config/bullMQ";
 import { setNotification } from "./notification.service";
 
 
@@ -32,7 +31,7 @@ export const jobOptions = (data: noteOptions): ProcessedJobConfig => {
 
   const minutes = date.getMinutes();
   const hours = date.getHours();
-  const timezone = data.timezone || "U";
+  const timezone = data.timezone || "UTC";
 
   // Base options for all jobs
   const baseOptions: JobsOptions = {

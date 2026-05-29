@@ -5,8 +5,9 @@
 }
 
 .main-content {
-  flex: 1; /* Takes up remaining space next to sidebar */
-  margin-left: 260px; /* IMPORTANT: Match this to your Sidebar's width */
+  flex: 1;
+  margin-left: 0;
+  min-width: 0;
   display: flex;
   flex-direction: column;
 }
@@ -46,4 +47,10 @@
   border: none;
   border-radius: var(--border-radius-sm);
   cursor: pointer;
+}
+
+@media (min-width: 1024px) {
+  .main-content {
+    margin-left: 260px;
+  }
 }

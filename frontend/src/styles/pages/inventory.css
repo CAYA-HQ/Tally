@@ -6,7 +6,14 @@
 
 .inventory-main {
   flex: 1;
-  margin-left: 260px;
+  margin-left: 0;
+  min-width: 0;
+}
+
+@media (min-width: 1024px) {
+  .inventory-main {
+    margin-left: 260px;
+  }
 }
 
 .inventory-content {
@@ -39,7 +46,8 @@
   font-weight: 600;
   cursor: pointer;
   font-family: var(--font-poppins);
-  transition: transform var(--transition-normal),
+  transition:
+    transform var(--transition-normal),
     opacity var(--transition-normal);
 }
 
@@ -206,7 +214,9 @@
   border: none;
   border-radius: var(--border-radius-sm);
   cursor: pointer;
-  transition: opacity var(--transition-fast), transform var(--transition-fast);
+  transition:
+    opacity var(--transition-fast),
+    transform var(--transition-fast);
 }
 
 .inventory-actions-save {
@@ -230,4 +240,33 @@
 .inventory-actions-delete:hover {
   opacity: 0.92;
   transform: translateY(-1px);
+}
+
+@media (max-width: 640px) {
+  .inventory-content {
+    padding: var(--spacing-sm);
+  }
+
+  .summary-card {
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .divider {
+    width: 100%;
+    height: 1px;
+  }
+
+  .table-controls {
+    flex-direction: column;
+  }
+
+  .table-search {
+    width: 100%;
+  }
+
+  .filter-group {
+    width: 100%;
+    flex-wrap: wrap;
+  }
 }

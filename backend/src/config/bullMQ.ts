@@ -3,17 +3,23 @@ import IORedis from "ioredis";
 import { env } from "../model/validate.user";
 import { transporter } from "../service/otp.service";
 import { Alert } from "../model/Reminders.model";
-import { io } from "../config/socket";
+import { io } from "./socket";
 import { setNotification } from "../service/notification.service";
 
 
-const ioRedis = new IORedis({
+export const ioRedis = new IORedis({
   host: 'redis',
   port: Number(env.REDIS_PORT),
   maxRetriesPerRequest: null,
 });
 
 const workerConnection = new IORedis({
+  host: 'redis',
+  port: Number(env.REDIS_PORT),
+  maxRetriesPerRequest: null,
+});
+
+export const ReportsConnection = new IORedis({
   host: 'redis',
   port: Number(env.REDIS_PORT),
   maxRetriesPerRequest: null,
