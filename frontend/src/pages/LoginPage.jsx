@@ -43,7 +43,12 @@ function LoginPage() {
     } finally {
       setIsLoading(false);
     }
+
+    
+    
   };
+
+ 
 
   const handleGoogleLogin = () => {
     window.location.href = `${authBaseURL}/auth/google`;

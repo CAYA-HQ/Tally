@@ -43,6 +43,8 @@ const NAV_ITEMS = [
     icon: <LuClipboardList />,
     path: "/dashboard/reminders",
   },
+
+  
 ];
 
 export default function Sidebar() {
@@ -82,12 +84,15 @@ export default function Sidebar() {
 
       {/* Bottom nav */}
       <div className="tally-bottom">
-        <button className="tally-nav-item">
+        <NavLink
+          to={RoutePaths.SETTINGS}
+          className={({ isActive }) => `tally-nav-item${isActive ? " active" : ""}`}
+        >
           <span className="tally-nav-icon">
             <IoSettingsOutline />
           </span>
           <span className="tally-nav-label">Settings</span>
-        </button>
+        </NavLink>
         <button className="tally-nav-item" onClick={handleLogout}>
           <span className="tally-nav-icon">
             <LuLogOut />
