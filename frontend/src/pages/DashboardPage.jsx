@@ -15,7 +15,7 @@ import ChartBox from "../components/chart";
 import { useReportStore, useUserStore } from "../utils/zustand";
 import api from '../utils/api'
 import { toast } from "react-toastify";
-import {getReport, getUser} from '../utils/fetchBackend'
+import { getUser} from '../utils/fetchBackend'
 import { Reports } from "../utils/dummyData";
 import { percentage } from "./ReportsPage";
 
@@ -40,7 +40,6 @@ const DashboardPage = () => {
       const init = async () => {
         try {
           await getUser();
-          await getReport();
         } catch (err) {
           console.log(err);
         }
