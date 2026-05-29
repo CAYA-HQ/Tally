@@ -26,6 +26,7 @@ const sortOptions = [
 const InventoryPage = () => {
   const { inventoryItems, addProduct, updateProductQuantity, deleteProduct } =
     useInventory();
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedStatus, setSelectedStatus] = useState("All");
   const [sortDirection, setSortDirection] = useState("desc");
@@ -105,16 +106,16 @@ const InventoryPage = () => {
           inStock: 0,
           lowStock: 0,
           outOfStock: 0,
-        }
+        },
       ),
-    [filteredInventory]
+    [filteredInventory],
   );
 
   const totalStockBuckets = Math.max(
     inventoryStats.inStock +
       inventoryStats.lowStock +
       inventoryStats.outOfStock,
-    1
+    1,
   );
 
   const stockDistribution = {
@@ -160,7 +161,7 @@ const InventoryPage = () => {
 
   const handleDeleteProduct = (item) => {
     const shouldDelete = window.confirm(
-      `Delete ${item.productName} from inventory?`
+      `Delete ${item.productName} from inventory?`,
     );
 
     if (!shouldDelete) {
@@ -223,7 +224,7 @@ const InventoryPage = () => {
         ),
       },
     ],
-    [quantityDrafts]
+    [quantityDrafts],
   );
 
   const handleAddProduct = async (product) => {
@@ -238,7 +239,7 @@ const InventoryPage = () => {
         unit: product.unit,
         quantity: product.quantity,
       });
-      console.log(useNotificationStore.getState().notifications)
+      console.log(useNotificationStore.getState().notifications);
 
       addProduct(product);
       toast.success("Product added successfully");
@@ -252,10 +253,10 @@ const InventoryPage = () => {
 
   return (
     <div className="inventory-wrapper">
-      <Sidebar />
+      <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
 
       <main className="inventory-main">
-        <Navbar />
+        <Navbar onMenuToggle={() => setSidebarOpen((prev) => !prev)} />
 
         <div className="inventory-content">
           <div className="inventory-header">

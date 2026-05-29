@@ -8,7 +8,7 @@ import {
   FiAlertTriangle,
   FiTrendingDown,
 } from "react-icons/fi";
-import { useMemo, useEffect } from "react";
+import { useMemo, useEffect, useState } from "react";
 import { useInventory } from "../context/InventoryContext";
 import "../styles/pages/dashboard.css";
 import ChartBox from "../components/chart";
@@ -49,6 +49,7 @@ const DashboardPage = () => {
     }, []);
   
   const { inventoryItems } = useInventory();
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const dashboardStats = useMemo(() => {
     const totals = inventoryItems.reduce(
@@ -76,7 +77,7 @@ const DashboardPage = () => {
         inStock: 0,
         lowStock: 0,
         outOfStock: 0,
-      }
+      },
     );
 
     return [
@@ -112,10 +113,10 @@ const DashboardPage = () => {
   return (
    
     <div className="dashboard-wrapper">
-      <Sidebar />
+      <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
 
       <main className="main-content">
-        <Navbar />
+        <Navbar onMenuToggle={() => setSidebarOpen((prev) => !prev)} />
 
         <div className="content-padding">
           <div className="stats-grid">

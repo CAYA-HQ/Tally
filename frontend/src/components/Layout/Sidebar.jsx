@@ -46,14 +46,19 @@ const NAV_ITEMS = [
   
 ];
 
-export default function Sidebar() {
+export default function Sidebar({ isOpen, onClose }) {
   const navigate = useNavigate();
   const handleLogout = () => {
     Cookies.remove("accessToken");
     navigate(RoutePaths.LOGIN);
   };
   return (
-    <aside className="tally-sidebar">
+    <>
+      <div
+        className={`sidebar-overlay${isOpen ? " active" : ""}`}
+        onClick={onClose}
+      />
+    <aside className={`tally-sidebar${isOpen ? " open" : ""}`}>
       {/* Logo */}
       <div className="tally-logo">
         <img src={logogroup} alt="Tally Logo" className="tally-img" />
@@ -97,5 +102,6 @@ export default function Sidebar() {
         </button>
       </div>
     </aside>
+    </>
   );
 }

@@ -7,6 +7,7 @@
   justify-content: space-between;
 }
 
+
 .inventory-dropdown-icon {
   transition: transform var(--transition-normal);
 }
