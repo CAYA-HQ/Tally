@@ -1,3 +1,4 @@
+import React, { useEffect, useState } from 'react'
 import Sidebar from "../components/Layout/Sidebar";
 import Navbar from "../components/Layout/Navbar";
 import Card from "../components/Layout/Cards";
@@ -8,7 +9,7 @@ import {
   FiAlertTriangle,
   FiTrendingDown,
 } from "react-icons/fi";
-import { useMemo, useEffect, useState } from "react";
+import { useMemo } from "react";
 import { useInventory } from "../context/InventoryContext";
 import "../styles/pages/dashboard.css";
 import ChartBox from "../components/chart";

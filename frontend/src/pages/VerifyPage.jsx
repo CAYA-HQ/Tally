@@ -7,9 +7,9 @@ import { BsCheckCircleFill } from "react-icons/bs";
 import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import api from "../utils/api";
-import { setAccessToken } from "../utils/session/token";
 import RoutePaths from "../routes/routePaths";
 import "../styles/pages/VerifyCode.css";
+import { useAccessTokenStore } from "../utils/zustand";
 
 const CODE_LENGTH = 6;
 
@@ -18,6 +18,7 @@ export default function VerifyPage() {
   const navigate = useNavigate();
   const email = location.state?.email;
 
+  const setAccessToken = useAccessTokenStore((state)=>state.setAccessToken)
   const [digits, setDigits] = useState(Array(CODE_LENGTH).fill(""));
   const [status, setStatus] = useState("idle"); // idle | success | loading
   const [cooldown, setCooldown] = useState(0);

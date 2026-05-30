@@ -1,8 +1,7 @@
 import { useEffect } from "react";
 import { socket, connectSocket } from "../utils/ioSocket";
-import { useNotificationStore } from "../utils/zustand";
+import { useNotificationStore, useAccessTokenStore } from "../utils/zustand";
 import api from "../utils/api";
-import { getAccessToken } from "../utils/session/token";
 
 export const NotificationProvider = ({children}) => {
 
@@ -12,10 +11,12 @@ export const NotificationProvider = ({children}) => {
   const setNotifications = useNotificationStore(
     (state) => state.setNotifications
   );
+  const token = useNotificationStore(
+    (state) => state.accessToken)
 
   // Fetch notifications on mount only if the user is authenticated
   useEffect(() => {
-    const token = getAccessToken();
+    
     if (!token) {
       return;
     }

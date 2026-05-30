@@ -1,11 +1,14 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Sidebar from "../components/Layout/Sidebar";
 import Navbar from "../components/Layout/Navbar";
 import { LuChevronDown } from "react-icons/lu";
 import { RiStackLine, RiCoinsLine, RiShieldFlashLine } from 'react-icons/ri';
 import "../styles/pages/settings.css";
+import { useUserStore } from '../utils/zustand';
+import { usePushReminders } from '../utils/pushReminder';
 
 const SettingsPage = () => {
+  const user = useUserStore((state) => state.user);
   const [activeTab, setActiveTab] = useState('Profile'); 
   const tabs = ['Profile', 'Security', 'Billings', 'Notifications'];
 
@@ -56,12 +59,10 @@ const SettingsPage = () => {
 
   // Notifications State 
   const [notifs, setNotifs] = useState({
-    news: true,
-    tips: false,
-    emailReminders: true,
-    comments: true,
+    whatsappReminders: true,
     pushReminders: true
   });
+  usePushReminders(notifs.pushReminders)
 
   const handleProfileChange = (e) => {
     const { name, value } = e.target;
@@ -80,7 +81,7 @@ const SettingsPage = () => {
     e.preventDefault();
     alert('Profile configurations updated successfully.');
   };
-
+    
   return (
     <div className="settings-wrapper">
       <Sidebar />
@@ -284,32 +285,11 @@ const SettingsPage = () => {
                 {/* Email Stack Group */}
                 <div className="notif-block-grid">
                   <div className="notif-meta-desc">
-                    <h2>Email notifications</h2>
-                    <p>Enable email alerts for low stock, reminders, and important updates.</p>
+                    <h2>Whatsapp notifications</h2>
+                    <p>Enable whatsapp alerts for low stock, reminders, and important updates.</p>
                   </div>
                   
                   <div className="notif-toggles-stack">
-                    <div className="toggle-row-item">
-                      <label className="toggle-switch">
-                        <input type="checkbox" checked={notifs.news} onChange={() => toggleNotif('news')} />
-                        <span className="toggle-slider"></span>
-                      </label>
-                      <div className="toggle-item-text">
-                        <h4>News and updates</h4>
-                        <p>Receive updates about new features, system improvements, and important product news.</p>
-                      </div>
-                    </div>
-
-                    <div className="toggle-row-item">
-                      <label className="toggle-switch">
-                        <input type="checkbox" checked={notifs.tips} onChange={() => toggleNotif('tips')} />
-                        <span className="toggle-slider"></span>
-                      </label>
-                      <div className="toggle-item-text">
-                        <h4>Tips and tutorials</h4>
-                        <p>Get useful tips and step-by-step tutorials to help you manage your inventory better.</p>
-                      </div>
-                    </div>
 
                     <div className="toggle-row-item">
                       <label className="toggle-switch">
@@ -333,17 +313,6 @@ const SettingsPage = () => {
                     <p>Enable push notifications to receive timely alerts and important inventory updates.</p>
                   </div>
 
-                  <div className="notif-toggles-stack">
-                    <div className="toggle-row-item">
-                      <label className="toggle-switch">
-                        <input type="checkbox" checked={notifs.comments} onChange={() => toggleNotif('comments')} />
-                        <span className="toggle-slider"></span>
-                      </label>
-                      <div className="toggle-item-text">
-                        <h4>Comments</h4>
-                        <p>Enable notifications for comments, replies, and activity discussions.</p>
-                      </div>
-                    </div>
 
                     <div className="toggle-row-item">
                       <label className="toggle-switch">
@@ -358,7 +327,6 @@ const SettingsPage = () => {
                   </div>
                 </div>
 
-              </div>
             )}
 
           </div>
