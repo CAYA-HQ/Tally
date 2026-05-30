@@ -1,27 +1,30 @@
-import React, { useEffect, useState } from 'react';
-import { FiSearch, FiBell, FiMenu } from 'react-icons/fi';
-import { IoChatbubbleOutline } from 'react-icons/io5';
+import { FiSearch, FiBell, FiMenu } from "react-icons/fi";
+import { IoChatbubbleOutline } from "react-icons/io5";
 import "../../styles/layout/navbar.css";
 import Ellipse2 from "../../assets/Ellipse2.png";
-import { useNotificationStore } from '../../utils/zustand';
-import { NavLink } from 'react-router-dom';
+import { useNotificationStore, useUserStore } from "../../utils/zustand";
+import { NavLink } from "react-router-dom";
 
 const Navbar = ({ onMenuToggle }) => {
   const { notifications } = useNotificationStore();
-  const hasNotification = notifications.length > 0;[notifications]
+  const user = useUserStore((state) => state.user);
+  const hasNotification = notifications.length > 0;
+  const avatarSrc = user?.avatar?.url || Ellipse2;
+  const displayName = user?.name || "User";
+  const displayEmail = user?.email || "";
   return (
     <nav className="top-navbar">
-      <button className="hamburger-btn" onClick={onMenuToggle} aria-label="Toggle menu">
+      <button
+        className="hamburger-btn"
+        onClick={onMenuToggle}
+        aria-label="Toggle menu"
+      >
         <FiMenu />
       </button>
 
       <div className="search-container">
         <FiSearch className="search-icon" />
-        <input 
-          type="text" 
-          placeholder="Search" 
-          className="search-input" 
-        />
+        <input type="text" placeholder="Search" className="search-input" />
       </div>
 
       <div className="nav-actions">
@@ -37,15 +40,11 @@ const Navbar = ({ onMenuToggle }) => {
 
         <div className="user-profile">
           <div className="user-info">
-            <span className="user-name">Mike John</span>
-            <span className="user-email">Mike_john@outlook.com</span>
+            <span className="user-name">{displayName}</span>
+            <span className="user-email">{displayEmail}</span>
           </div>
           <div className="avatar-wrapper">
-            <img 
-              src={Ellipse2} 
-              alt="User Avatar" 
-              className="user-avatar" 
-            />
+            <img src={avatarSrc} alt="User Avatar" className="user-avatar" />
             <span className="status-indicator"></span>
           </div>
         </div>

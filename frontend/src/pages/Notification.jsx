@@ -1,15 +1,19 @@
-import React, { useEffect, useState } from 'react';
-import { FiSearch } from 'react-icons/fi';
+import React, { useEffect, useState } from "react";
 import Sidebar from "../components/Layout/Sidebar";
 import Navbar from "../components/Layout/Navbar";
 import "../styles/pages/inventory.css";
-import api from '../utils/api';
+import "../styles/pages/notification.css";
+import api from "../utils/api";
+import { useNotificationStore } from "../utils/zustand";
 
 const NotificationPage = () => {
-  const [notifications, setNotifications] = useState([]);
   const [nextCursor, setNextCursor] = useState(null);
   const [hasMore, setHasMore] = useState(false);
   const [loading, setLoading] = useState(false);
+  const notifications = useNotificationStore((state) => state.notifications);
+  const setNotifications = useNotificationStore(
+    (state) => state.setNotifications
+  );
 
   const fetchNotifications = async (cursor = null) => {
     setLoading(true);
@@ -18,7 +22,7 @@ const NotificationPage = () => {
         params: cursor ? { cursor } : {},
       });
       const fetched = response.data.notification || [];
-      setNotifications((prev) => (cursor ? [...prev, ...fetched] : fetched));
+      setNotifications(cursor ? [...notifications, ...fetched] : fetched);
       setNextCursor(response.data.nextCursor || null);
       setHasMore(response.data.hasMore ?? false);
     } catch (error) {
@@ -34,87 +38,81 @@ const NotificationPage = () => {
       setNotifications([]);
       setNextCursor(null);
       setHasMore(false);
-      console.log("Clear all clicked")
     } catch (error) {
       console.error("Failed to clear notifications:", error);
     }
-  }
+  };
 
   useEffect(() => {
     fetchNotifications();
   }, []);
 
   const renderNotification = (notification, index) => (
-    <div
-      key={notification._id || index}
-      style={{
-        marginLeft: "35vh",
-        paddingTop: "20px",
-        paddingRight: "45px",
-        borderBottom: "1px solid rgba(0,0,0,0.08)",
-      }}
-    >
-      <p style={{ margin: 0, fontWeight: 600 }}>{notification.message}</p>
-      <p style={{ margin: 0, opacity: 0.6 }}>
-        {notification.category || "General Notification"}
-        </p>
-      <p style={{ margin: 0, opacity: 0.5 }}>
+    <div key={notification._id || index} className="notification-item">
+      <div className="notification-item__top">
+        <p className="notification-message">{notification.message}</p>
+        <span className="notification-category">
+          {notification.category || "General Notification"}
+        </span>
+      </div>
+      <p className="notification-date">
         {new Date(notification.createdAt).toLocaleString()}
       </p>
-      
     </div>
   );
 
   return (
-    <div className="order-wrapper">
+    <div className="notification-wrapper">
       <Sidebar />
-      
-      <main className="notification-main">        
-        <div style={{ marginLeft: "30vh", paddingTop: "40px", paddingLeft: "40px" }}>
-          <div className="inventory-header" style={{ display: "flex", alignItems: "center", gap: "20px" }}>
-            <h1 className='page-title'>Notifications</h1>
-          </div>
-          <hr style={{ width: "70vw" }} />
-        </div>
+      <main className="notification-main">
+        <Navbar />
 
-        <div style={{
-          marginLeft: "30vh",
-          paddingTop: "20px",
-          paddingRight: "45px",
-          display: "flex",
-          justifyContent: "right",
-          alignItems: "center",
-        }}>
-          <h4 style={{ opacity: 0.5, cursor: 'pointer' }} onClick={clearNotifications}>clear all</h4>
-        </div>
-
-        {notifications.length < 1 ? (
-          <div style={{ marginLeft: "35vh", paddingTop: "20px", paddingRight: "45px" }}>
-            <h3 style={{ opacity: 0.5 }}>{loading ? "Loading notifications..." : "No notifications yet"}</h3>
-          </div>
-        ) : (
-          notifications.map(renderNotification)
-        )}
-
-        {hasMore && (
-          <div style={{ marginLeft: "35vh", padding: "20px 45px" }}>
+        <div className="notification-content">
+          <div className="notification-header">
+            <div>
+              <h1 className="page-title">Notifications</h1>
+              <p className="notification-subtitle">
+                View and manage your recent alerts.
+              </p>
+            </div>
             <button
               type="button"
-              onClick={() => fetchNotifications(nextCursor)}
-              disabled={loading}
-              style={{
-                padding: "10px 20px",
-                backgroundColor: "#1d4ed8",
-                color: "white",
-                border: "none",
-                borderRadius: "6px",
-                cursor: loading ? "not-allowed" : "pointer",
-              }}
+              className="clear-notifications-btn"
+              onClick={clearNotifications}
             >
-              {loading ? "Loading..." : "Load more"}
+              Clear all
             </button>
           </div>
-        )}
+
+          <section className="notification-panel">
+            {notifications.length < 1 ? (
+              <div className="notification-empty">
+                <h3>
+                  {loading
+                    ? "Loading notifications..."
+                    : "No notifications yet"}
+                </h3>
+              </div>
+            ) : (
+              <div className="notification-list">
+                {notifications.map(renderNotification)}
+              </div>
+            )}
+
+            {hasMore && (
+              <div className="notification-load-more">
+                <button
+                  type="button"
+                  onClick={() => fetchNotifications(nextCursor)}
+                  disabled={loading}
+                  className="load-more-btn"
+                >
+                  {loading ? "Loading..." : "Load more"}
+                </button>
+              </div>
+            )}
+          </section>
+        </div>
       </main>
     </div>
   );

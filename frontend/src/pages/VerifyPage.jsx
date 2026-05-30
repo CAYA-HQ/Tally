@@ -9,7 +9,7 @@ import { toast } from "react-toastify";
 import api from "../utils/api";
 import RoutePaths from "../routes/routePaths";
 import "../styles/pages/VerifyCode.css";
-import { useAccessTokenStore } from "../utils/zustand";
+import { useAccessTokenStore, useUserStore } from "../utils/zustand";
 
 const CODE_LENGTH = 6;
 
@@ -18,7 +18,8 @@ export default function VerifyPage() {
   const navigate = useNavigate();
   const email = location.state?.email;
 
-  const setAccessToken = useAccessTokenStore((state)=>state.setAccessToken)
+  const setAccessToken = useAccessTokenStore((state) => state.setAccessToken);
+  const setUser = useUserStore((state) => state.setUser);
   const [digits, setDigits] = useState(Array(CODE_LENGTH).fill(""));
   const [status, setStatus] = useState("idle"); // idle | success | loading
   const [cooldown, setCooldown] = useState(0);
@@ -109,8 +110,15 @@ export default function VerifyPage() {
 
     setStatus("loading");
     try {
-      const { data } = await api.post("/auth/otp", { email, otp: code, timezone });
-      setAccessToken(data.accessToken, data.user);
+      const { data } = await api.post("/auth/otp", {
+        email,
+        otp: code,
+        timezone,
+      });
+      setAccessToken(data.accessToken);
+      if (data.user) {
+        setUser(data.user);
+      }
       setStatus("success");
       showToast("Verified successfully!", <BsCheckCircleFill size={14} />);
       setTimeout(() => navigate(RoutePaths.DASHBOARD), 1500);

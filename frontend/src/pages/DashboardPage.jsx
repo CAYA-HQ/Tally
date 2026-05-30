@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useMemo, useState } from "react";
 import Sidebar from "../components/Layout/Sidebar";
 import Navbar from "../components/Layout/Navbar";
 import Card from "../components/Layout/Cards";
@@ -9,17 +9,11 @@ import {
   FiAlertTriangle,
   FiTrendingDown,
 } from "react-icons/fi";
-import { useMemo } from "react";
 import { useInventory } from "../context/InventoryContext";
 import "../styles/pages/dashboard.css";
 import ChartBox from "../components/chart";
-import { useReportStore, useUserStore } from "../utils/zustand";
-import api from '../utils/api'
-import { toast } from "react-toastify";
-import { getUser} from '../utils/fetchBackend'
 import { Reports } from "../utils/dummyData";
 import { percentage } from "./ReportsPage";
-
 
 const dashboardColumns = [
   { key: "productName", header: "Product" },
@@ -36,19 +30,6 @@ const dashboardColumns = [
 ];
 
 const DashboardPage = () => {
-
-    useEffect(() => {
-      const init = async () => {
-        try {
-          await getUser();
-        } catch (err) {
-          console.log(err);
-        }
-      };  
-  
-      init();
-    }, []);
-  
   const { inventoryItems } = useInventory();
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
@@ -78,7 +59,7 @@ const DashboardPage = () => {
         inStock: 0,
         lowStock: 0,
         outOfStock: 0,
-      },
+      }
     );
 
     return [
@@ -112,7 +93,6 @@ const DashboardPage = () => {
   const recentProducts = [...inventoryItems].slice(-5).reverse();
 
   return (
-   
     <div className="dashboard-wrapper">
       <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
 
@@ -131,31 +111,29 @@ const DashboardPage = () => {
               />
             ))} */}
 
-          {dashboardStats.map((stat, i) => (
-            <ChartBox
-              key={i}
-              data={percentage}
-              boxStyle={{background: 'white'}}
-              chartBoxClass="chart-box"
-              barChartClass="bar-chart"
-              barFillClass="bar-fill"
-              barDivClass="bar-div"
-              barFillStyle={{background: stat.iconColor}}
-            >
-            
-              {/* TEXT INSIDE CHART */}
-              <div className="chart-header">
-                <stat.icon style={{ color: stat.iconColor }} />
-                <div>
-                  <p>{stat.title}</p>
-                  <h3>{stat.amount}</h3>
+            {dashboardStats.map((stat, i) => (
+              <ChartBox
+                key={i}
+                data={percentage}
+                boxStyle={{ background: "white" }}
+                chartBoxClass="chart-box"
+                barChartClass="bar-chart"
+                barFillClass="bar-fill"
+                barDivClass="bar-div"
+                barFillStyle={{ background: stat.iconColor }}
+              >
+                {/* TEXT INSIDE CHART */}
+                <div className="chart-header">
+                  <stat.icon style={{ color: stat.iconColor }} />
+                  <div>
+                    <p>{stat.title}</p>
+                    <h3>{stat.amount}</h3>
+                  </div>
                 </div>
-              </div>
-          
-            </ChartBox>
-          ))}            
+              </ChartBox>
+            ))}
           </div>
-          
+
           <section className="table-section">
             <h2 className="section-title">Recent inventory additions</h2>
             <Table columns={dashboardColumns} data={recentProducts} />

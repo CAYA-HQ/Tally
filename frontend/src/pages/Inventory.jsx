@@ -43,10 +43,6 @@ const InventoryPage = () => {
   const [productToDelete, setProductToDelete] = useState(null);
 
   useEffect(() => {
-    fetchInventory();
-  }, []);
-
-  useEffect(() => {
     setQuantityDrafts((currentDrafts) => {
       const nextDrafts = {};
 
@@ -116,16 +112,16 @@ const InventoryPage = () => {
           inStock: 0,
           lowStock: 0,
           outOfStock: 0,
-        },
+        }
       ),
-    [filteredInventory],
+    [filteredInventory]
   );
 
   const totalStockBuckets = Math.max(
     inventoryStats.inStock +
       inventoryStats.lowStock +
       inventoryStats.outOfStock,
-    1,
+    1
   );
 
   const stockDistribution = {
@@ -240,7 +236,7 @@ const InventoryPage = () => {
         ),
       },
     ],
-    [quantityDrafts],
+    [quantityDrafts]
   );
 
   const handleAddProduct = async (product) => {
