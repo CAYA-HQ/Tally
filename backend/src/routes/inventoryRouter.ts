@@ -6,11 +6,6 @@ const inventoryRouter = Router()
 inventoryRouter.post('/', addInventory)
 inventoryRouter.delete('/:id', deleteItem)
 inventoryRouter.put('/:id', updateInventory)
-inventoryRouter.get('/',( req: Request, res: Response, next: NextFunction)=>{
-    console.log({
-        'request from user with id': (req.user as any).id
-    })
-    next()
-}, getInventory)
+inventoryRouter.get('/', getInventory)
 
 export default inventoryRouter
