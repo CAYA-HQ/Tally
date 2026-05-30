@@ -4,8 +4,6 @@ import Sidebar from "../components/Layout/Sidebar";
 import Navbar from "../components/Layout/Navbar";
 import "../styles/components/chartStyle.css";
 import {getReport} from '../utils/fetchBackend'
-
-
 import {
   FiBarChart2,
   FiClipboard,
@@ -72,7 +70,7 @@ export const chartIndicators = [
 ];
 
 const ReportsPage = () => {
-    
+
      useEffect(() => {
           const init = async () => {
             try {
@@ -151,16 +149,15 @@ const ReportsPage = () => {
             style={{position: 'relative'}}
           >
             <div className="chart-indicator">
-            {chartIndicators.map((item, i) => (<>
+            {chartIndicators.map((item, i) => (<div key={i}>
                 <p>{item.name}</p>
               <div
-                key={i}
                 className="indicator-dot"
                 style={{
                   background: item.color,
                 }}
               />
-            </>))}
+            </div>))}
             </div>
           </ChartBox>
 

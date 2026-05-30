@@ -32,7 +32,7 @@ const DeleteReminderModal = ({ isOpen, reminder, onClose, onConfirm }) => {
         <div className="delete-reminder-content">
           <h2 className="delete-reminder-title">Delete reminder?</h2>
           <p className="delete-reminder-copy">
-            This will remove <strong>{reminder.title}</strong> from your
+            This will remove <strong>{reminder}</strong> from your
             reminders list. This action cannot be undone.
           </p>
         </div>

@@ -31,7 +31,7 @@
   pointer-events: none;
   transition: opacity var(--transition-normal),
     transform var(--transition-normal);
-  z-index: 20;
+  z-index: 50;
 }
 
 .inventory-dropdown-menu.is-open {

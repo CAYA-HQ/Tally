@@ -6,8 +6,7 @@ import { setNotification } from '../service/notification.service'
 import { Inventory } from '../model/inventory.model'
 import { setRecordsJob } from '../service/reports.service'
 
-const data = (d: any)=>{
-  const data = {
+const data = (d: any)=>({
     id:  d._id,
     name:  d.stock,
     qty:  d.quantity,
@@ -15,9 +14,8 @@ const data = (d: any)=>{
     sellingPrice:  d.sellingPrice,
     category:  d.category,
     unit:  d.unit,
-  };
-  return data
-}
+  });
+
 
 // Add inventory
 export const addInventory = asyncHandler(async (req: Request, res: Response) => {
@@ -129,16 +127,16 @@ export const deleteItem = asyncHandler(async (req: Request, res: Response) => {
 
 // Update inventory
 export const updateInventory = asyncHandler(async (req: Request, res: Response) => {
-  const { stock, quantity, boughtPrice, sellingPrice } = req.body
+  const {quantity} = req.body
   const userId = (req as any).user.id
   const stockId = req.params.id
 
-  if (!req.body) {
-    return res.status(400).json({
-      success: false,
-      message: 'nothing to update'
-    })
-  }
+  if (quantity) {
+      return res.status(400).json({
+        success: false,
+        message: "nothing to update",
+      });
+    }
 
   if(!userId){
     return res.status(404).json({
@@ -147,44 +145,29 @@ export const updateInventory = asyncHandler(async (req: Request, res: Response) 
     })
   }
 
-  const result = await Inventory.findOneAndUpdate(
-  {
-    _id: stockId,
-    userId,
-  },
-  {
-    $set: {
-      stock,
-      boughtPrice,
-      sellingPrice,
-    },
-  },
-  {
-    new: true,
-  }
-  )
-  if(!result){
-    console.error(`failed to update inventory with this error: ${Error}`)
+  const inventory = await Inventory.findOne({_id: stockId, userId})
+
+  if (!inventory) {
     return res.status(400).json({
       success: false,
-      message: 'failed to update inventory'
-    })
+      message: "failed to update inventory",
+    });
   }
-  const qtySaved = result.quantity  
-  const base = result.updatedQuantity ?? result.quantity;
+
+  const qtySaved = inventory.quantity  
+  const base = inventory.updatedQuantity ?? inventory.quantity;
   const qtyDifference = base - quantity;
 
-  if(qtyDifference < 0) result.quantity = qtySaved + Math.abs(qtyDifference)
-  if(qtyDifference > 0) result.soldQuantity += qtyDifference
+  if(qtyDifference < 0) inventory.quantity = qtySaved + Math.abs(qtyDifference)
+  if(qtyDifference > 0) inventory.soldQuantity += qtyDifference
 
-  result.updatedQuantity = quantity
-  await result.save()
-  
-  const updatedResult = data(result)
+  await inventory.save()
+
+  const updatedinventory = data(inventory) 
 
   await setNotification(
     userId as string,
-    data(result),
+    data(inventory),
     'stock updated successfully',
     'inventory'
   )
@@ -192,8 +175,8 @@ export const updateInventory = asyncHandler(async (req: Request, res: Response) 
   return res.status(200).json({
     success: true,
     message: 'inventory updated',
-    updatedResult,
-    stockId: result?._id
+    updatedinventory,
+    stockId: inventory?._id
   })
 })
 
@@ -206,13 +189,16 @@ export const getInventory = asyncHandler(async(req: Request, res: Response)=>{
     success: false
   })
 
-  const inventory = await Inventory.findById({userId})
+  const inventory = await Inventory.find({userId})
+  
   
   if(!inventory) return res.status(400).json({
     success: false,
     message: 'no inventory found for this user'
   })
-  const sentInventory = data(inventory)
+  console.log(`inventory: ${inventory}`)
+  const sentInventory = inventory.map(data)
+  console.log(`sent inventory: ${sentInventory[0]?.id}`)
 
   return res.status(200).json({
     success: true,

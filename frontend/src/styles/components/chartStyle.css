@@ -20,12 +20,20 @@
     }
     }
 
-.reports-wrapper, .big-chart-wrapper{
+ .big-chart-wrapper{
     display: flex;
     flex-wrap: wrap;
     padding: 20px;
     justify-content: center;
 }
+.reports-wrapper {
+    display: flex;
+    background-color: white;
+    margin: 30px;
+    justify-content: flex-start;
+    padding: 0;
+}
+
 
 .chart-box {
     display: flex;
@@ -39,7 +47,8 @@
     overflow: hidden;
     margin: 25px;
     flex-direction: column;
-    background: rgba(223, 219, 219, 0.797);
+    background: #2323230f;
+
 
     && p{
         font-size: 15px;
