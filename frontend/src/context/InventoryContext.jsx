@@ -1,160 +1,102 @@
 /* eslint-disable react-refresh/only-export-components */
-import { createContext, useContext, useEffect, useMemo, useState } from "react";
-
-const INVENTORY_STORAGE_KEY = "tally.inventory.items";
-
-const initialInventoryData = [
-  {
-    sn: 1,
-    idNo: "IVS-1002",
-    productName: "Hi-Drone",
-    category: "Electronics",
-    stocks: 50,
-    status: "Low Stock",
-    costPrice: 320,
-    sellingPrice: 450,
-    unit: "pcs",
-  },
-  {
-    sn: 2,
-    idNo: "BEN-6701",
-    productName: "Body-fit Compact",
-    category: "Wellness",
-    stocks: 95,
-    status: "In Stock",
-    costPrice: 120,
-    sellingPrice: 180,
-    unit: "pcs",
-  },
-  {
-    sn: 3,
-    idNo: "TIN-2090",
-    productName: "Peak Milk",
-    category: "Beverages",
-    stocks: 20,
-    status: "Out of Stock",
-    costPrice: 70,
-    sellingPrice: 110,
-    unit: "carton",
-  },
-  {
-    sn: 4,
-    idNo: "PAN-0076",
-    productName: "Paracetamol",
-    category: "Medication",
-    stocks: 15,
-    status: "Out of Stock",
-    costPrice: 40,
-    sellingPrice: 65,
-    unit: "box",
-  },
-  {
-    sn: 5,
-    idNo: "TIN-3044",
-    productName: "Nivea",
-    category: "Deodorant",
-    stocks: 400,
-    status: "In Stock",
-    costPrice: 150,
-    sellingPrice: 210,
-    unit: "pcs",
-  },
-];
+import { createContext, useContext, useCallback, useMemo, useState } from "react";
+import api from "../utils/api";
 
 const InventoryContext = createContext(null);
 
 const createInventoryStatus = (quantity) => {
-  if (quantity <= 0) {
-    return "Out of Stock";
-  }
-
-  if (quantity <= 20) {
-    return "Low Stock";
-  }
-
+  if (quantity <= 0) return "Out of Stock";
+  if (quantity <= 20) return "Low Stock";
   return "In Stock";
 };
 
-const buildInventoryItem = (product, currentItems) => ({
-  sn: currentItems.length + 1,
-  idNo: `INV-${String(Date.now()).slice(-6)}`,
-  productName: product.inventoryName,
-  category: product.category,
-  stocks: product.quantity,
-  status: createInventoryStatus(product.quantity),
-  costPrice: product.costPrice,
-  sellingPrice: product.sellingPrice,
-  unit: product.unit || "-",
+const fromBackend = (item, index) => ({
+  sn: index + 1,
+  idNo: String(item.id),
+  productName: item.name,
+  category: item.category,
+  stocks: item.qty,
+  status: createInventoryStatus(item.qty),
+  costPrice: item.boughtPrice,
+  sellingPrice: item.sellingPrice,
+  unit: item.unit || "-",
 });
 
-const withSerialNumbers = (items) =>
-  items.map((item, index) => ({
-    ...item,
-    sn: index + 1,
-  }));
-
 export const InventoryProvider = ({ children }) => {
-  const [inventoryItems, setInventoryItems] = useState(() => {
-    if (typeof window === "undefined") {
-      return initialInventoryData;
-    }
+  const [inventoryItems, setInventoryItems] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
 
+  const fetchInventory = useCallback(async () => {
+    setIsLoading(true);
     try {
-      const storedItems = window.localStorage.getItem(INVENTORY_STORAGE_KEY);
-      return storedItems ? JSON.parse(storedItems) : initialInventoryData;
+      const response = await api.get("/user/inventory");
+      const items = response.data.sentInventory;
+      setInventoryItems(Array.isArray(items) ? items.map(fromBackend) : []);
     } catch {
-      return initialInventoryData;
+      setInventoryItems([]);
+    } finally {
+      setIsLoading(false);
     }
-  });
+  }, []);
 
-  useEffect(() => {
-    try {
-      window.localStorage.setItem(
-        INVENTORY_STORAGE_KEY,
-        JSON.stringify(inventoryItems)
-      );
-    } catch {
-      // Ignore storage failures and keep the in-memory state.
-    }
-  }, [inventoryItems]);
+  const addProduct = async (product) => {
+    const response = await api.post("/user/inventory", {
+      stock: product.inventoryName,
+      category: product.category,
+      boughtPrice: product.costPrice,
+      sellingPrice: product.sellingPrice,
+      unit: product.unit,
+      quantity: product.quantity,
+    });
 
-  const addProduct = (product) => {
+    const newStock = response.data.newStock;
+
     setInventoryItems((currentItems) => [
       ...currentItems,
-      buildInventoryItem(product, currentItems),
+      {
+        sn: currentItems.length + 1,
+        idNo: String(newStock.id),
+        productName: newStock.name,
+        category: newStock.category,
+        stocks: newStock.qty,
+        status: createInventoryStatus(newStock.qty),
+        costPrice: newStock.boughtPrice,
+        sellingPrice: newStock.sellingPrice,
+        unit: newStock.unit || "-",
+      },
     ]);
   };
 
-  const updateProductQuantity = (idNo, quantity) => {
+  const updateProductQuantity = async (idNo, quantity) => {
+    await api.put(`/user/inventory/${idNo}`, { quantity });
+
     setInventoryItems((currentItems) =>
       currentItems.map((item) => {
-        if (item.idNo !== idNo) {
-          return item;
-        }
-
-        return {
-          ...item,
-          stocks: quantity,
-          status: createInventoryStatus(quantity),
-        };
+        if (item.idNo !== idNo) return item;
+        return { ...item, stocks: quantity, status: createInventoryStatus(quantity) };
       })
     );
   };
 
-  const deleteProduct = (idNo) => {
-    setInventoryItems((currentItems) =>
-      withSerialNumbers(currentItems.filter((item) => item.idNo !== idNo))
-    );
+  const deleteProduct = async (idNo) => {
+    await api.delete(`/user/inventory/${idNo}`);
+
+    setInventoryItems((currentItems) => {
+      const filtered = currentItems.filter((item) => item.idNo !== idNo);
+      return filtered.map((item, index) => ({ ...item, sn: index + 1 }));
+    });
   };
 
   const value = useMemo(
     () => ({
       inventoryItems,
+      isLoading,
+      fetchInventory,
       addProduct,
       updateProductQuantity,
       deleteProduct,
     }),
-    [inventoryItems]
+    [inventoryItems, isLoading, fetchInventory]
   );
 
   return (

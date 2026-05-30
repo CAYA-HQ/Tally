@@ -303,7 +303,7 @@ const ReminderPage = () => {
 
       <DeleteReminderModal
         isOpen={Boolean(reminderToDelete)}
-        reminder={reminderToDelete}
+        reminder={reminderToDelete?.title}
         onClose={() => setReminderToDelete(null)}
         onConfirm={async () => {
           console.log("Deleting reminder with id:", reminderToDelete?.id);
