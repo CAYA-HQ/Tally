@@ -51,3 +51,17 @@ export const getWeekRange = (date: string | Date | number) => {
 
   return { start, end };
 }
+
+export const getDayRange = (date: string | Date | number) => {
+  const now = new Date(date);
+
+  // Start of day (00:00:00.000)
+  const start = new Date(now);
+  start.setHours(0, 0, 0, 0);
+
+  // End = start of next day (00:00:00.000)
+  const end = new Date(start);
+  end.setDate(start.getDate() + 1);
+
+  return { start, end };
+};

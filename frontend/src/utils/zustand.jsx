@@ -6,15 +6,21 @@ import { connectSocket, disconnectSocket } from "./ioSocket";
 export const useNotificationStore = create(persist((set) => ({
   notifications: [],
 
+  seenNotification: true,
+
   setNotifications: (n) => set({ notifications: n }),
 
   addNotification: (n) =>
     set((state) => ({
-      notifications: [...state.notifications, n],
-    })),
+      notifications: [...n, ...state.notifications],
+  })),
+
+  setSeenNotification: (n) => set({seenNotification: n}),
+
 }),
   { name: 'notifications' }
 ))
+
 
 export const useReportStore = create(persist((set)=>({
   reports: [],
@@ -28,6 +34,7 @@ export const useReportStore = create(persist((set)=>({
 }),
   { name: 'reports'}
 ))
+
 
 export const useUserStore = create(persist((set)=>({
   user: null,

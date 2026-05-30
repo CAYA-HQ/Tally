@@ -27,9 +27,8 @@ export const fetchNotifications = async (setNotification, setCursor, setHasMore,
 export const getReport = async () => {
   try {
     const res = await api.get("/user/reports");
-    const report = res.data;
 
-    useReportStore.getState().setReport(report);
+    useReportStore.getState().setReport(res.data);
   } catch (err) {
     toast.error(err.response?.data?.message || "Failed to fetch reports");
   }

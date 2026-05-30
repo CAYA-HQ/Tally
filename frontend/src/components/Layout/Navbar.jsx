@@ -7,8 +7,17 @@ import { useNotificationStore } from '../../utils/zustand';
 import { NavLink } from 'react-router-dom';
 
 const Navbar = ({ onMenuToggle }) => {
-  const { notifications } = useNotificationStore();
-  const hasNotification = notifications.length > 0;[notifications]
+
+  const {notifications, seenNotification, setSeenNotification,
+  hasNotification} = useNotificationStore();
+
+  useEffect(()=>{
+    console.log({
+      'notification seen': seenNotification,
+      'notification length is there': notifications.length > 0
+    })
+  },[])
+
   return (
     <nav className="top-navbar">
       <button className="hamburger-btn" onClick={onMenuToggle} aria-label="Toggle menu">
@@ -28,7 +37,8 @@ const Navbar = ({ onMenuToggle }) => {
         <div className="icon-group">
           <NavLink to="/notifications" className="icon-btn">
             <FiBell />
-            {hasNotification && <span className="notification-dot"></span>}
+            {notifications.length > 0 && !seenNotification && 
+            <span className="notification-dot"></span>}
           </NavLink>
           <NavLink className="icon-btn">
             <IoChatbubbleOutline />

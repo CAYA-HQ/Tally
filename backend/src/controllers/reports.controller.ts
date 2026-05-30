@@ -11,6 +11,8 @@ export const getReports = asyncHandler(async(req: Request, res: Response)=>{
     })
 
     const weeklyReports = await Reports.find({userId})
+    .sort({createdAt: -1})
+
     if(!weeklyReports?.length){
         console.log(`reports empth for now: ${weeklyReports}`)
         return res.status(404).json({
