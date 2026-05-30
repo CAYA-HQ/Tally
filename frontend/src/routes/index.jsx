@@ -9,6 +9,7 @@ import InventoryPage from "../pages/Inventory";
 import TaskHistoryPage from "../pages/Orders";
 import Reminderpage from "../pages/ReminderPage";
 import NotFoundPage from "../pages/NotFoundPage";
+import SettingsPage from "../pages/Settingspage";
 import RoutePaths from "./routePaths";
 import NotificationPage from "../pages/Notification";
 import ReportsPage from "../pages/ReportsPage";
@@ -59,6 +60,10 @@ export const router = createBrowserRouter([
       {
         path: "reminders",
         element: <Reminderpage />,
+      },
+      {
+        path: "settings",
+        element: <SettingsPage />,
       },
     
     ],

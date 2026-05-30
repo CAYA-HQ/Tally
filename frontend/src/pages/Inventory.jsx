@@ -5,11 +5,10 @@ import Navbar from "../components/Layout/Navbar";
 import Table from "../components/Layout/Tables";
 import FilterDropdown from "../components/FilterDropdown";
 import AddProductModal from "../components/AddProductModal";
+import DeleteReminderModal from "../components/DeleteReminderModal";
 import { useInventory } from "../context/InventoryContext";
 import { toast } from "react-toastify";
-import api from "../utils/api";
 import "../styles/pages/inventory.css";
-import { useNotificationStore } from "../utils/zustand";
 
 const statusOptions = [
   { label: "All", value: "All" },
@@ -24,8 +23,14 @@ const sortOptions = [
 ];
 
 const InventoryPage = () => {
-  const { inventoryItems, addProduct, updateProductQuantity, deleteProduct } =
-    useInventory();
+  const {
+    inventoryItems,
+    isLoading,
+    fetchInventory,
+    addProduct,
+    updateProductQuantity,
+    deleteProduct,
+  } = useInventory();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedStatus, setSelectedStatus] = useState("All");
@@ -35,6 +40,11 @@ const InventoryPage = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [modalInstanceKey, setModalInstanceKey] = useState(0);
   const [quantityDrafts, setQuantityDrafts] = useState({});
+  const [productToDelete, setProductToDelete] = useState(null);
+
+  useEffect(() => {
+    fetchInventory();
+  }, []);
 
   useEffect(() => {
     setQuantityDrafts((currentDrafts) => {
@@ -136,7 +146,7 @@ const InventoryPage = () => {
     }));
   };
 
-  const handleUpdateQuantity = (item) => {
+  const handleUpdateQuantity = async (item) => {
     const draftValue = quantityDrafts[item.idNo];
     const parsedQuantity = Number(draftValue);
 
@@ -155,21 +165,27 @@ const InventoryPage = () => {
       return;
     }
 
-    updateProductQuantity(item.idNo, parsedQuantity);
-    toast.success(`${item.productName} quantity updated`);
+    try {
+      await updateProductQuantity(item.idNo, parsedQuantity);
+      toast.success(`${item.productName} quantity updated`);
+    } catch (err) {
+      toast.error(err.response?.data?.message || "Failed to update quantity");
+    }
   };
 
   const handleDeleteProduct = (item) => {
-    const shouldDelete = window.confirm(
-      `Delete ${item.productName} from inventory?`,
-    );
+    setProductToDelete(item);
+  };
 
-    if (!shouldDelete) {
-      return;
+  const confirmDeleteProduct = async () => {
+    try {
+      await deleteProduct(productToDelete.idNo);
+      toast.success(`${productToDelete.productName} deleted`);
+    } catch (err) {
+      toast.error(err.response?.data?.message || "Failed to delete product");
+    } finally {
+      setProductToDelete(null);
     }
-
-    deleteProduct(item.idNo);
-    toast.success(`${item.productName} deleted`);
   };
 
   const inventoryColumns = useMemo(
@@ -231,17 +247,7 @@ const InventoryPage = () => {
     setIsSubmitting(true);
 
     try {
-      await api.post("/user/inventory", {
-        stock: product.inventoryName,
-        category: product.category,
-        boughtPrice: product.costPrice,
-        sellingPrice: product.sellingPrice,
-        unit: product.unit,
-        quantity: product.quantity,
-      });
-      console.log(useNotificationStore.getState().notifications);
-
-      addProduct(product);
+      await addProduct(product);
       toast.success("Product added successfully");
       setIsAddModalOpen(false);
     } catch (err) {
@@ -367,7 +373,11 @@ const InventoryPage = () => {
             </div>
           </div>
 
-          <Table columns={inventoryColumns} data={filteredInventory} />
+          {isLoading ? (
+            <p className="inventory-loading">Loading inventory...</p>
+          ) : (
+            <Table columns={inventoryColumns} data={filteredInventory} />
+          )}
         </div>
       </main>
 
@@ -377,6 +387,13 @@ const InventoryPage = () => {
         isSubmitting={isSubmitting}
         onClose={() => setIsAddModalOpen(false)}
         onSubmit={handleAddProduct}
+      />
+
+      <DeleteReminderModal
+        isOpen={Boolean(productToDelete)}
+        reminder={productToDelete?.productName}
+        onClose={() => setProductToDelete(null)}
+        onConfirm={confirmDeleteProduct}
       />
     </div>
   );
