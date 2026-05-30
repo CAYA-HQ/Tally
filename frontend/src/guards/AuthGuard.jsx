@@ -8,11 +8,7 @@ const AuthGuard = () => {
 
   if (!accessToken) {
     return (
-<<<<<<< HEAD
-      <Navigate to={RoutePaths.LOGIN} state={{from:location}} replace />
-=======
-      <Navigate to={RoutePaths.DASHBOARD} />
->>>>>>> dev
+      <Navigate to={RoutePaths.LOGIN} state={{ from: location }} replace />
     );
   }
 
