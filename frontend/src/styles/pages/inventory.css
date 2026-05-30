@@ -46,8 +46,7 @@
   font-weight: 600;
   cursor: pointer;
   font-family: var(--font-poppins);
-  transition:
-    transform var(--transition-normal),
+  transition: transform var(--transition-normal),
     opacity var(--transition-normal);
 }
 
@@ -216,9 +215,7 @@
   border: none;
   border-radius: var(--border-radius-sm);
   cursor: pointer;
-  transition:
-    opacity var(--transition-fast),
-    transform var(--transition-fast);
+  transition: opacity var(--transition-fast), transform var(--transition-fast);
 }
 
 .inventory-actions-save {
@@ -270,5 +267,11 @@
   .filter-group {
     width: 100%;
     flex-wrap: wrap;
+  }
+}
+
+@media (max-width: 1023px) {
+  .inventory-main {
+    margin-left: 0;
   }
 }

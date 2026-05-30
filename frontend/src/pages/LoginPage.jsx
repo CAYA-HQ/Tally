@@ -8,7 +8,7 @@ import { useNavigate } from "react-router-dom";
 import RoutePaths from "../routes/routePaths";
 import api from "../utils/api";
 import { toast } from "react-toastify";
-import { useAccessTokenStore } from "../utils/zustand";
+import { useAccessTokenStore, useUserStore } from "../utils/zustand";
 
 function LoginPage() {
   const navigate = useNavigate();
@@ -16,7 +16,8 @@ function LoginPage() {
   const [isLoading, setIsLoading] = useState(false);
   // const authBaseURL = import.meta.env.VITE_BASE_URL;
 
-  const setAccessToken = useAccessTokenStore((state)=>state.setAccessToken)
+  const setAccessToken = useAccessTokenStore((state) => state.setAccessToken);
+  const setUser = useUserStore((state) => state.setUser);
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
@@ -28,6 +29,9 @@ function LoginPage() {
     try {
       const { data } = await api.post(`/auth/login`, formData);
       setAccessToken(data.accessToken);
+      if (data.user) {
+        setUser(data.user);
+      }
       navigate(RoutePaths.DASHBOARD);
     } catch (err) {
       // If user is not verified (403), redirect to verify page
@@ -40,17 +44,12 @@ function LoginPage() {
           err.response?.data?.message ||
             "Something went wrong. Please try again."
         );
-        console.log('error occured while loging in:', err)
+        console.log("error occured while loging in:", err);
       }
     } finally {
       setIsLoading(false);
     }
-
-    
-    
   };
-
- 
 
   const handleGoogleLogin = () => {
     window.location.href = `${authBaseURL}/auth/google`;

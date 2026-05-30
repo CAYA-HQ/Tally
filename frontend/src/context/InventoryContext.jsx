@@ -1,6 +1,14 @@
 /* eslint-disable react-refresh/only-export-components */
-import { createContext, useContext, useCallback, useMemo, useState } from "react";
+import {
+  createContext,
+  useContext,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 import api from "../utils/api";
+import { useAccessTokenStore } from "../utils/zustand";
 
 const InventoryContext = createContext(null);
 
@@ -25,15 +33,16 @@ const fromBackend = (item, index) => ({
 export const InventoryProvider = ({ children }) => {
   const [inventoryItems, setInventoryItems] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const accessToken = useAccessTokenStore((state) => state.accessToken);
 
   const fetchInventory = useCallback(async () => {
     setIsLoading(true);
     try {
       const response = await api.get("/user/inventory");
       const items = response.data.sentInventory;
-      
+
       setInventoryItems(Array.isArray(items) ? items.map(fromBackend) : []);
-    } catch(error) {
+    } catch (error) {
       console.error("Inventory fetch failed:", error);
       setInventoryItems([]);
     } finally {
@@ -75,7 +84,11 @@ export const InventoryProvider = ({ children }) => {
     setInventoryItems((currentItems) =>
       currentItems.map((item) => {
         if (item.idNo !== idNo) return item;
-        return { ...item, stocks: quantity, status: createInventoryStatus(quantity) };
+        return {
+          ...item,
+          stocks: quantity,
+          status: createInventoryStatus(quantity),
+        };
       })
     );
   };
@@ -88,6 +101,15 @@ export const InventoryProvider = ({ children }) => {
       return filtered.map((item, index) => ({ ...item, sn: index + 1 }));
     });
   };
+
+  useEffect(() => {
+    if (!accessToken) {
+      setInventoryItems([]);
+      return;
+    }
+
+    fetchInventory();
+  }, [accessToken, fetchInventory]);
 
   const value = useMemo(
     () => ({

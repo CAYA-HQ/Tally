@@ -13,7 +13,6 @@ export const NotificationProvider = ({children}) => {
 
     // Fetch notifications on mount only if the user is authenticated
   useEffect(() => {
-    
     if (!token) {
       return;
     }
@@ -31,7 +30,7 @@ export const NotificationProvider = ({children}) => {
       }
     };
     fetchNotifications();
-  }, [setNotifications]);
+  }, [token, setNotifications]);
 
   // Listen for real-time notifications via socket
   useEffect(() => {
@@ -52,4 +51,4 @@ export const NotificationProvider = ({children}) => {
   }, [addNotification]);
 
   return <>{children}</>;
-}
+};
