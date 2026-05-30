@@ -31,8 +31,13 @@ export const InventoryProvider = ({ children }) => {
     try {
       const response = await api.get("/user/inventory");
       const items = response.data.sentInventory;
+      console.log({
+      response,
+      items: response.data,
+    });
       setInventoryItems(Array.isArray(items) ? items.map(fromBackend) : []);
-    } catch {
+    } catch(error) {
+      console.error("Inventory fetch failed:", error);
       setInventoryItems([]);
     } finally {
       setIsLoading(false);
