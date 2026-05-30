@@ -7,8 +7,8 @@ import PasswordInput from "../components/PasswordInput";
 import { useNavigate } from "react-router-dom";
 import RoutePaths from "../routes/routePaths";
 import api from "../utils/api";
-import { setAccessToken } from "../utils/session/token";
 import { toast } from "react-toastify";
+import { useAccessTokenStore } from "../utils/zustand";
 
 function LoginPage() {
   const navigate = useNavigate();
@@ -16,6 +16,7 @@ function LoginPage() {
   const [isLoading, setIsLoading] = useState(false);
   // const authBaseURL = import.meta.env.VITE_BASE_URL;
 
+  const setAccessToken = useAccessTokenStore((state)=>state.setAccessToken)
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
@@ -26,7 +27,7 @@ function LoginPage() {
     setIsLoading(true);
     try {
       const { data } = await api.post(`/auth/login`, formData);
-      setAccessToken(data.accessToken, data.user);
+      setAccessToken(data.accessToken);
       navigate(RoutePaths.DASHBOARD);
     } catch (err) {
       // If user is not verified (403), redirect to verify page
@@ -39,6 +40,7 @@ function LoginPage() {
           err.response?.data?.message ||
             "Something went wrong. Please try again."
         );
+        console.log('error occured while loging in:', err)
       }
     } finally {
       setIsLoading(false);
