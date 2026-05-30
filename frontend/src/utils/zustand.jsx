@@ -1,12 +1,10 @@
-import { create } from "zustand";
-import { persist } from "zustand/middleware";
+import {create} from 'zustand';
+import {persist} from "zustand/middleware"
 import Cookies from "js-cookie";
 import { connectSocket, disconnectSocket } from "./ioSocket";
 
-export const useNotificationStore = create(
-  persist(
-    (set) => ({
-      notifications: [],
+export const useNotificationStore = create(persist((set) => ({
+  notifications: [],
 
   seenNotification: true,
 
@@ -27,52 +25,52 @@ export const useNotificationStore = create(
 export const useReportStore = create(persist((set)=>({
   reports: [],
 
-      setReport: (n) => set({ reports: n }),
+  setReport: (n) => set ({reports: n}),
 
-      addReport: (n) =>
-        set((state) => ({
-          reports: [...state.reports, n],
-        })),
-    }),
-    { name: "reports" }
-  )
-);
+  addReport: (n) => set((state) =>({
+    reports: [...state.reports, n]
+  })),
+
+}),
+  { name: 'reports'}
+))
+
 
 export const useUserStore = create(persist((set)=>({
   user: null,
 
-      logout: (n) => set({ user: null }),
-    }),
-    {
-      name: "user",
+  setUser: (n) => set ({user: n.payload}),
+
+  logout: (n) => set({user: null}),
+
+}),
+  {
+    name: 'user'
+  }
+))
+
+export const useAccessTokenStore = create(persist((set)=>({
+  accessToken: Cookies.get("accessToken") || null,
+
+  setAccessToken: (token) => {
+    const value =
+      typeof token === "object" && token !== null
+        ? token.accessToken
+        : token || null;
+
+    if (value) {
+      Cookies.set("accessToken", value, { expires: 1 });
+      connectSocket(value);
+    } else {
+      Cookies.remove("accessToken");
+      disconnectSocket();
     }
-  )
-);
 
-export const useAccessTokenStore = create(
-  persist(
-    (set) => ({
-      accessToken: Cookies.get("accessToken") || null,
+    set({
+      accessToken: value,
+    });
+  },
 
-      setAccessToken: (token) => {
-        const value =
-          typeof token === "object" && token !== null
-            ? token.accessToken
-            : token || null;
-
-        if (value) {
-          Cookies.set("accessToken", value, { expires: 1 });
-          connectSocket(value);
-        } else {
-          Cookies.remove("accessToken");
-          disconnectSocket();
-        }
-
-        set({
-          accessToken: value,
-        });
-      },
-    }),
-    { name: "accessToken" }
-  )
-);
+}),
+ { name: 'accessToken'}
+))

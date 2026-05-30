@@ -2,9 +2,9 @@ import React, { useEffect, useState } from "react";
 import Sidebar from "../components/Layout/Sidebar";
 import Navbar from "../components/Layout/Navbar";
 import "../styles/pages/inventory.css";
-import "../styles/pages/notification.css";
-import api from "../utils/api";
-import { useNotificationStore } from "../utils/zustand";
+import api from '../utils/api';
+import { useNotificationStore } from '../utils/zustand';
+
 
 const NotificationPage = () => {
   const [nextCursor, setNextCursor] = useState(null);
