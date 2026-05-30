@@ -89,7 +89,7 @@ export const addInventory = asyncHandler(async (req: Request, res: Response) => 
 
 // Delete item
 export const deleteItem = asyncHandler(async (req: Request, res: Response) => {
-  const { stockId } = req.params
+  const { id: stockId } = req.params
   const userId = (req as any).user.id
 
   if (!stockId || !userId) {
@@ -98,6 +98,8 @@ export const deleteItem = asyncHandler(async (req: Request, res: Response) => {
       message: 'missing stock or user'
     })
   }
+
+  console.log(stockId)
 
   const deletedItem = await Inventory.findOneAndDelete({
     _id: stockId,
@@ -196,9 +198,7 @@ export const getInventory = asyncHandler(async(req: Request, res: Response)=>{
     success: false,
     message: 'no inventory found for this user'
   })
-  console.log(`inventory: ${inventory}`)
   const sentInventory = inventory.map(data)
-  console.log(`sent inventory: ${sentInventory[0]?.id}`)
 
   return res.status(200).json({
     success: true,
