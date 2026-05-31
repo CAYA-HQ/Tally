@@ -2,18 +2,16 @@ import React, { useEffect, useState } from "react";
 import Sidebar from "../components/Layout/Sidebar";
 import Navbar from "../components/Layout/Navbar";
 import "../styles/pages/inventory.css";
-import "../styles/pages/notification.css";
-import api from "../utils/api";
-import { useNotificationStore } from "../utils/zustand";
+import api from '../utils/api';
+import { useNotificationStore } from '../utils/zustand';
+
 
 const NotificationPage = () => {
   const [nextCursor, setNextCursor] = useState(null);
   const [hasMore, setHasMore] = useState(false);
   const [loading, setLoading] = useState(false);
-  const notifications = useNotificationStore((state) => state.notifications);
-  const setNotifications = useNotificationStore(
-    (state) => state.setNotifications
-  );
+  const {notifications, setNotifications,
+  addNotification, setSeenNotification} = useNotificationStore();
 
   const fetchNotifications = async (cursor = null) => {
     setLoading(true);
@@ -22,9 +20,11 @@ const NotificationPage = () => {
         params: cursor ? { cursor } : {},
       });
       const fetched = response.data.notification || [];
-      setNotifications(cursor ? [...notifications, ...fetched] : fetched);
+      cursor ? addNotifications(fetched) : setNotifications(fetched)
+
       setNextCursor(response.data.nextCursor || null);
       setHasMore(response.data.hasMore ?? false);
+
     } catch (error) {
       console.error("Failed to fetch notifications:", error);
     } finally {
@@ -45,6 +45,7 @@ const NotificationPage = () => {
 
   useEffect(() => {
     fetchNotifications();
+    setSeenNotification(true)
   }, []);
 
   const renderNotification = (notification, index) => (

@@ -60,12 +60,13 @@ export const addInventory = asyncHandler(async (req: Request, res: Response) => 
  
 
   const reportJobId = user.reportsJobId
+  const cron = '* * * * *'
 
   if(reportJobId){
     return null
   }else{
     try{
-      setRecordsJob(userId)
+      setRecordsJob(userId, cron)
     }catch(error){
       console.log(`Error creating Recorde ${error}`)
     }
@@ -132,8 +133,8 @@ export const updateInventory = asyncHandler(async (req: Request, res: Response) 
   const {quantity} = req.body
   const userId = (req as any).user.id
   const stockId = req.params.id
-
-  if (quantity) {
+  
+  if (!quantity) {
       return res.status(400).json({
         success: false,
         message: "nothing to update",

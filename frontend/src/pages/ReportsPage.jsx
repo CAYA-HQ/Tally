@@ -10,6 +10,7 @@ import {
   FiCreditCard,
 } from "react-icons/fi";
 import { Reports } from "../utils/dummyData";
+import { useReportStore } from "../utils/zustand";
 
 export const percentage = Reports.map((r) => {
   let percent =
@@ -75,6 +76,8 @@ const ReportsPage = () => {
           const init = async () => {
             try {
               await getReport();
+              const reports = useReportStore.getState().reports
+              console.log('reports from backend:',reports)
             } catch (err) {
               console.log(err);
             }

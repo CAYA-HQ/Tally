@@ -3,7 +3,8 @@ import { ioRedis, ReportsConnection } from "../config/bullMQ";
 import { Inventory } from "../model/inventory.model";
 import Reports from "../model/Reports.model";
 import { getUserById } from "./user.service";
-import { getWeekRange } from "../utils/date";
+import { getWeekRange, getDayRange } from "../utils/date";
+import mongoose from "mongoose";
 
 // Report Queue
 export const reportQueue = new Queue("recordQueue", {
@@ -15,10 +16,31 @@ const getWeeklyStats = async (
   start: Date,
   end: Date
 ) => {
-  const result = await Inventory.aggregate([
+
+  console.log(
+  await Inventory.aggregate([
+    {
+      $match: {
+        createdAt: { $gte: start, $lt: end },
+      },
+    },
+  ])
+);
+
+console.log(
+  await Inventory.aggregate([
     {
       $match: {
         userId,
+      },
+    },
+  ])
+);
+
+  const result = await Inventory.aggregate([
+    {
+      $match: {
+        userId: new mongoose.Types.ObjectId(userId),
         createdAt: { $gte: start, $lt: end },
       },
     },
@@ -43,15 +65,15 @@ const getWeeklyStats = async (
       },
     },
   ]);
+  console.log("aggregation results:", JSON.stringify(result, null, 2));
+  console.log("aggregation result:", result);
 
-  return (
-    result[0] || {
-      totalQtyBought: 0,
-      totalQtySold: 0,
-      totalSales: 0,
-      totalCost: 0,
-    }
-  );
+  return result[0] || {
+  totalQtyBought: 0,
+  totalQtySold: 0,
+  totalSales: 0,
+  totalCost: 0,
+};
 };
 
 
@@ -63,9 +85,16 @@ new Worker(
       const { userId } = job.data;
       const now = new Date();
 
-      const { start, end } = getWeekRange(now);
+      const { start, end } = getDayRange(now);
 
       const stats = await getWeeklyStats(userId, start, end);
+      
+      console.log({ userId, start, end });
+      console.log("stats:", stats);
+        if (!stats) {
+  console.log("No stats found");
+  return;
+}
 
       await Reports.create({
         userId,
@@ -88,9 +117,9 @@ new Worker(
 
 //Report SCHEDULER
 
-export const setRecordsJob = async (userId: string) => {
+export const setRecordsJob = async (userId: string, cron?: string) => {
   const user = await getUserById(userId);
-
+  const cronTime = cron?.trim() || "0 0 * * 0"
   if (!user) {
     console.log("User not found");
     return null;
@@ -98,22 +127,11 @@ export const setRecordsJob = async (userId: string) => {
 
   const schedulerId = `${userId}--recordJob`;
 
-  // prevent duplicate schedulers
-  const existing = await reportQueue.getJobSchedulers();
-
-  const alreadyExists = existing.some(
-    (job) => job.id === schedulerId
-  );
-
-  if (alreadyExists) {
-    console.log("Scheduler already exists:", schedulerId);
-    return null;
-  }
 
   await reportQueue.upsertJobScheduler(
     schedulerId,
     {
-      pattern: "0 0 * * 0",
+      pattern: cronTime ,
       tz: user.metadata?.timezone || "Africa/Lagos",
     },
     {
@@ -129,4 +147,13 @@ export const setRecordsJob = async (userId: string) => {
   );
 
   console.log(`Weekly scheduler created for user: ${userId}`);
+  return {
+  success: true,
+  scheduler: {
+    id: schedulerId,
+    cron: cronTime,
+    timezone: user.metadata?.timezone || "Africa/Lagos",
+    name: "weekly-records",
+  },
+};
 };

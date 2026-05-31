@@ -57,6 +57,7 @@ export const updateUser = asyncHandler(
   }
 );
 
+
 // update avatar
 export const updateAvatar = asyncHandler(
   async (req: Request, res: Response) => {
@@ -148,8 +149,9 @@ export const changePassword = asyncHandler(
   }
 )
 
+
+//getting user's info
 export const getUser = asyncHandler(async(req: Request, res: Response)=>{
-  console.log('get user fn connected')
   const userId = (req.user as any).id
   if(!userId) return res.status(404).json({
     success: false,
@@ -163,9 +165,6 @@ export const getUser = asyncHandler(async(req: Request, res: Response)=>{
   })
 
   const payload = payLoad(userInfo as any)
-  console.log({
-    'userData sent': payload
-  })
 
   res.status(200).json({
     success: true,

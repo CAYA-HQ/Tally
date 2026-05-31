@@ -3,22 +3,22 @@ import { socket, connectSocket } from "../utils/ioSocket";
 import { useNotificationStore, useAccessTokenStore } from "../utils/zustand";
 import api from "../utils/api";
 
-export const NotificationProvider = ({ children }) => {
-  const addNotification = useNotificationStore(
-    (state) => state.addNotification
-  );
-  const setNotifications = useNotificationStore(
-    (state) => state.setNotifications
-  );
-  const token = useAccessTokenStore((state) => state.accessToken);
+export const NotificationProvider = ({children}) => {
 
-  // Fetch notifications on mount only if the user is authenticated
+  const {notifications, setNotifications,
+  addNotification, setSeenNotification} = useNotificationStore();
+
+  const token = useNotificationStore(
+    (state) => state.accessToken)
+
+    // Fetch notifications on mount only if the user is authenticated
   useEffect(() => {
     if (!token) {
       return;
     }
 
     connectSocket(token);
+    const prevNotificationLength = notifications.length
 
     const fetchNotifications = async () => {
       try {
@@ -34,8 +34,15 @@ export const NotificationProvider = ({ children }) => {
 
   // Listen for real-time notifications via socket
   useEffect(() => {
+
     socket.on("notification:new", (data) => {
       addNotification(data);
+      setSeenNotification(false)
+       console.log({
+      'notification seen': seenNotification,
+      'notification length is there': notifications.length > 0
+    })
+
     });
 
     return () => {

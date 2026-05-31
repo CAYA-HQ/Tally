@@ -83,10 +83,12 @@ export const createReminder = asyncHandler(async(req: Request, res: Response)=>{
 
   //Send alert info to worker to create job
   const jobId = await createAlert({...alertData, alertId: alertId})
-  if (!jobId) return res.status(500).json({
+  if (!jobId) {
+    await alert.deleteOne()
+    return res.status(500).json({
     message: "Failed to create alert",
     success: false,
-  })
+  })}
   alert.jobId = jobId as string;
 
   await alert.save().catch((err)=>{

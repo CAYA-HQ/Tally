@@ -1,3 +1,4 @@
+import React, {useEffect} from 'react'
 import { FiSearch, FiBell, FiMenu } from "react-icons/fi";
 import { IoChatbubbleOutline } from "react-icons/io5";
 import "../../styles/layout/navbar.css";
@@ -6,6 +7,16 @@ import { useNotificationStore, useUserStore } from "../../utils/zustand";
 import { NavLink } from "react-router-dom";
 
 const Navbar = ({ onMenuToggle }) => {
+
+  const {seenNotification, setSeenNotification} = useNotificationStore();
+
+  useEffect(()=>{
+    console.log({
+      'notification seen': seenNotification,
+      'notification length is there': notifications.length > 0
+    })
+  },[])
+
   const { notifications } = useNotificationStore();
   const user = useUserStore((state) => state.user);
   const hasNotification = notifications.length > 0;
@@ -31,7 +42,8 @@ const Navbar = ({ onMenuToggle }) => {
         <div className="icon-group">
           <NavLink to="/notifications" className="icon-btn">
             <FiBell />
-            {hasNotification && <span className="notification-dot"></span>}
+            {notifications.length > 0 && !seenNotification && 
+            <span className="notification-dot"></span>}
           </NavLink>
           <NavLink className="icon-btn">
             <IoChatbubbleOutline />
