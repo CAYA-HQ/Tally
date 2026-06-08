@@ -16,18 +16,6 @@ const RemindersSchema = new mongoose.Schema(
       index: true,
     },
 
-    whatsappNumber: {
-      type: String,
-      trim: true,
-      match: [/^\+?[1-9]\d{7,14}$/, "Invalid phone number"],
-    },
-
-    alertMode: [{
-      type: String,
-      enum: ['whatsapp', 'email', 'push'],
-      default: ['email'],
-    }],
-
     title: {
       type: String,
       trim: true,
@@ -59,9 +47,9 @@ const RemindersSchema = new mongoose.Schema(
 
     frequency: {
       type: String,
-      enum: ['', "Daily", "Weekly", "Monthly"] as const,
+      enum: ['none', "Daily", "Weekly", "Monthly"] as const,
       trim: true,
-      default: " ",
+      default: "none",
     },
 
     weekday: {
@@ -88,18 +76,6 @@ const RemindersSchema = new mongoose.Schema(
     type: String,
     trim: true
    },
-
-   repeatType: {
-    type: String,
-    enum: ["none", "daily", "weekly", "monthly"] as const,
-    default: "none",
-   },
-   
-   repeatDays: [{
-    type: Number,
-    min: 0,
-    max: 6,
-   }],
 
    timezone: {
     type: String,

@@ -5,6 +5,7 @@ import * as userService from '../service/user.service'
 import { setNotification } from '../service/notification.service'
 import { Inventory } from '../model/inventory.model'
 import { setRecordsJob } from '../service/reports.service'
+import { getUserId } from '../utils/getUserId'
 
 const data = (d: any)=>({
     id:  d._id,
@@ -20,10 +21,11 @@ const data = (d: any)=>({
 // Add inventory
 export const addInventory = asyncHandler(async (req: Request, res: Response) => {
   const { stock, quantity, boughtPrice, sellingPrice, category, unit } = req.body
-  const userId = (req as any).user.id
+  const userId = getUserId(req)
+
+  console.log(userId)
 
   if (
-    !userId ||
     !stock ||
     quantity == null ||
     boughtPrice == null ||
@@ -39,13 +41,13 @@ export const addInventory = asyncHandler(async (req: Request, res: Response) => 
   const user = await userService.getUserById(userId as string)
 
   if (!user) {
-    return res.status(401).json({
+    return res.status(404).json({
       success: false,
       message: 'user not found'
     })
   }
 
-  const inventoryStock = Inventory.create({
+  const inventoryStock = await Inventory.create({
     userId,
     stock,
     quantity,
@@ -55,21 +57,19 @@ export const addInventory = asyncHandler(async (req: Request, res: Response) => 
     unit
   })
 
-  const Stock = await inventoryStock
+  const Stock = inventoryStock
   const newStock = data(Stock)
- 
 
-  const reportJobId = user.reportsJobId
-  const cron = '* * * * *'
+  const recordJobId = user.dailyRecordsJobId
 
-  if(reportJobId){
-    return null
-  }else{
+  if(!recordJobId){
     try{
-      setRecordsJob(userId, cron)
+      setRecordsJob(userId)
     }catch(error){
       console.log(`Error creating Recorde ${error}`)
     }
+  }else{
+    console.log('records jobs created: ', recordJobId)
   }
 
   await setNotification(
@@ -91,10 +91,12 @@ export const addInventory = asyncHandler(async (req: Request, res: Response) => 
 // Delete item
 export const deleteItem = asyncHandler(async (req: Request, res: Response) => {
   const { id: stockId } = req.params
-  const userId = (req as any).user.id
+  const userId = getUserId(req)
 
-  if (!stockId || !userId) {
-    return res.status(400).json({
+  console.log(userId)
+
+  if (!stockId) {
+    return res.status(401).json({
       success: false,
       message: 'missing stock or user'
     })
@@ -131,7 +133,8 @@ export const deleteItem = asyncHandler(async (req: Request, res: Response) => {
 // Update inventory
 export const updateInventory = asyncHandler(async (req: Request, res: Response) => {
   const {quantity} = req.body
-  const userId = (req as any).user.id
+  const userId = getUserId(req)
+  console.log(userId)
   const stockId = req.params.id
   
   if (!quantity) {
@@ -140,13 +143,6 @@ export const updateInventory = asyncHandler(async (req: Request, res: Response) 
         message: "nothing to update",
       });
     }
-
-  if(!userId){
-    return res.status(404).json({
-      success: false,
-      message: 'user not found'
-    })
-  }
 
   const inventory = await Inventory.findOne({_id: stockId, userId})
 
@@ -185,12 +181,10 @@ export const updateInventory = asyncHandler(async (req: Request, res: Response) 
 
 export const getInventory = asyncHandler(async(req: Request, res: Response)=>{
 
-  const userId = (req.user as any).id
+  const userId = getUserId(req)
 
-  if(!userId) return res.status(404).json({
-    message: 'user id missing',
-    success: false
-  })
+  console.log(userId)
+  
 
   const inventory = await Inventory.find({userId})
   

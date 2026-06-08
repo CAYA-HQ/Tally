@@ -1,6 +1,8 @@
 import { createBrowserRouter, Navigate } from "react-router-dom";
+
 import GuestGuard from "../guards/GuestGuard";
 import AuthGuard from "../guards/AuthGuard";
+
 import LoginPage from "../pages/LoginPage";
 import RegisterPage from "../pages/RegisterPage";
 import VerifyPage from "../pages/VerifyPage";
@@ -8,11 +10,16 @@ import DashboardPage from "../pages/DashboardPage";
 import InventoryPage from "../pages/Inventory";
 import TaskHistoryPage from "../pages/Orders";
 import Reminderpage from "../pages/ReminderPage";
-import NotFoundPage from "../pages/NotFoundPage";
 import SettingsPage from "../pages/Settingspage";
-import RoutePaths from "./routePaths";
 import NotificationPage from "../pages/Notification";
 import ReportsPage from "../pages/ReportsPage";
+import NotFoundPage from "../pages/NotFoundPage";
+import RoutePaths from "./routePaths";
+import { UserProvider } from "../context/userContext";
+import { NotificationProvider } from "../context/notificationContext";
+import ReportPage from '../pages/Reportpage'
+
+
 
 export const router = createBrowserRouter([
   {
@@ -20,7 +27,7 @@ export const router = createBrowserRouter([
     element: <GuestGuard />,
     children: [
       {
-        path: RoutePaths.ROOT,
+        index: true,
         element: <Navigate to={RoutePaths.LOGIN} replace />,
       },
       {
@@ -33,47 +40,59 @@ export const router = createBrowserRouter([
       },
     ],
   },
+
   {
     path: RoutePaths.VERIFY,
     element: <VerifyPage />,
   },
+
   {
-    path: RoutePaths.DASHBOARD,
-    element: <AuthGuard />,
+    element: <UserProvider />,
     children: [
       {
-        index: true,
-        element: <DashboardPage />,
+        element: <NotificationProvider />,
+        children: [
+          {
+            path: RoutePaths.DASHBOARD,
+            element: <AuthGuard />,
+            children: [
+              {
+                index: true,
+                element: <DashboardPage />,
+              },
+              {
+                path: "inventory",
+                element: <InventoryPage />,
+              },
+              {
+                path: "orders",
+                element: <ReportsPage />,
+              },
+              {
+                path: "reports",
+                element: <ReportPage />,
+              },
+              {
+                path: "reminders",
+                element: <Reminderpage />,
+              },
+              {
+                path: "settings",
+                element: <SettingsPage />,
+              },
+            ],
+          },
+          {
+            path: RoutePaths.NOTIFICATIONS,
+            element: <NotificationPage />,
+          },
+        ],
       },
-      {
-        path: "inventory",
-        element: <InventoryPage />,
-      },
-      {
-        path: "orders",
-        element: <TaskHistoryPage />,
-      },
-      {
-        path: "reports",
-        element: <ReportsPage />,
-      },
-      {
-        path: "reminders",
-        element: <Reminderpage />,
-      },
-      {
-        path: "settings",
-        element: <SettingsPage />,
-      },
-    
     ],
   },
-  {
-    path: "/notifications",
-    element: <NotificationPage />,
-  },  
 
-  { path: "*",
+  {
+    path: "*",
     element: <NotFoundPage />,
   },
 ]);

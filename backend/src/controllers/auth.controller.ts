@@ -76,9 +76,9 @@ export const login = asyncHandler(async (req: Request, res: Response) => {
   const user = await userService.getUserByEmail(email);
 
   if (!user) {
-    return res.status(400).json({
+    return res.status(404).json({
       success: false,
-      message: "Invalid email or password",
+      message: "user not found",
     });
   }
 

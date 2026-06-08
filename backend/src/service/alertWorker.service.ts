@@ -7,12 +7,12 @@ import { setNotification } from "./notification.service";
 
 const daysOfTheWeek = ['Sunday' ,'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
 
-type RepeatType =   "none" | "daily" | "weekly" | "monthly";
+type frequency =   "none" | "daily" | "weekly" | "monthly";
 
 interface noteOptions {
   alertAt: string;
-  repeatType: RepeatType;
-  repeatDays?: string;
+  frequency: frequency;
+  weekday?: string;
   monthDay?: number;
   timezone?: string;
   startDate?: Date;
@@ -47,7 +47,7 @@ export const jobOptions = (data: noteOptions): ProcessedJobConfig => {
   };
 
   // ONE TIME
-  if (data.repeatType === "none") {
+  if (data.frequency === "none") {
     const now = Date.now();
     const target = Date.parse(data.alertAt);
     
@@ -79,7 +79,7 @@ export const jobOptions = (data: noteOptions): ProcessedJobConfig => {
   }
 
   // DAILY
-  if (data.repeatType === "daily") {
+  if (data.frequency === "daily") {
     return {
       ...baseOptions,
 
@@ -92,11 +92,11 @@ export const jobOptions = (data: noteOptions): ProcessedJobConfig => {
   }
 
   // WEEKLY
-  if (data.repeatType === "weekly") {
-    if (!data.repeatDays) throw new Error("Weekly repeat requires repeatDays");
+  if (data.frequency === "weekly") {
+    if (!data.weekday) throw new Error("Weekly repeat requires weekday");
     
-    const weekDay = daysOfTheWeek.indexOf(data.repeatDays)
-    if(weekDay === -1) throw new Error("Invalid repeatDays value for weekly repeat");
+    const weekDay = daysOfTheWeek.indexOf(data.weekday)
+    if(weekDay === -1) throw new Error("Invalid weekday value for weekly repeat");
 
     return {
       ...baseOptions,
@@ -110,7 +110,7 @@ export const jobOptions = (data: noteOptions): ProcessedJobConfig => {
   }
 
   // MONTHLY
-  if (data.repeatType === "monthly") {
+  if (data.frequency === "monthly") {
     if (data.monthDay === undefined) throw new Error("Monthly repeat requires monthDay");
 
     return {
@@ -134,14 +134,12 @@ export type noteData = {
   note: string,
   alertAt: string,
   timezone: string,
-  repeatType:  RepeatType,
-  repeatDays?: string,
   userId: string,
   alertMode?: ("whatsapp" | "email" | "push")[],
   date?: string,
   time?: string,
   mode?: "One-time" | "Recurring",
-  frequency?: string,
+  frequency?: frequency,
   weekday?: string,
   monthDay?: number,
   startDate?: Date,
@@ -166,15 +164,15 @@ const Alertdata = (d: any )=> {return {
 
 
 // Service function to reschedule alert job
-export const scheduleAlertJob = async (alert: any) => {
+export const reScheduleAlertJob = async (alert: any) => {
   const options = jobOptions({
     alertAt: alert.alertAt,
     timezone: alert.timezone,
-    repeatType: alert.repeatType,
-    repeatDays: alert.repeatDays,
+    frequency: alert.frequency,
+    weekday: alert.weekday,
   });
 
-  if (alert.repeatType !== "none") {
+  if (alert.frequency !== "none") {
     const { repeat, ...baseOptions } = options as ProcessedJobConfig;
     if (!repeat) throw new Error("Missing repeat configuration for alert repeat job");
       
@@ -211,17 +209,17 @@ export const scheduleAlertJob = async (alert: any) => {
 export const createAlert = async(alert: noteData ) => {
   
   const {
-    title, note, alertAt, timezone, repeatType, repeatDays, userId,
-    alertMode, date, time, mode, frequency, weekday, monthDay, alertId,
+    title, note, alertAt, timezone, userId, alertMode, date,
+    time, mode, frequency = "none", weekday, monthDay, alertId,
   } = alert;
 
   const options = jobOptions({
-    alertAt, timezone, repeatType, repeatDays,
+    alertAt, timezone, frequency, weekday,
   });
 
   let jobId
 
-  if (repeatType !== "none") {
+  if (frequency !== "none") {
     const { repeat, ...baseOptions } = options as ProcessedJobConfig;
 
     if (!repeat) {
@@ -230,7 +228,7 @@ export const createAlert = async(alert: noteData ) => {
 
     const schedulerId = `${alertId}--repeat`
 
-    const job = await emailQueue.upsertJobScheduler(
+    await emailQueue.upsertJobScheduler(
       schedulerId,
       repeat,
       {
@@ -259,7 +257,7 @@ export const removeAlertJob = async (alert: any, jobId: string, userId: string) 
   const alertId = alert._id
   try {
   
-      if (alert.repeatType === "none") {
+      if (alert.frequency === "none") {
 
         const job = await emailQueue.getJob(jobId);
         if (job) await job.remove();

@@ -1,15 +1,25 @@
 import multer from "multer";
-import { CloudinaryStorage } from "multer-storage-cloudinary";
 import cloudinary from "../config/cloudinary";
+import { UploadApiResponse } from "cloudinary";
 
-const storage = new CloudinaryStorage({
-  cloudinary,
-  params: async () => ({
-    folder: "avatars",
-    allowed_formats: ["jpg", "png", "jpeg", "webp"],
-  }),
-});
+export const uploadToCloudinary = (
+  buffer: Buffer, folder: string = "avatars"
+): Promise<UploadApiResponse> => {
+  return new Promise((resolve, reject) => {
+    const stream = cloudinary.uploader.upload_stream(
+      {
+        folder,
+        resource_type: "image",
+      },
+      (error, result) => {
+        if (error || !result) return reject(error);
+        resolve(result);
+      }
+    );
 
+    stream.end(buffer);
+  });
+};
 export const upload = multer({
-  storage,
+  storage: multer.memoryStorage(),
 });

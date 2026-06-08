@@ -77,7 +77,6 @@ const ReportsPage = () => {
             try {
               await getReport();
               const reports = useReportStore.getState().reports
-              console.log('reports from backend:',reports)
             } catch (err) {
               console.log(err);
             }

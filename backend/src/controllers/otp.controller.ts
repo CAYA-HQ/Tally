@@ -141,7 +141,8 @@ export const verifyOtp = asyncHandler(async (req: Request, res: Response) => {
     await setNotification(user.id, 'Complete onboarding to get started', 'login', '')
   }
 
-  const payload = jwt.payLoad(user);
+  const safeAvatar = user.avatar ?? { url: '', public_id: '' };
+  const payload = jwt.payLoad({ ...user.toObject(), avatar: safeAvatar } as any);
   const accessToken = jwt.genAccessToken(payload);  
 
   await jwt.generateRefreshToken(res, payload);

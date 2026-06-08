@@ -7,6 +7,7 @@ export const verifyUser = (
   next: NextFunction
 ) => {
   const authHeader = req.headers.authorization;
+  // console.log("Authorization header:", authHeader);
 
   if (!authHeader || !authHeader.startsWith("Bearer ")) {
     return res.status(401).json({
@@ -17,7 +18,10 @@ export const verifyUser = (
 
   const token = authHeader.split(" ")[1] as string;
 
+  // console.log("Token:", token);
+
   const decoded = jwt.verifyAccessToken(token);
+  // console.log("Decoded token:", decoded);
 
   if (!decoded) {
     return res.status(401).json({

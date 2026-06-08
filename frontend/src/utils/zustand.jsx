@@ -6,16 +6,16 @@ import { connectSocket, disconnectSocket } from "./ioSocket";
 export const useNotificationStore = create(persist((set) => ({
   notifications: [],
 
-  seenNotification: true,
-
   setNotifications: (n) => set({ notifications: n }),
 
   addNotification: (n) =>
     set((state) => ({
-      notifications: [...n, ...state.notifications],
+      notifications: [ n, ...state.notifications ],
   })),
 
-  setSeenNotification: (n) => set({seenNotification: n}),
+  nextCursor: null,
+
+  setNextCursor: (n)=> set({nextCursor: n}),
 
 }),
   { name: 'notifications' }
@@ -39,7 +39,7 @@ export const useReportStore = create(persist((set)=>({
 export const useUserStore = create(persist((set)=>({
   user: null,
 
-  setUser: (n) => set ({user: n.payload}),
+  setUser: (n) => set ({user: n}),
 
   logout: (n) => set({user: null}),
 
@@ -74,3 +74,13 @@ export const useAccessTokenStore = create(persist((set)=>({
 }),
  { name: 'accessToken'}
 ))
+
+export const useWhatsappStore = create(persist((set) => ({
+  whatsappNotif: false,
+  setWhatsappNotif: (n) => set({ whatsappNotif: n }),
+}),{name: 'whatsapp-notif'}))
+
+export const usePushStore = create(persist((set) => ({
+  pushNotif: false,
+  setPushNotif: (n) => set({ pushNotif: n }),
+}),{name: 'push-notif'}))

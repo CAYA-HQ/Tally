@@ -19,11 +19,6 @@ UserRouter.use('/inventory', inventoryRouter )
 UserRouter.post('/onboarding', userOnBoarding)
 UserRouter.use('/notification', notificationRouter)
 UserRouter.get('/reports', getReports)
-UserRouter.get('/', (req, res, next)=>{
-  
-    console.log('get user route active')
-    
-    next()
-}, userController.getUser)
+UserRouter.get('/', userController.getUser)
 
 export default UserRouter

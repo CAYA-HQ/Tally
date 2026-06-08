@@ -6,23 +6,21 @@ import Ellipse2 from "../../assets/Ellipse2.png";
 import { useNotificationStore, useUserStore } from "../../utils/zustand";
 import { NavLink } from "react-router-dom";
 
+
 const Navbar = ({ onMenuToggle }) => {
 
-  const {seenNotification, setSeenNotification} = useNotificationStore();
-
-  useEffect(()=>{
-    console.log({
-      'notification seen': seenNotification,
-      'notification length is there': notifications.length > 0
-    })
-  },[])
-
-  const { notifications } = useNotificationStore();
-  const user = useUserStore((state) => state.user);
-  const hasNotification = notifications.length > 0;
+  const notifications = useNotificationStore(
+    (state)=> state.notifications
+  );
+  const user  = useUserStore((state) => state.user);
   const avatarSrc = user?.avatar?.url || Ellipse2;
   const displayName = user?.name || "User";
   const displayEmail = user?.email || "";
+
+  const notReadNotif = notifications.some(
+    n => n.read === false
+  )
+
   return (
     <nav className="top-navbar">
       <button
@@ -42,7 +40,7 @@ const Navbar = ({ onMenuToggle }) => {
         <div className="icon-group">
           <NavLink to="/notifications" className="icon-btn">
             <FiBell />
-            {notifications.length > 0 && !seenNotification && 
+            {notReadNotif && 
             <span className="notification-dot"></span>}
           </NavLink>
           <NavLink className="icon-btn">

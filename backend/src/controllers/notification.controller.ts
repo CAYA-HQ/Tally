@@ -2,29 +2,29 @@ import type { Request, Response, RequestHandler } from "express";
 import { asyncHandler } from "../utils/asyncHandler";
 import { Notification } from "../model/notification.model";
 import * as notificationService from "../service/notification.service";
-
+import { getUserId } from "../utils/getUserId";
 
 // Get notifications with pagination
 export const getNotification: RequestHandler = asyncHandler(
   async (req: Request, res: Response) => {
     const { cursor } = req.query;
-    const userId = (req.user! as any).id;
+    const userId = getUserId(req)
 
-    const notification = await Notification.find({
+    const notifications = await Notification.find({
       userId,
       _id: cursor ? { $lt: cursor } : { $exists: true },
-    })
-      .sort({ _id: -1 })
-      .limit(20);
+    }).sort({ _id: -1 }).limit(20);
 
     const nextCursor =
-      notification.length === 20
-        ? notification[notification.length - 1]?._id
+      notifications.length === 20
+        ? notifications[notifications.length - 1]?._id
         : null;
-    const hasMore = notification.length === 20;
+    const hasMore = notifications.length === 20;
+
+    console.log('notifications: ',notifications)
 
     res.status(200).json({
-      notification,
+      notifications,
       nextCursor,
       hasMore,
     });
@@ -35,7 +35,8 @@ export const getNotification: RequestHandler = asyncHandler(
 // Mark a notification as read
 export const markAsRead = asyncHandler(async (req: Request, res: Response) => {
   const { id } = req.params;
-  const userId = (req.user! as any).id;
+  const userId = getUserId(req)
+  
   await notificationService.markAsRead(userId, id as string);
   res.status(200).json({ message: "Notification marked as read" });
 });
@@ -44,9 +45,16 @@ export const markAsRead = asyncHandler(async (req: Request, res: Response) => {
 // Mark all notifications as read
 export const markAllAsRead = asyncHandler(
   async (req: Request, res: Response) => {
-    const userId = (req.user! as any).id;
-    await notificationService.markAllAsRead(userId);
-    res.status(200).json({ message: "All notifications marked as read" });
+
+    const userId = getUserId(req)
+
+    const notifications = await notificationService
+    .markAllAsRead(userId);
+
+    res.status(200).json({ 
+      message: "All notifications marked as read",
+      notifications
+    });
   },
 );
 
@@ -55,7 +63,7 @@ export const markAllAsRead = asyncHandler(
 export const deleteNotification = asyncHandler(
   async (req: Request, res: Response) => {
     const { id } = req.params;
-    const userId = (req.user! as any).id;
+    const userId = getUserId(req)
     await notificationService.deleteNotification(userId, id as string);
     res.status(200).json({ message: "Notification deleted" });
   },
@@ -65,7 +73,7 @@ export const deleteNotification = asyncHandler(
 // Delete all notifications
 export const deleteAllNotification = asyncHandler(
   async (req: Request, res: Response) => {
-    const userId = (req.user! as any).id;
+    const userId = getUserId(req)
     await notificationService.deleteAllNotification(userId);
     res.status(200).json({ message: "All notifications deleted" });
   },

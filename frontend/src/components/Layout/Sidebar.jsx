@@ -25,12 +25,12 @@ const NAV_ITEMS = [
     icon: <MdOutlineInventory2 />,
     path: "/dashboard/inventory",
   },
-  {
-    id: "orders",
-    label: "Orders",
-    icon: <BsCart3 />,
-    path: "/dashboard/orders",
-  },
+  // {
+  //   id: "orders",
+  //   label: "Orders",
+  //   icon: <BsCart3 />,
+  //   path: "/dashboard/orders",
+  // },
   {
     id: "reports",
     label: "Reports",

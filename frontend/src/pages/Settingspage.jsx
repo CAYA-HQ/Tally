@@ -4,13 +4,26 @@ import Navbar from "../components/Layout/Navbar";
 import { LuChevronDown } from "react-icons/lu";
 import { RiStackLine, RiCoinsLine, RiShieldFlashLine } from "react-icons/ri";
 import "../styles/pages/settings.css";
-import { useUserStore } from "../utils/zustand";
-import { usePushReminders } from "../utils/pushReminder";
+import {
+  useUserStore, useAccessTokenStore,
+  useWhatsappStore, usePushStore
+ } from "../utils/zustand";
+import { setupPushReminders, setupWhatsappReminders,
+  getWhatsappNotif
+ } from "../utils/pushReminder";
+import api from "../utils/api";
 
 const SettingsPage = () => {
   const user = useUserStore((state) => state.user);
+  const setUser = useUserStore((state) => state.setUser);
+  const accessToken = useAccessTokenStore((s)=> s.accessToken)
   const [activeTab, setActiveTab] = useState("Profile");
   const tabs = ["Profile", "Security", "Billings", "Notifications"];
+  const whatsappNotif = useWhatsappStore((s) => s.whatsappNotif);
+  const setWhatsappNotif = useWhatsappStore((s) => s.setWhatsappNotif);
+
+  const pushNotif = usePushStore((s) => s.pushNotif);
+  const setPushNotif = usePushStore((s) => s.setPushNotif);
 
   // Profile Form States
   const [profileData, setProfileData] = useState({
@@ -72,11 +85,10 @@ const SettingsPage = () => {
   ];
 
   // Notifications State
-  const [notifs, setNotifs] = useState({
-    whatsappReminders: true,
-    pushReminders: true,
-  });
-  usePushReminders(notifs.pushReminders);
+  const notifs = {
+    whatsappNotif,
+    pushNotif,
+  };
 
   useEffect(() => {
     if (!user) return;
@@ -105,15 +117,43 @@ const SettingsPage = () => {
   };
 
   const toggleNotif = (key) => {
-    setNotifs((prev) => ({ ...prev, [key]: !prev[key] }));
+  
+    if (key === "whatsappReminders") {
+     
+      const notifToggle = !whatsappNotif;
+      setWhatsappNotif(notifToggle);
+      setupWhatsappReminders(notifToggle);
+    }
+
+    if (key === "pushReminders") {
+      const notifToggle = !pushNotif;
+      setPushNotif(notifToggle);
+      setupPushReminders(notifToggle, accessToken);
+    }
   };
+
+  useEffect(()=>{
+    getWhatsappNotif()
+  },[])
 
   const toggleTwoFactor = () => {
     setSecurityData((prev) => ({ ...prev, twoFactor: !prev.twoFactor }));
   };
 
-  const handleProfileSubmit = (e) => {
+  const handleProfileSubmit = async (e) => {
     e.preventDefault();
+    console.log("Updated profile data:", profileData);
+    try {
+      const res = await api.put("/user", profileData);
+      if (res.status === 200) {
+        console.log("Profile updated successfully:", res.data);
+        setUser(res.data.sendUser);
+      } else {
+        console.error("Failed to update profile:", res.data);
+      }
+    } catch (error) {
+      console.error("Error updating profile data:", error);
+    }
     alert("Profile configurations updated successfully.");
   };
 
@@ -352,8 +392,8 @@ const SettingsPage = () => {
                       <label className="toggle-switch">
                         <input
                           type="checkbox"
-                          checked={notifs.emailReminders}
-                          onChange={() => toggleNotif("emailReminders")}
+                          checked={whatsappNotif}
+                          onChange={() => toggleNotif("whatsappReminders")}
                         />
                         <span className="toggle-slider"></span>
                       </label>
@@ -384,7 +424,7 @@ const SettingsPage = () => {
                     <label className="toggle-switch">
                       <input
                         type="checkbox"
-                        checked={notifs.pushReminders}
+                        checked={pushNotif}
                         onChange={() => toggleNotif("pushReminders")}
                       />
                       <span className="toggle-slider"></span>

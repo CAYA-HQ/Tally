@@ -4,11 +4,12 @@ import * as settingsService from "../service/settings.service";
 import * as userService from "../service/user.service";
 import { redis } from "../config/redis";
 import { updateNotificationSchema } from "../model/validate.settings";
+import { getUserId } from "../utils/getUserId";
 
 
 export const getNotifications = asyncHandler(
   async (req: Request, res: Response) => {
-    const userId = (req.user as any)?.id;
+    const userId = getUserId(req)
     const notifications = await settingsService.getNotifications(userId);
 
     if (!notifications) {
@@ -27,7 +28,7 @@ export const getNotifications = asyncHandler(
 
 export const updateNotifications = asyncHandler(
   async (req: Request, res: Response) => {
-    const userId = (req.user as any)?.id;
+    const userId = getUserId(req)
     const updateData = updateNotificationSchema.parse(req.body);
 
     const updatedUser = await settingsService.updateNotifications(
@@ -75,7 +76,7 @@ export const updateNotifications = asyncHandler(
 // };
 
 export const deleteSessions = async (req: Request, res: Response) => {
-  const userId = (req.user as any)?.id;
+  const userId = getUserId(req)
 
   await userService.addToMetaData(userId, null, "sessions");
 
@@ -88,7 +89,7 @@ export const deleteSessions = async (req: Request, res: Response) => {
 };
 
 export const get2FA = async (req: Request, res: Response) => {
-  const userId = (req.user as any)?.id;
+  const userId = getUserId(req)
 
   const allow2fa = await settingsService.get2FA(userId);
   if (allow2fa === null) {
@@ -105,7 +106,7 @@ export const get2FA = async (req: Request, res: Response) => {
 };
 
 export const set2FA = async (req: Request, res: Response) => {
-  const userId = (req.user as any)?.id;
+  const userId = getUserId(req)
   const updateData = req.body; // { allow2fa: boolean }
 
   const updatedUser = await settingsService.set2FA(userId, updateData.allow2fa);

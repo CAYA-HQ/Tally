@@ -58,13 +58,10 @@ api.interceptors.response.use(
 
         const newToken = res.data.accessToken;
 
-        // update zustand store
         useAccessTokenStore.getState().setAccessToken(newToken);
 
-        // retry queued requests
         processQueue(null, newToken);
 
-        // retry original request
         originalRequest.headers = originalRequest.headers || {};
         originalRequest.headers.Authorization = `Bearer ${newToken}`;
 
@@ -72,7 +69,6 @@ api.interceptors.response.use(
       } catch (refreshError) {
         processQueue(refreshError, null);
 
-        // clear auth state
         useAccessTokenStore.getState().setAccessToken(null);
 
         window.location.href = "/login";

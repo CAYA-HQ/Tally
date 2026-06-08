@@ -4,7 +4,7 @@ import Navbar from "../components/Layout/Navbar";
 import StatCard from '../components/Layout/Cards';
 import { 
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Cell 
-} from 'recharts';
+} from 'recharts'
 import { FiArrowUpRight, FiArrowDownRight } from 'react-icons/fi';
 import { RiFileList3Line, RiWalletLine, RiBankLine } from 'react-icons/ri';
 import { LuChevronDown } from "react-icons/lu";

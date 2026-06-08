@@ -19,9 +19,10 @@ const app = express();
 app.use(helmet());
 app.use(morgan("dev"));
 
-await connectRedis();
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+ const init = async()=> {
+  await connectRedis();
+  app.use(express.json());
+  app.use(express.urlencoded({ extended: true }));
 app.use(
   cors({
     origin: env.FRONTEND_URL,
@@ -44,18 +45,28 @@ app.all(/.*/, (req, res) => {
   });
 });
 
+
+
+}
 app.use(errorHandler);
 const server = ioServer(app);
 
 const PORT = process.env.PORT || 3000;
 
-connectDB().then(async () => {
-  server.listen(PORT, async () => {
-    console.log(`Server running on port ${PORT}`);
-    console.log("MONGO:", env.MONGO_URI);
-    console.log("REDIS:", env.REDIS_URL);
-    console.log("FRONTEND_URL:", env.FRONTEND_URL);
-    await startSock();
-    await verifyMailer()
+init()
+  .then(() => {
+    connectDB().then(async () => {
+      server.listen(PORT, async () => {
+        console.log(`Server running on port ${PORT}`);
+        console.log("MONGO:", env.MONGO_URI);
+        console.log("REDIS:", env.REDIS_URL);
+        console.log("FRONTEND_URL:", env.FRONTEND_URL);
+        await startSock();
+        await verifyMailer();
+      });
+    });
+  })
+  .catch((err) => {
+    console.error("Initialization error:", err);
+    process.exit(1);
   });
-});
