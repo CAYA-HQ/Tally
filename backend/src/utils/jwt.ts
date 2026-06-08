@@ -50,8 +50,8 @@ type payLoadType = {
   id: string;
   name: string;
   email: string;
-  phone: string;
-  avatar: { url: string; public_id: string; };
+  phone?: string;
+  avatar?: { url: string; public_id: string; } | any;
   session?: Array<any>;
   registrationDate?: string;
   registrationTime?: string;

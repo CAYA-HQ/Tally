@@ -161,21 +161,24 @@ const ReminderPage = () => {
   );
 
   const handleAddReminder = async (nextReminder) => {
+    if(!nextReminder.frequency)nextReminder.frequency = "none";
     try {
       const res = selectedReminder
         ? await api.put(`/user/reminder/${selectedReminder.id}`, nextReminder)
         : await api.post("/user/reminder", nextReminder);
+
       const data = res.data;
+   
       const id = data.id;
       const newReminder = data.alert;
+      const date = newReminder.date.split('-').reverse().join('/')
+      console.log('new reminder date: ', date)
 
       const remind = {
         id: id,
         title: newReminder.title,
-        mode: newReminder.frequency === "" ? "One-time" : "Recurring",
-        date: newReminder.date
-          ? new Date(newReminder.date).toLocaleDateString()
-          : "",
+        mode: newReminder.frequency === "none" ? "One-time" : "Recurring",
+        date: newReminder.date ? date : "",
         time: newReminder.time,
         frequency: newReminder.frequency,
         weekday: newReminder.weekday || "",
@@ -183,6 +186,7 @@ const ReminderPage = () => {
         note: newReminder.note,
         status: newReminder.sent ? "Sent" : "Scheduled",
       };
+      console.log(new Date(newReminder.date).toLocaleDateString())
 
       setReminders((current) => {
         if (selectedReminder) {
@@ -220,10 +224,9 @@ const ReminderPage = () => {
           fetchedReminders.map((reminder) => ({
             id: reminder._id,
             title: reminder.title,
-            mode: reminder.frequency === "" ? "One-time" : "Recurring",
+            mode: reminder.frequency === "none" ? "One-time" : "Recurring",
             date: reminder.date
-              ? new Date(reminder.date).toLocaleDateString()
-              : "",
+              ? reminder.date.split('-').join('/') : "",
             time: reminder.time,
             frequency: reminder.frequency,
             weekday: reminder.weekday || "",

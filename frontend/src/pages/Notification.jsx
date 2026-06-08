@@ -4,33 +4,22 @@ import Navbar from "../components/Layout/Navbar";
 import "../styles/pages/inventory.css";
 import api from '../utils/api';
 import { useNotificationStore } from '../utils/zustand';
+import { fetchNotifications, markRead } from "../utils/fetchBackend";
+
 
 
 const NotificationPage = () => {
-  const [nextCursor, setNextCursor] = useState(null);
   const [hasMore, setHasMore] = useState(false);
   const [loading, setLoading] = useState(false);
-  const {notifications, setNotifications,
-  addNotification, setSeenNotification} = useNotificationStore();
+  const {notifications, setNotifications, setNextCursor,
+  addNotification, nextCursor} = useNotificationStore();
 
-  const fetchNotifications = async (cursor = null) => {
-    setLoading(true);
-    try {
-      const response = await api.get("/user/notification", {
-        params: cursor ? { cursor } : {},
-      });
-      const fetched = response.data.notification || [];
-      cursor ? addNotifications(fetched) : setNotifications(fetched)
+  const data = {
+    setNotifications, addNotification, setNextCursor,
+    notifications, setHasMore, hasMore, setLoading
+  }
 
-      setNextCursor(response.data.nextCursor || null);
-      setHasMore(response.data.hasMore ?? false);
-
-    } catch (error) {
-      console.error("Failed to fetch notifications:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
+  const cursor = null
 
   const clearNotifications = async () => {
     try {
@@ -44,8 +33,8 @@ const NotificationPage = () => {
   };
 
   useEffect(() => {
-    fetchNotifications();
-    setSeenNotification(true)
+    fetchNotifications(cursor, data)
+    markRead()
   }, []);
 
   const renderNotification = (notification, index) => (
@@ -104,7 +93,7 @@ const NotificationPage = () => {
               <div className="notification-load-more">
                 <button
                   type="button"
-                  onClick={() => fetchNotifications(nextCursor)}
+                  onClick={() => fetchNotifications(nextCursor, data)}
                   disabled={loading}
                   className="load-more-btn"
                 >

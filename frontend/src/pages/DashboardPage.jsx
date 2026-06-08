@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useMemo, useState, useEffect } from "react";
 import Sidebar from "../components/Layout/Sidebar";
 import Navbar from "../components/Layout/Navbar";
 import Card from "../components/Layout/Cards";
@@ -14,6 +14,8 @@ import "../styles/pages/dashboard.css";
 import ChartBox from "../components/chart";
 import { Reports } from "../utils/dummyData";
 import { percentage } from "./ReportsPage";
+import { getUser } from '../utils/fetchBackend';
+
 
 const dashboardColumns = [
   { key: "productName", header: "Product" },
@@ -30,6 +32,7 @@ const dashboardColumns = [
 ];
 
 const DashboardPage = () => {
+
   const { inventoryItems } = useInventory();
   const [sidebarOpen, setSidebarOpen] = useState(false);
 

@@ -71,6 +71,8 @@ const userSchema = new mongoose.Schema(
 
     usage: String,
 
+    countryCode: String,
+
     business: {
       storeName: String,
       address: String,
@@ -101,12 +103,39 @@ const userSchema = new mongoose.Schema(
       type: String,
       trim: true
     },
+    
+    dailyRecordsJobId: {
+      type: String,
+      trim: true
+    },
+
+    alertMode:{
+      type: [String],
+      enum: ['whatsapp', 'email', 'push'],
+      default: ['email'],
+    },
+    
+    whatsappVerified: {
+      type: Boolean,
+      default: false,
+    },
+
+    whatsappJid: {
+      type: String,
+      trim: true,
+    },
+
+    whatsappToken: {
+      type: String,
+      trim: true,
+    },
 
     metadata: {
       type: mongoose.Schema.Types.Mixed,
       default: {},
     },
   },
+ 
   {
     timestamps: true,
     versionKey: false,

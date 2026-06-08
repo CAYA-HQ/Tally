@@ -2,6 +2,7 @@ import type { Request, Response } from "express";
 import * as userService from '../service/user.service'
 import { asyncHandler } from "../utils/asyncHandler";
 import { setNotification } from '../service/notification.service'
+import { getUserId } from "../utils/getUserId";
 
 
 export const userOnBoarding = asyncHandler(async(req: Request, res: Response)=>{
@@ -11,7 +12,7 @@ export const userOnBoarding = asyncHandler(async(req: Request, res: Response)=>{
         inventoryType, category, currency, unit
     } = req.body
 
-    const userId = (req.user as any ).id
+    const userId = getUserId(req)
     const user = await userService.getUserById(userId)
 
     if(!user){

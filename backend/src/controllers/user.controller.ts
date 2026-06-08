@@ -5,14 +5,28 @@ import { payLoad } from "../utils/jwt";
 import { comparePassword, hashPassword } from "../utils/bcrypt";
 import cloudinary from "../config/cloudinary";
 import { setNotification } from '../service/notification.service'
+import {uploadToCloudinary} from '../middleware/uploadImg'
+import { getUserId } from "../utils/getUserId";
 
 
 // UPDATE USER
 export const updateUser = asyncHandler(
   async (req: Request, res: Response ) => {
-    const updateUserInfo = req.body;
+    const {
+    firstName,
+    lastName,
+    email,
+    phoneNumber,
+    countryCode
+  } = req.body;
+    const updateUserInfo = ({
+      name: firstName && lastName ? `${firstName} ${lastName}` : undefined,
+      username: email,
+      phone: phoneNumber  ||  '',
+      countryCode
+    } as any);
     
-    const userId = (req.user as any)?.id;
+    const userId = getUserId(req)
 
     const user = await userService.getUserById(userId);
 
@@ -27,6 +41,7 @@ export const updateUser = asyncHandler(
       "name",
       "username",
       "phone",
+      "countryCode",
     ];
 
     const updates: Record<string, any> = {};
@@ -37,17 +52,18 @@ export const updateUser = asyncHandler(
       }
     }
 
-    user.set(updates);
+    const updatedUser = user.set(updates);
 
     await user.save();
     const sendUser = payLoad(user as any);
 
     await setNotification(
       user.id,
+      (sendUser as any),
       "You updated you information successfully 🎉",
       "user",
-      (sendUser as any),
     );
+    console.log("user updated successfully 🎉:", updatedUser);
 
     return res.status(200).json({
       success: true,
@@ -61,7 +77,7 @@ export const updateUser = asyncHandler(
 // update avatar
 export const updateAvatar = asyncHandler(
   async (req: Request, res: Response) => {
-    const userId = (req.user as any).id;
+    const userId = getUserId(req)
 
     const user = await userService.getUserById(userId);
 
@@ -85,9 +101,11 @@ export const updateAvatar = asyncHandler(
 
     const file = req.file as any;
 
+    const result = await uploadToCloudinary(file.buffer, "avatars");
+
     user.avatar = {
-      url: file.path,
-      public_id: file.filename,
+      url: result.secure_url,
+      public_id: result.public_id,
     };
 
     await user.save();
@@ -106,7 +124,7 @@ export const updateAvatar = asyncHandler(
 export const changePassword = asyncHandler(
   async(req: Request, res: Response, next: NextFunction)=>{
 
-    const userId = (req.user as any)?.id
+    const userId = getUserId(req)
     const { newPassword, oldPassword } = req.body
     const user = await userService.getUserById(userId)
 
@@ -130,7 +148,7 @@ export const changePassword = asyncHandler(
     const verifyPassword = comparePassword(oldEncryptedPassword, user?.password as string)
 
     if(!verifyPassword){
-      return res.status(401).json({
+      return res.status(404).json({
         success: false,
         message: 'incorrect password'
       })
@@ -152,17 +170,14 @@ export const changePassword = asyncHandler(
 
 //getting user's info
 export const getUser = asyncHandler(async(req: Request, res: Response)=>{
-  const userId = (req.user as any).id
-  if(!userId) return res.status(404).json({
-    success: false,
-    mesage: 'no user id found'
-  })
+  const userId = getUserId(req)
 
   const userInfo = await userService.getUserById(userId)
   if(!userInfo) return res.status(400).json({
     success: false,
     mesage: 'failed to get users info'
   })
+  console.log(userInfo)
 
   const payload = payLoad(userInfo as any)
 

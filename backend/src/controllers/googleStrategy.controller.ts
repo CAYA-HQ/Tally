@@ -102,7 +102,7 @@ export const googleSession = asyncHandler(async (req: Request, res: Response) =>
     EX: 60 * 60 * 24 * 7,
   });
 
-  return res.json({
+  return res.status(200).json({
     success: true,
     accessToken,
     user: payload,

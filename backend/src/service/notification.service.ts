@@ -18,7 +18,6 @@ export const setNotification = async (
     "notification:new",
     notification
   );
-  console.log(`Notification emitted to user ${userId}: ${message}`);
   return notification;
 };
 
@@ -31,7 +30,16 @@ export const markAsRead = async (userId: string, notificationId: string) => {
 };
 
 export const markAllAsRead = async (userId: string) => {
-  return await Notification.updateMany({ userId, read: false }, { read: true });
+  await Notification.updateMany(
+    { userId, read: false },
+    { read: true }
+  );
+  const notifications = await Notification.find({userId})
+  io.to(userId).emit(
+    "notification:read",
+    notifications
+  )
+  return notifications
 };
 
 export const deleteNotification = async (

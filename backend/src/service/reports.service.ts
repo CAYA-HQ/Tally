@@ -17,26 +17,6 @@ const getWeeklyStats = async (
   end: Date
 ) => {
 
-  console.log(
-  await Inventory.aggregate([
-    {
-      $match: {
-        createdAt: { $gte: start, $lt: end },
-      },
-    },
-  ])
-);
-
-console.log(
-  await Inventory.aggregate([
-    {
-      $match: {
-        userId,
-      },
-    },
-  ])
-);
-
   const result = await Inventory.aggregate([
     {
       $match: {
@@ -65,8 +45,7 @@ console.log(
       },
     },
   ]);
-  console.log("aggregation results:", JSON.stringify(result, null, 2));
-  console.log("aggregation result:", result);
+
 
   return result[0] || {
   totalQtyBought: 0,
@@ -88,13 +67,6 @@ new Worker(
       const { start, end } = getDayRange(now);
 
       const stats = await getWeeklyStats(userId, start, end);
-      
-      console.log({ userId, start, end });
-      console.log("stats:", stats);
-        if (!stats) {
-  console.log("No stats found");
-  return;
-}
 
       await Reports.create({
         userId,
@@ -116,7 +88,6 @@ new Worker(
 );
 
 //Report SCHEDULER
-
 export const setRecordsJob = async (userId: string, cron?: string) => {
   const user = await getUserById(userId);
   const cronTime = cron?.trim() || "0 0 * * 0"
@@ -145,6 +116,8 @@ export const setRecordsJob = async (userId: string, cron?: string) => {
       },
     }
   );
+  user.dailyRecordsJobId = schedulerId
+  user.save()
 
   console.log(`Weekly scheduler created for user: ${userId}`);
   return {

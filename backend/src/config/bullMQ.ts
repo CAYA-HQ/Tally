@@ -5,6 +5,8 @@ import { transporter } from "../service/otp.service";
 import { Alert } from "../model/Reminders.model";
 import { io } from "./socket";
 import { setNotification } from "../service/notification.service";
+import { getUserById } from "../service/user.service";
+import { whatsappAlert } from "../service/whatsapp.service";
 
 
 export const ioRedis = new IORedis({
@@ -44,10 +46,6 @@ new Worker(
       mode,
       date,
       time,
-      frequency,
-      weekday,
-      monthDay,
-      alertAt,
     } = job.data;
 
     try {
@@ -100,28 +98,58 @@ new Worker(
       // 2. Update DB
       await Alert.findByIdAndUpdate(
         alertId,
-        {
-          sent: true,
-        }
+        {sent: true},
+        {returnDocument: "after"}
       );
 
+      if(!alert) {
+        console.log("Alert not found for ID:", alertId);
+        return null;
+      }
+
+      const user = await getUserById(userId);
+      if(!user) {
+        console.log("User not found for ID:", userId);
+        return null;
+      }
+
+      // 3. Notify frontend in real-time for push notification
+      if(user?.alertMode.includes("push")) {
+        io.to(userId).emit("alert:sent", {
+          alertId,
+          title,
+          note,
+          mode,
+          date,
+          time,
+          sentAt: new Date(),
+        });
+      }
+
+      // 4 Set whatsapp notification for the alert if enabled
+      if(user?.alertMode.includes("whatsapp")) {
+        const user = await getUserById(userId);
+        if(!user) {
+          console.log("User not found for WhatsApp alert");
+          return null;
+        }
+
+        const userName = user.name || "User";
+        const countryCode = user.countryCode || "+234";
+        const jid = user.phone as string;
+        const message = `Hello ${userName}, this is *Tally*.
+        A quick reminder to *${title}*.
+        Note: ${note}`;
+
+        await whatsappAlert(jid, countryCode, message);
+      }
+      
       await setNotification(
         userId,
         job.data,
-        `${title} reminder have been sent to your email successfully!`,
+        `${title} reminder have been sent to your ${user.alertMode} successfully!`,
         "alert"
       )
-
-      // 3. Notify frontend in real-time
-      io.to(userId).emit("alert:sent", {
-        alertId,
-        title,
-        note,
-        mode,
-        date,
-        time,
-        sentAt: new Date(),
-      });
 
       console.log("Email sent:", email);
     } catch (err) {
