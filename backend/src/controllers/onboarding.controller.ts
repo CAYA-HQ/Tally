@@ -13,14 +13,7 @@ export const userOnBoarding = asyncHandler(async(req: Request, res: Response)=>{
     } = req.body
 
     const userId = getUserId(req)
-    const user = await userService.getUserById(userId)
-
-    if(!user){
-        return res.status(404).json({
-            success: false,
-            message: 'user not found'
-        })
-    }
+    const user = await userService.getUserById(userId, res)
     
     const business = { 
         storeName, address, businessPhone,

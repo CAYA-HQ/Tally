@@ -7,11 +7,12 @@ import { Inventory } from '../model/inventory.model'
 import { setRecordsJob } from '../service/reports.service'
 import { getUserId } from '../utils/getUserId'
 
+
 const data = (d: any)=>({
     id:  d._id,
     name:  d.stock,
-    qty:  d.quantity,
-    boughtPrice:  d.boughtPrice,
+    qty:  d.updatedQuantity || d.quantity,
+    boughtPrice:  d.boughtPrice ,
     sellingPrice:  d.sellingPrice,
     category:  d.category,
     unit:  d.unit,
@@ -23,14 +24,12 @@ export const addInventory = asyncHandler(async (req: Request, res: Response) => 
   const { stock, quantity, boughtPrice, sellingPrice, category, unit } = req.body
   const userId = getUserId(req)
 
-  console.log(userId)
+  console.log('item received from user',req.body)
 
   if (
-    !stock ||
-    quantity == null ||
+    !stock || quantity == null ||
     boughtPrice == null ||
-    sellingPrice == null ||
-    !category
+    sellingPrice == null || !category
   ) {
     return res.status(400).json({
       success: false,
@@ -38,14 +37,7 @@ export const addInventory = asyncHandler(async (req: Request, res: Response) => 
     })
   }
 
-  const user = await userService.getUserById(userId as string)
-
-  if (!user) {
-    return res.status(404).json({
-      success: false,
-      message: 'user not found'
-    })
-  }
+  const user = await userService.getUserById(userId, res)
 
   const inventoryStock = await Inventory.create({
     userId,
@@ -57,8 +49,12 @@ export const addInventory = asyncHandler(async (req: Request, res: Response) => 
     unit
   })
 
+  console.log('item saved in db: ', inventoryStock)
+
   const Stock = inventoryStock
   const newStock = data(Stock)
+
+  console.log('item sent back: ', newStock)
 
   const recordJobId = user.dailyRecordsJobId
 
@@ -83,7 +79,7 @@ export const addInventory = asyncHandler(async (req: Request, res: Response) => 
     success: true,
     message: 'new item added to inventory',
     newStock,
-    stockId: (await inventoryStock).id
+    stockId: (inventoryStock).id
   })
 })
 
@@ -134,10 +130,11 @@ export const deleteItem = asyncHandler(async (req: Request, res: Response) => {
 export const updateInventory = asyncHandler(async (req: Request, res: Response) => {
   const {quantity} = req.body
   const userId = getUserId(req)
-  console.log(userId)
+  console.log('quantity received: ', typeof quantity)
   const stockId = req.params.id
+  console.log('stockId received: ', stockId, req.params.id)
   
-  if (!quantity) {
+  if (typeof quantity !== 'number') {
       return res.status(400).json({
         success: false,
         message: "nothing to update",
@@ -152,17 +149,35 @@ export const updateInventory = asyncHandler(async (req: Request, res: Response) 
       message: "failed to update inventory",
     });
   }
+  console.log('inventory in db: ', inventory)
 
   const qtySaved = inventory.quantity  
-  const base = inventory.updatedQuantity ?? inventory.quantity;
-  const qtyDifference = base - quantity;
+  const base = inventory.updatedQuantity || inventory.quantity || 0;
+  const qtyDifference = Number(base) - Number(quantity);
+
+  console.log({
+    'incoming qty': quantity,
+    'updated qty in db':inventory.updatedQuantity,
+    'qty in db': inventory.quantity,
+    'base': base,
+    'qtyDifference': qtyDifference
+  })
 
   if(qtyDifference < 0) inventory.quantity = qtySaved + Math.abs(qtyDifference)
   if(qtyDifference > 0) inventory.soldQuantity += qtyDifference
+  if(quantity === 0){
+    inventory.quantity = quantity
+  }
+
+  inventory.updatedQuantity = quantity
 
   await inventory.save()
 
+  console.log('new Inventory saved: ', inventory)
+
   const updatedinventory = data(inventory) 
+
+  console.log('updated invetory to be sent: ', updatedinventory)
 
   await setNotification(
     userId as string,

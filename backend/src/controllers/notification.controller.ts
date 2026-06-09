@@ -21,8 +21,6 @@ export const getNotification: RequestHandler = asyncHandler(
         : null;
     const hasMore = notifications.length === 20;
 
-    console.log('notifications: ',notifications)
-
     res.status(200).json({
       notifications,
       nextCursor,

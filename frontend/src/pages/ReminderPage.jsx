@@ -14,6 +14,7 @@ import "../styles/pages/record.css";
 import ReminderModal from "../components/ReminderModal";
 import DeleteReminderModal from "../components/DeleteReminderModal";
 import api from "../utils/api";
+import { formatDate } from "../utils/helperFn";
 
 const ReminderPage = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -171,14 +172,13 @@ const ReminderPage = () => {
    
       const id = data.id;
       const newReminder = data.alert;
-      const date = newReminder.date.split('-').reverse().join('/')
-      console.log('new reminder date: ', date)
+      const date = newReminder.date
 
       const remind = {
         id: id,
         title: newReminder.title,
         mode: newReminder.frequency === "none" ? "One-time" : "Recurring",
-        date: newReminder.date ? date : "",
+        date: newReminder.date ? formatDate(date) : "",
         time: newReminder.time,
         frequency: newReminder.frequency,
         weekday: newReminder.weekday || "",
@@ -186,7 +186,6 @@ const ReminderPage = () => {
         note: newReminder.note,
         status: newReminder.sent ? "Sent" : "Scheduled",
       };
-      console.log(new Date(newReminder.date).toLocaleDateString())
 
       setReminders((current) => {
         if (selectedReminder) {
@@ -203,7 +202,7 @@ const ReminderPage = () => {
           ...current,
         ];
       });
-      if (selectedReminder) window.location.reload();
+      // if (selectedReminder) window.location.reload();
       setSelectedReminder(null);
       setIsReminderModalOpen(false);
     } catch (error) {
@@ -220,13 +219,14 @@ const ReminderPage = () => {
       try {
         const response = await api.get("/user/reminder");
         const fetchedReminders = response.data.alerts || [];
+        console.log(fetchedReminders)
         setReminders(
           fetchedReminders.map((reminder) => ({
             id: reminder._id,
             title: reminder.title,
             mode: reminder.frequency === "none" ? "One-time" : "Recurring",
             date: reminder.date
-              ? reminder.date.split('-').join('/') : "",
+              ? formatDate(reminder.date) : "",
             time: reminder.time,
             frequency: reminder.frequency,
             weekday: reminder.weekday || "",

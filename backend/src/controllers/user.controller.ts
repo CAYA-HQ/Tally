@@ -28,14 +28,7 @@ export const updateUser = asyncHandler(
     
     const userId = getUserId(req)
 
-    const user = await userService.getUserById(userId);
-
-    if (!user) {
-      return res.status(404).json({
-        success: false,
-        message: "user not found",
-      });
-    }
+    const user = await userService.getUserById(userId, res);
 
     const allowedUpdates = [
       "name",
@@ -79,14 +72,7 @@ export const updateAvatar = asyncHandler(
   async (req: Request, res: Response) => {
     const userId = getUserId(req)
 
-    const user = await userService.getUserById(userId);
-
-    if (!user) {
-      return res.status(404).json({
-        success: false,
-        message: "User not found",
-      });
-    }
+    const user = await userService.getUserById(userId, res);
 
     if (!req.file) {
       return res.status(400).json({
@@ -126,14 +112,7 @@ export const changePassword = asyncHandler(
 
     const userId = getUserId(req)
     const { newPassword, oldPassword } = req.body
-    const user = await userService.getUserById(userId)
-
-    if(!user){
-      return res.status(404).json({
-        success: false,
-        message: 'user not found'
-      })
-    }
+    const user = await userService.getUserById(userId, res)
 
     if(!oldPassword || !newPassword){
       return res.status(400).json({
@@ -172,11 +151,8 @@ export const changePassword = asyncHandler(
 export const getUser = asyncHandler(async(req: Request, res: Response)=>{
   const userId = getUserId(req)
 
-  const userInfo = await userService.getUserById(userId)
-  if(!userInfo) return res.status(400).json({
-    success: false,
-    mesage: 'failed to get users info'
-  })
+  const userInfo = await userService.getUserById(userId, res)
+
   console.log(userInfo)
 
   const payload = payLoad(userInfo as any)

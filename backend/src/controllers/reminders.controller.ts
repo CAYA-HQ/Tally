@@ -16,18 +16,16 @@ export const createReminder = asyncHandler(async(req: Request, res: Response)=>{
   } = req.body
 
   const userId = getUserId(req)
-  const user = await getUserById(userId)
-
-  if(!user){
-    return res.status(404).json({
-      success: false,
-      message: 'user not found'
-    })
-  }
+  const user = await getUserById(userId, res)
 
   const timezone = user.metadata?.timezone;
 
   const alertAt = AlertAt(date, time, timezone) as string
+
+  if(new Date(alertAt) < new Date()) return res.status(402).json({
+    success: false,
+    message: 'time is in the past'
+  })
     
   if (!alertAt || isNaN(new Date(alertAt).getTime())) {
     throw new Error("Invalid alertAt date");
@@ -44,6 +42,8 @@ export const createReminder = asyncHandler(async(req: Request, res: Response)=>{
     whatsappNumber: user.phone,
   } as any);
   
+  console.log('alert created: ', alert)
+
   if (!alert) {
     return res.status(400).json({
       success: false,
@@ -137,43 +137,40 @@ export const updateReminder = asyncHandler(async (req: Request, res: Response) =
       message: "Alert id is required",
     });
   }
+  console.log('edited alert id: ', alertId)
 
-  const user = await getUserById(userId)
-
-  if(!user){
-    return res.status(404).json({
-      success: false,
-      message: 'user not found'
-    })
-  }
+  const user = await getUserById(userId, res)
 
   const timezone = user.metadata?.timezone || 'UTC';
-  const alert = await Alert.findOne({ _id: alertId, userId });
+  const {
+    title, note, date, time, mode, frequency, weekday, monthDay, repeatType, repeatDays, alertMode,
+  } = req.body;
 
-  if (!alert) {
+  const updates: any = {
+    title, note, date, time, mode, frequency, weekday, monthDay,
+    timezone: timezone, repeatType, repeatDays,
+    alertMode
+  };
+
+  const updatedAlert = await Alert.findByIdAndUpdate(
+    alertId, updates, { new: true }
+  );
+
+  console.log('elert to be edited: ', alert)
+
+  if (!updatedAlert) {
     return res.status(402).json({
       success: false,
       message: "Alert not found",
     });
   }
 
-  const {
-    title, note, date, time, mode, frequency, weekday, monthDay,
-    timezone: requestTimezone, repeatType, repeatDays, alertMode,
-  } = req.body;
-
-  const updates: any = {
-    title, note, date, time, mode, frequency, weekday, monthDay,
-    timezone: requestTimezone || timezone, repeatType, repeatDays,
-    alertMode, email: alert.email,
-  };
-
   const alertAt = AlertAt(date, time, timezone) as string
   updates.alertAt = alertAt
 
-  const oldJobId = alert.jobId as string;
+  const oldJobId = updatedAlert.jobId as string;
 
-  const updatedAlert = await Alert.findByIdAndUpdate(alertId, updates, { new: true });
+  
 
   if (!updatedAlert) {
     return res.status(403).json({
@@ -216,9 +213,11 @@ export const updateReminder = asyncHandler(async (req: Request, res: Response) =
 // Get all alerts for a user
 export const getReminders = asyncHandler(async (req: Request, res: Response) => {
   const userId = getUserId(req)
-  console.log("Fetching alerts for user:", userId);
-  const alerts = await Alert.find({ userId: userId }).sort({ alertAt: 1 });
-  console.log("Retrieved alerts for user:", alerts.length);
+   
+  const alerts = await Alert.find(
+    { userId: userId }
+  ).sort({ alertAt: 1 });
+  
   
   res.status(200).json({
     success: true,

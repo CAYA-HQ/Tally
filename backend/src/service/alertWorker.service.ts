@@ -228,7 +228,7 @@ export const createAlert = async(alert: noteData ) => {
 
     const schedulerId = `${alertId}--repeat`
 
-    await emailQueue.upsertJobScheduler(
+    const reapetJob = await emailQueue.upsertJobScheduler(
       schedulerId,
       repeat,
       {
@@ -238,6 +238,7 @@ export const createAlert = async(alert: noteData ) => {
       }
     );
     jobId = schedulerId
+    console.log('repeat alert job: ', reapetJob)
 
   } else {
 
@@ -247,6 +248,7 @@ export const createAlert = async(alert: noteData ) => {
       options
     );
     jobId = job.id
+    console.log('single alert job: ', job)
   }
 
   return jobId
