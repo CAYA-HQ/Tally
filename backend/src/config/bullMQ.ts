@@ -70,7 +70,7 @@ new Worker(
             align-items: center;
             margin-bottom: 24px;
           ">
-          <h1>TALLY REMINDER SERVICER</h1>
+          <h1>TALLY REMINDER SERVICES</h1>
           </div>
           <h2 style="margin-bottom: 12px;">
             Remember To ${title}
