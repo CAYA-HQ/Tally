@@ -117,7 +117,6 @@ new Worker(
 
       // 3. Notify frontend in real-time for push notification
       if(user?.alertMode.includes("push")) {
-
         console.log('push alert: ',user?.alertMode)
         io.to(userId).emit("alert:sent", {
           alertId,
