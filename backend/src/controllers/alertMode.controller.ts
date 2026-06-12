@@ -3,7 +3,6 @@ import crypto from "crypto";
 import { asyncHandler } from "../utils/asyncHandler";
 import { getUserById } from "../service/user.service";
 import { whatsappAlertVerification } from "../service/whatsapp.service";
-import { User } from "../model/User";
 import { getUserId } from "../utils/getUserId";
 
 

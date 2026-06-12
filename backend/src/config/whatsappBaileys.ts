@@ -168,13 +168,6 @@ sock.ev.on("messages.upsert", async ({ messages }) => {
     return;
   }
 
-  if (text.toLowerCase() === "stop") {
-    await socket.sendMessage(jid, {
-      text: "Notifications disabled.",
-    });
-
-    return;
-  }
 });
 
     return sock;
