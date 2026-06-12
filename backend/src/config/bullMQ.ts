@@ -70,7 +70,7 @@ new Worker(
             align-items: center;
             margin-bottom: 24px;
           ">
-          <h1>TALLY REMINDER SERVICER</h1>
+          <h1>TALLY REMINDER SERVICES</h1>
           </div>
           <h2 style="margin-bottom: 12px;">
             Remember To ${title}
@@ -96,7 +96,7 @@ new Worker(
       });
       
       // 2. Update DB
-      await Alert.findByIdAndUpdate(
+      const alert = await Alert.findByIdAndUpdate(
         alertId,
         {sent: true},
         {returnDocument: "after"}
@@ -107,6 +107,8 @@ new Worker(
         return null;
       }
 
+      console.log('alert sent: ', alert)
+
       const user = await getUserById(userId);
       if(!user) {
         console.log("User not found for ID:", userId);
@@ -115,6 +117,7 @@ new Worker(
 
       // 3. Notify frontend in real-time for push notification
       if(user?.alertMode.includes("push")) {
+        console.log('push alert: ',user?.alertMode)
         io.to(userId).emit("alert:sent", {
           alertId,
           title,
@@ -124,30 +127,31 @@ new Worker(
           time,
           sentAt: new Date(),
         });
+        console.log('push alert sent')
       }
 
       // 4 Set whatsapp notification for the alert if enabled
       if(user?.alertMode.includes("whatsapp")) {
-        const user = await getUserById(userId);
-        if(!user) {
-          console.log("User not found for WhatsApp alert");
-          return null;
-        }
 
+        console.log('whatsapp alert: ',user?.alertMode)
         const userName = user.name || "User";
         const countryCode = user.countryCode || "+234";
         const jid = user.phone as string;
-        const message = `Hello ${userName}, this is *Tally*.
-        A quick reminder to *${title}*.
-        Note: ${note}`;
+        const message = `
+         👋 Hello ${userName}, this is *Tally*.
 
-        await whatsappAlert(jid, countryCode, message);
+        A quick reminder 🔔 to *${title}*.
+
+        Note: ${note}`.trim();
+
+        await whatsappAlert(jid, countryCode, message.trim());
+        console.log('alert sent to whatsapp')
       }
       
       await setNotification(
         userId,
         job.data,
-        `${title} reminder have been sent to your ${user.alertMode} successfully!`,
+        `${title} reminder have been sent successfully!`,
         "alert"
       )
 

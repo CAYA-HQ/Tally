@@ -8,6 +8,7 @@ import {
   FiX,
 } from "react-icons/fi";
 import "../styles/components/reminderModal.css";
+import { formatDateForInput } from "../utils/helperFn";
 
 const initialFormState = {
   title: "",
@@ -45,7 +46,7 @@ const buildInitialFormState = (initialReminder) => {
   return {
     title: initialReminder.title ?? "",
     mode: initialReminder.mode ?? "One-time",
-    date: initialReminder.date ?? "",
+    date: formatDateForInput(initialReminder.date) ?? "",
     time: initialReminder.time ?? "",
     frequency: initialReminder.frequency || "Daily",
     weekday: initialReminder.weekday || "Monday",
@@ -164,9 +165,25 @@ const ReminderModal = ({ isOpen, onClose, onSubmit, initialReminder }) => {
       if (!formData.date) {
         nextErrors.date = "Choose a reminder date";
       }
-    } else if (formData.frequency === "Weekly" && !formData.weekday) {
+    
+      if (formData.date && formData.time) {
+        const reminderDateTime = new Date(
+          `${formData.date}T${formData.time}`
+        );
+      
+        if (reminderDateTime <= new Date()) {
+          nextErrors.date = "Date and time must be in the future";
+        }
+      }
+    } else if (
+      formData.frequency === "Weekly" &&
+      !formData.weekday
+    ) {
       nextErrors.weekday = "Pick a weekday";
-    } else if (formData.frequency === "Monthly" && !formData.monthDay) {
+    } else if (
+      formData.frequency === "Monthly" &&
+      !formData.monthDay
+    ) {
       nextErrors.monthDay = "Pick a day of the month";
     }
 

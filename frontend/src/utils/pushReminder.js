@@ -4,16 +4,9 @@ import { toast } from "react-toastify";
 import api from './api'
 
 export const setupPushReminders = async (enable, accessToken) => {
-  // if (!enable) {
-  //   socket.off("alert:sent");
-  //   toast.info("Push reminders disabled");
-  //   return;
-  // }
-
-  if (!socket.connected) {
-    connectSocket(accessToken);
+  if (enable === false) {
+    socket.off("alert:sent");
   }
-
   if (!("Notification" in window)) return;
 
   const permission =
@@ -43,14 +36,7 @@ export const setupPushReminders = async (enable, accessToken) => {
     toast.error(`Error setting up push reminders: ${err}`);
     return;
   }
-
-  socket.on("alert:sent", (data) => {
-    new Notification(data.title, {
-      body: data.note,
-      icon: "/logo.png",
-    });
-  });
-
+  
 };
 
 

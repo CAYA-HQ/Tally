@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
 import Sidebar from "../components/Layout/Sidebar";
 import Navbar from "../components/Layout/Navbar";
-import "../styles/pages/inventory.css";
 import api from '../utils/api';
 import { useNotificationStore } from '../utils/zustand';
 import { fetchNotifications, markRead } from "../utils/fetchBackend";
+import '../styles/pages/notification.css'
 
 
 
@@ -61,9 +61,6 @@ const NotificationPage = () => {
           <div className="notification-header">
             <div>
               <h1 className="page-title">Notifications</h1>
-              <p className="notification-subtitle">
-                View and manage your recent alerts.
-              </p>
             </div>
             <button
               type="button"

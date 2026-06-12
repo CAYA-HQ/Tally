@@ -13,8 +13,19 @@ export const createUser = async (data: CreateUserInput) => {
 };
 
 // get user by id
-export const getUserById = async (id: string) => {
-  return await User.findById(id);
+export const getUserById = async (id: string, res?: any) => {
+  
+  const user = await User.findById(id);
+
+  if(!res) return user
+  
+  if(!user){
+    return res.status(404).json({
+      success: false,
+      message: 'user not found'
+    })
+  }
+  return user
 };
 
 // get user by email

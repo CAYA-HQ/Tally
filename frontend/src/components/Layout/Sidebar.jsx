@@ -29,13 +29,13 @@ const NAV_ITEMS = [
   //   id: "orders",
   //   label: "Orders",
   //   icon: <BsCart3 />,
-  //   path: "/dashboard/orders",
+  //   path: "/dashboard/reports",
   // },
   {
     id: "reports",
     label: "Reports",
     icon: <HiOutlineDocumentReport />,
-    path: "/dashboard/reports",
+    path: "/dashboard/orders",
   },
   {
     id: "record",

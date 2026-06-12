@@ -6,19 +6,13 @@ import { whatsappAlertVerification } from "../service/whatsapp.service";
 import { User } from "../model/User";
 import { getUserId } from "../utils/getUserId";
 
+
 export const whatsAppReminder = asyncHandler(
   async (req: Request, res: Response) => {
     const { enable } = req.body;
     const userId = getUserId(req)
   
-    const user = await getUserById(userId);
-
-    if (!user) {
-      return res.status(404).json({
-        success: false,
-        message: "User not found",
-      });
-    }
+    const user = await getUserById(userId, res)
 
     if (!user.phone) {
       return res.status(400).json({
@@ -31,7 +25,7 @@ export const whatsAppReminder = asyncHandler(
     // Disable WhatsApp reminders
     if (!enable) {
       user.alertMode = user.alertMode.filter(
-        (mode) => mode !== "whatsapp"
+        (mode: string) => mode !== "whatsapp"
       );
 
       await user.save();
@@ -86,14 +80,7 @@ export const getWhatsappNotif = asyncHandler(async(req: Request, res: Response)=
 
   console.log(userId)
 
-  const user = await getUserById(userId);
-
-  if (!user) {
-    return res.status(404).json({
-      success: false,
-      message: "User not found",
-    });
-  }
+  const user = await getUserById(userId, res)
   
   res.status(200).json({
     success: true,
@@ -108,14 +95,7 @@ export const pushReminder = asyncHandler(
     const { enable } = req.body;
     const userId = getUserId(req)
 
-    const user = await User.findById(userId);
-
-    if (!user) {
-      return res.status(404).json({
-        success: false,
-        message: "User not found",
-      });
-    }
+    const user = await getUserById(userId, res)
 
     if (enable) {
       if (!user.alertMode.includes("push")) {
@@ -123,7 +103,7 @@ export const pushReminder = asyncHandler(
       }
     } else {
       user.alertMode = user.alertMode.filter(
-        (mode) => mode !== "push"
+        (mode: string) => mode !== "push"
       );
     }
 

@@ -51,6 +51,7 @@ export const InventoryProvider = ({ children }) => {
   }, []);
 
   const addProduct = async (product) => {
+    console.log('product to be sent: ', product)
     const response = await api.post("/user/inventory", {
       stock: product.inventoryName,
       category: product.category,
@@ -61,6 +62,8 @@ export const InventoryProvider = ({ children }) => {
     });
 
     const newStock = response.data.newStock;
+
+    console.log('stock received from backend: ',newStock)
 
     setInventoryItems((currentItems) => [
       ...currentItems,
@@ -79,7 +82,13 @@ export const InventoryProvider = ({ children }) => {
   };
 
   const updateProductQuantity = async (idNo, quantity) => {
-    await api.put(`/user/inventory/${idNo}`, { quantity });
+    console.log({
+      'item id': idNo,
+      'item': quantity
+    })
+    
+    const res = await api.put(`/user/inventory/${idNo}`, { quantity });
+    console.log(res.data.updatedinventory)
 
     setInventoryItems((currentItems) =>
       currentItems.map((item) => {

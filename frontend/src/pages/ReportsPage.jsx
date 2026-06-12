@@ -103,7 +103,6 @@ const ReportsPage = () => {
           {getMultipleChart.map((chart, i) => (
             <ChartBox
               key={i}
-            //   data={percentage}
               chartBoxClass="chart-box"
               barChartClass="bar-chart"
               barFillClass="bar-fill"
@@ -145,10 +144,15 @@ const ReportsPage = () => {
             barDivClass="big-bar-div"
             extraBarData={extraData}
             extraBarClass="extra-bar-fill"
-            extraBarDiv="extra-bar-div"
-            style={{ gap: "5px" }}
+            barChartDiv="bar-chart-div"
             weeklyBar={true}
-            style={{position: 'relative'}}
+            toolTipData={Reports}
+            toolTipClass="tool-tip"
+            toolTipColor={chartIndicators}
+            style={{
+              position: 'relative', gap: "10px",
+              flexDirection: 'column',
+            }}
           >
             <div className="chart-indicator">
             {chartIndicators.map((item, i) => (<div key={i}>

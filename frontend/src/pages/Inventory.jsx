@@ -9,6 +9,7 @@ import DeleteReminderModal from "../components/DeleteReminderModal";
 import { useInventory } from "../context/InventoryContext";
 import { toast } from "react-toastify";
 import "../styles/pages/inventory.css";
+import api from "../utils/api";
 
 const statusOptions = [
   { label: "All", value: "All" },
@@ -31,6 +32,7 @@ const InventoryPage = () => {
     updateProductQuantity,
     deleteProduct,
   } = useInventory();
+
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedStatus, setSelectedStatus] = useState("All");
@@ -43,6 +45,7 @@ const InventoryPage = () => {
   const [productToDelete, setProductToDelete] = useState(null);
 
   useEffect(() => {
+    
     setQuantityDrafts((currentDrafts) => {
       const nextDrafts = {};
 
@@ -145,6 +148,8 @@ const InventoryPage = () => {
   const handleUpdateQuantity = async (item) => {
     const draftValue = quantityDrafts[item.idNo];
     const parsedQuantity = Number(draftValue);
+    console.log('item draftValue b4 sending: ', draftValue)
+    console.log('item parsedqty b4 sending: ', parsedQuantity)
 
     if (
       draftValue === "" ||
@@ -157,7 +162,7 @@ const InventoryPage = () => {
     }
 
     if (parsedQuantity === item.stocks) {
-      toast.info("Quantity is already up to date");
+      toast.info("Stock up-to date");
       return;
     }
 
