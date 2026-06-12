@@ -49,12 +49,9 @@ export const addInventory = asyncHandler(async (req: Request, res: Response) => 
     unit
   })
 
-  console.log('item saved in db: ', inventoryStock)
-
   const Stock = inventoryStock
   const newStock = data(Stock)
 
-  console.log('item sent back: ', newStock)
 
   const recordJobId = user.dailyRecordsJobId
 
@@ -89,16 +86,12 @@ export const deleteItem = asyncHandler(async (req: Request, res: Response) => {
   const { id: stockId } = req.params
   const userId = getUserId(req)
 
-  console.log(userId)
-
   if (!stockId) {
     return res.status(401).json({
       success: false,
       message: 'missing stock or user'
     })
   }
-
-  console.log(stockId)
 
   const deletedItem = await Inventory.findOneAndDelete({
     _id: stockId,
@@ -149,19 +142,10 @@ export const updateInventory = asyncHandler(async (req: Request, res: Response) 
       message: "failed to update inventory",
     });
   }
-  console.log('inventory in db: ', inventory)
 
   const qtySaved = inventory.quantity  
   const base = inventory.updatedQuantity || inventory.quantity || 0;
   const qtyDifference = Number(base) - Number(quantity);
-
-  console.log({
-    'incoming qty': quantity,
-    'updated qty in db':inventory.updatedQuantity,
-    'qty in db': inventory.quantity,
-    'base': base,
-    'qtyDifference': qtyDifference
-  })
 
   if(qtyDifference < 0) inventory.quantity = qtySaved + Math.abs(qtyDifference)
   if(qtyDifference > 0) inventory.soldQuantity += qtyDifference
@@ -173,11 +157,7 @@ export const updateInventory = asyncHandler(async (req: Request, res: Response) 
 
   await inventory.save()
 
-  console.log('new Inventory saved: ', inventory)
-
   const updatedinventory = data(inventory) 
-
-  console.log('updated invetory to be sent: ', updatedinventory)
 
   await setNotification(
     userId as string,
@@ -196,10 +176,7 @@ export const updateInventory = asyncHandler(async (req: Request, res: Response) 
 
 export const getInventory = asyncHandler(async(req: Request, res: Response)=>{
 
-  const userId = getUserId(req)
-
-  console.log(userId)
-  
+  const userId = getUserId(req)  
 
   const inventory = await Inventory.find({userId})
   

@@ -151,7 +151,7 @@ new Worker(
       await setNotification(
         userId,
         job.data,
-        `${title} reminder have been sent to your ${user.alertMode} successfully!`,
+        `${title} reminder have been sent successfully!`,
         "alert"
       )
 

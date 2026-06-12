@@ -30,7 +30,7 @@
     display: flex;
     background-color: white;
     margin: 30px;
-    justify-content: flex-start;
+    justify-content: center;
     padding: 0;
 }
 
@@ -84,10 +84,12 @@
     height: 100%;
     background: rgb(209, 205, 201);
     border-radius: 20px;
+    animation: barAnim 2s ease-in-out forwards;
 }
 
 .big-bar-chart {
-    width: 70%;
+    width: 40%;
+   margin-right: 3px;
 }
 
 .bar-fill {
@@ -97,41 +99,54 @@
     right: 0;
     background: rgb(119, 94, 221);
     border-radius: 20px;
-    content: '';
+    animation: barAnim 3s ease-in-out forwards;
+    
 }
 
 .extra-bar-fill {
     background: palevioletred;
-    width: 60%;
+    width: 30%;
     border-radius: 10px;
     margin-bottom: 0;
+    animation: barAnim 2s ease-in-out forwards;
     position: absolute;
     bottom: 0;
+    right: 0;
 }
 
-.extra-bar-div {
-    width: 100%;
+@keyframes barAnim {
+    from {
+        transform: translateY(100%);
+    }
+    to {
+        transform: translateY(0);
+    }
+}
+
+.bar-chart-div {
     height: 100%;
     display: flex;
-    position: relative;
+    justify-content: center;
     margin: 0;
-    gap: 5px
+    position: relative;
+    overflow-y: hidden;
 }
 
 .big-bar-div p {
-    position: absolute;
-    bottom: -15%;
-    font-size: 15px;
+
+    font-size: 90%;
     font-weight: 600;
+    text-align: center;
     color: var(--color-text-primary);
     font-family: var(--font-poppins);
     opacity: .7;
+    white-space: nowrap;
 }
 
 .chart-indicator {
     display: flex;
     position: absolute;
-    bottom: -20%;
+    bottom: -13%;
     width: 100%;
     align-items: center;
     justify-content: center;
@@ -142,6 +157,7 @@
     && p {
         font-size: 12px;
         opacity: .8;
+        text-align: center;
     }
 }
 
@@ -149,4 +165,20 @@
     height: 10px;
     width: 70px;
     border-radius: 30px;
+}
+
+.tool-tip {
+  font-size: 90%;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  background: white;
+  padding: 10px;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px var(--color-text-primary);
+  animation: tooltipAnim 1s ease-in-out;
+}
+
+@keyframes tooltipAnim {
+    from{ opacity: 0; }
+    to{ opacity: 1; }
 }
