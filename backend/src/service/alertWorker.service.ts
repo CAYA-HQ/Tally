@@ -146,7 +146,7 @@ export type noteData = {
   alertId: string,
 }
 
-// Service function to create alert and corresponding job
+// Service function to create alert data
 const Alertdata = (d: any )=> {return {
   alertId: d.alertId,
   userId: d.userId,
